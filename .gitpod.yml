@@ -1,5 +1,6 @@
 tasks:
   - name: Setup Development Env
+    before: mv ./sample.env ./.env
     openMode: tab-after
     init: |
       type -p curl >/dev/null || sudo apt install curl -y
@@ -9,6 +10,8 @@ tasks:
       sudo apt update
       sudo apt install gh -y
       gp sync-done dev-setup
+  - name: Setup Backup env
+    before: mv ./sample.env~ ./.env~
   - name: Install ODK Central
     openMode: tab-after
     init: |
