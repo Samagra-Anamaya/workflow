@@ -21,7 +21,7 @@ FORM_MANAGER_BASE_URI=IP:PORT_OF_DEPLOYED_INSTANCE
 
 # form manager
 FORM_MANAGER_URL=http://form-manager:3006
-MINIO_URL=IP:PORT_OF_DEPLOYED_MINIO
+MINIO_URL=https://9000-coderamantech-workflow-wxavmus5rk8.ws-us98.gitpod.io
 MINIO_ENDPOINT=minio
 MINIO_PORT=9000
 REDIS_HOST=fm-cache
@@ -41,6 +41,6 @@ HASURA_GRAPHQL_DATABASE_URL=postgres://$TSDB_POSTGRES_USER:$TSDB_POSTGRES_PASSWO
 # http://service-name is not going to work as we are building a static build
 # and serving it through nginx
 # use actual IP address instead
-REACT_APP_ENKETO_URL=https://8065-tushar5526-workflow-0qffaj3egws.ws-us93.gitpod.io
-REACT_APP_FORM_MANAGER_URL=https://3006-tushar5526-workflow-0qffaj3egws.ws-us93.gitpod.io
-REACT_APP_HASURA_URL=https://8080-tushar5526-workflow-0qffaj3egws.ws-us93.gitpod.io
+REACT_APP_ENKETO_URL=https://8065-coderamantech-workflow-wxavmus5rk8.ws-us98.gitpod.io
+REACT_APP_FORM_MANAGER_URL=https://3006-coderamantech-workflow-wxavmus5rk8.ws-us98.gitpod.io
+REACT_APP_HASURA_URL=https://8080-coderamantech-workflow-wxavmus5rk8.ws-us98.gitpod.io
