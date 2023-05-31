@@ -10,8 +10,6 @@ tasks:
       sudo apt update
       sudo apt install gh -y
       gp sync-done dev-setup
-  - name: Setup Backup env
-    before: mv ./sample.env~ ./.env~
   - name: Install ODK Central
     openMode: tab-after
     init: |
