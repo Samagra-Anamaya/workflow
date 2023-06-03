@@ -6,17 +6,17 @@
 
 ## About :open_book:
 
-Enketo has been used all around the world for a wide range of uses from needs assessments in humanitarian aid, to raising historical awareness, to clinical research, to election monitoring.
+Enketo has been used all around the world for a wide range of purposes, from needs assessments in humanitarian aid, to raising historical awareness, to clinical research, to election monitoring.
 
 ## Features :dart:
 
 - [x] Can connect to your custom backend
 - [ ] Have the edit api in case user wants to edit submitted response
-- [ ] Api for the customize change in XML of form
+- [ ] Api to customize changes in XML of the form
 - [x] Have beautiful themes and widgets
 - [x] Are printer-friendly
 - [x] Can use very powerful skip and validation logic
-- [x] Run on any device, mobile or desktop, as long as it has a fairly modern browser
+- [x] Runs on any device, mobile or desktop, as long as it has a fairly modern browser
 
 ## Use Case :rocket:
 
@@ -50,7 +50,7 @@ npm -v
 
 ![Workfow Demo UI](https://user-images.githubusercontent.com/46066481/227316968-487e52db-0236-4282-b57a-73d71788d4ea.gif)
 - Currently offering 4 demo flows namely
-- Jumping Forms (Opening of next form once once is submitted)
+- Jumping Forms (Opening of next form once the first one is submitted)
 - Hasura Submissions (Basically saving the form data to any database, hasura extending postgres in this case)
 - Offline capabilites (How the form behaves when working offline)
 - File Upload (How to handle uploading files to any desired CDN, Minio in this case)
@@ -122,7 +122,7 @@ curl 'https://3006-samagradevelop-workflow-mxpsr1yqse0.ws-us92.gitpod.io/prefill
 ## Architecture
 
 <!-- Insert LLD Image here -->
-![alt text](./docs/images/LLD.png "Title")
+![LLD Image](./docs/images/LLD.png "Title")
 
 
 ## Wrapper Config
