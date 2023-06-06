@@ -82,9 +82,9 @@ npm -v
 
 ## By using npm
 
-1. cd/apps
+1. cd apps
 
-   cd/wrapper
+   cd wrapper
 
 2. run docker ps
 
