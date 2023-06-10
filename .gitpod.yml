@@ -1,5 +1,6 @@
 tasks:
   - name: Setup Development Env
+    before: mv ./sample.env ./.env
     openMode: tab-after
     init: |
       type -p curl >/dev/null || sudo apt install curl -y
