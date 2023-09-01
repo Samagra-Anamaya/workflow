@@ -1,0 +1,30 @@
+/* Font family */
+@font-face {
+  font-family: Mulish-bold;
+  src: url("./fonts/Mulish-Bold.ttf");
+  font-display: swap;
+}
+@font-face {
+  font-family: Mulish-demi;
+  src: url("./fonts/Mulish-Demi.ttf");
+  font-display: swap;
+}
+@font-face {
+  font-family: Mulish-medium;
+  src: url("./fonts/Mulish-Medium.ttf");
+  font-display: swap;
+}
+@font-face {
+  font-family: Mulish-regular;
+  src: url("./fonts/Mulish-Regular.ttf");
+  font-display: swap;
+}
+
+body {
+  font-family: Mulish-regular !important;
+  background: #f6f5f5;
+}
+
+/* :disabled {
+  background: #f9f9f9;
+} */

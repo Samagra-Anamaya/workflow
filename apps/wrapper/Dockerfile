@@ -1,36 +1,9 @@
-#get the latest alpine image from node registry
-FROM node:16-alpine AS build-stage
-RUN npm i -g pnpm
-#set the working directory
+FROM node:lts as dependencies
 WORKDIR /app
+COPY . ./
+RUN yarn
 
-#copy the package and package lock files
-#from local to container work directory /app
-COPY package.json /app/
-COPY pnpm-lock.yaml /app/
+RUN yarn build
 
-#Run command npm install to install packages
-RUN pnpm install
-
-#copy all the folder contents from local to container
-COPY . .
-
-#specify env variables at runtime
-ARG REACT_APP_ENKETO_URL
-ARG REACT_APP_FORM_MANAGER_URL
-ARG REACT_APP_HASURA_URL
-
-ENV REACT_APP_ENKETO_URL $REACT_APP_ENKETO_URL
-ENV REACT_APP_FORM_MANAGER_URL $REACT_APP_FORM_MANAGER_URL
-ENV REACT_APP_HASURA_URL $REACT_APP_HASURA_URL
-
-
-#create a react production build
-RUN npm run build
-
-#get the latest alpine image from nginx registry
-FROM nginx:alpine
-
-#we copy the output from first stage that is our react build
-#into nginx html directory where it will serve our index file
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
+EXPOSE 3000
+CMD ["yarn", "start"]
