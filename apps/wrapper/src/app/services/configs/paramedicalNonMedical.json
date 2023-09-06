@@ -1,0 +1,25 @@
+{
+    "forms": {
+        "paramedical_non_medical": {
+            "skipOnSuccessMessage": true,
+            "prefill": {},
+            "submissionURL": "",
+            "name": "paramedical_non_medical",
+            "successCheck": "async (formData) => { return true; }",
+            "onSuccess": {
+                "notificationMessage": "Form submitted successfully",
+                "sideEffect": "async (formData) => { console.log(formData); }"
+            },
+            "onFailure": {
+                "message": "Form submission failed",
+                "sideEffect": "async (formData) => { console.log(formData); }",
+                "next": {
+                    "type": "url",
+                    "id": "google"
+                }
+            }
+        }
+    },
+    "start": "paramedical_non_medical",
+    "metaData": {}
+}
