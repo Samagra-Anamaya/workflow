@@ -19,7 +19,7 @@
         "allowIPAddressList": [],
         "denyIPAddressList": []
     },
-    "timeout": 300000,
+    "timeout": 500,
     "expiry for record cache": 30000,
     "encryption key": "s0m3v3rys3cr3tk3y",
     "less secure encryption key": "this $3cr3t key is crackable",

@@ -207,6 +207,12 @@ services:
         REACT_APP_HASURA_URL: ${REACT_APP_HASURA_URL}
     ports:
       - 3000:80
+  
+  centro:
+    image: centro
+    build: packages/centro
+    ports: 
+      - 3560:3560
       
 networks:
   db_net:

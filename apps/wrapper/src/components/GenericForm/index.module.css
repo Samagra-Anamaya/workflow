@@ -1,140 +1,236 @@
+/* Light Theme */
+:root {
+  --background: #f5f5f5;
+  --text: #2b2b2b;
+  --text-secondary: #777777;
+  --button-border: #2b2b2b;
+  --button-hover-background: #2b2b2b;
+  --button-hover-text: #fff;
+  --button-shadow: 0px 30px 60px -6px, 0px 18px 36px -9px;
+  --toggle-button-color: #2b2b2b;
+}
+
+/* Dark Theme */
+.dark {
+  --background: #2b2b2b;
+  --text: #ffc119;
+  --text-secondary: #efefef;
+  --button-border: #ffc119;
+  --button-hover-background: #ffc119;
+  --button-hover-text: #000;
+  --button-shadow: 0px 30px 60px -6px, 0px 18px 36px -9px;
+  --toggle-button-color: #efefef;
+}
+
 .container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    width: 100vw;
-    padding-bottom: 2rem;
-    position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 100vw;
+  padding-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background);
+  color: var(--text);
 }
 
 .header {
-    display: flex;
-    flex-direction: row;
-    width: 94%;
-    justify-content: space-between;
-    font-size: 3rem;
-    color: #ffc119;
-    margin: 0.5rem 0rem;
+  display: flex;
+  flex-direction: row;
+  width: 94%;
+  justify-content: space-between;
+  font-size: 3rem;
+  color: var(--text);
+  margin: 0.5rem 0rem;
 }
 
-.header>div:nth-child(1) {
-    cursor: pointer;
-    color: #efefef;
+.header > div:nth-child(1) {
+  cursor: pointer;
+  color: var(--text-secondary);
 }
-
+p{
+color:var(--text-secondary);
+}
 .formContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    height: 100%;
-    width: 100%;
-    padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
 }
 
 .odkForm {
-    width: 45%;
-    height: 100%;
+  width: 45%;
+  height: 100%;
 }
 
 .jsonResponse {
-    position: relative;
-    border: 1px solid #efefef;
-    width: 45%;
-    height: 100%;
-    overflow: hidden;
+  position: relative;
+  border: 1px solid var(--text-secondary);
+  width: 45%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .formText {
-    height: 100%;
-    width: 100%;
-    background: #2b2b2b;
-    color: #efefef;
-    padding: 1rem;
+  height: 100%;
+  width: 100%;
+  background: var(--background);
+  color: var(--text-secondary);
+  padding: 1rem;
 }
 
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 3.5rem;
-    height: 1.5rem;
+  position: relative;
+  display: inline-block;
+  width: 3.5rem;
+  height: 1.5rem;
 }
 
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    border-radius: 34px;
-    bottom: 0;
-    background-color: #2b2b2b;
-    border: 1px solid #ffc119;
-    -webkit-transition: .4s;
-    transition: .4s;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 34px;
+  bottom: 0;
+  background-color: var(--background);
+  border: 1px solid var(--button-border);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 1rem;
-    width: 1rem;
-    left: 4px;
-    bottom: 3px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%;
+  position: absolute;
+  content: "";
+  height: 1rem;
+  width: 1rem;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
 }
 
-input:checked+.slider {
-    background-color: #ffc119;
+input:checked + .slider {
+  background-color: var(--text);
 }
 
-input:focus+.slider {
-    box-shadow: 0 0 1px #ffc119;
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--button-border);
 }
 
-input:checked+.slider:before {
-    -webkit-transform: translateX(28px);
-    -ms-transform: translateX(28px);
-    transform: translateX(28px);
+input:checked + .slider:before {
+  -webkit-transform: translateX(28px);
+  -ms-transform: translateX(28px);
+  transform: translateX(28px);
 }
 
 .toggleBtn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-right: 1rem;
-    margin-top: 1rem;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--toggle-button-color);
 }
 
 .imageLinks {
-    width: 94%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    color: #fff;
+  width: 94%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--text);
 }
 
-.imageLinks>p:nth-child(1) {
-    font-size: 1.8rem;
-    font-weight: 600;
+.imageLinks > p:nth-child(1) {
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
 .imageLinks a {
-    color:#fff;
+  color: var(--text);
+}
+
+.copyButton {
+  align-items: center;
+  background-color: initial;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: inherit;
+  text-transform: uppercase;
+  font-family: inherit;
+  gap: 2px;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  outline: none;
+  position: absolute;
+  right: 4.5rem;
+  top: 0.3rem;
+  transition: color 0.3s;
+  z-index: 1;
+}
+
+.copyButton:hover {
+  filter: opacity(0.8);
+}
+
+.copied {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .header {
+    font-size: 2.5rem;
+    justify-content: center;
+    margin: 0.5rem auto;
+    text-align: center;
+    flex-wrap: wrap-reverse;
+    width: 100%;
+  }
+
+  .back {
+    font-size: 2rem;
+  }
+
+  .odkForm {
+    width: 95%;
+    margin: auto;
+    height: 100%;
+  }
+
+  .formContainer {
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+
+  .jsonResponse {
+    width: 95%;
+    margin: auto;
+  }
+
+  .subDetails {
+    font-size: 1.2rem !important;
+    text-align: center;
+    margin: 2px auto;
+  }
 }

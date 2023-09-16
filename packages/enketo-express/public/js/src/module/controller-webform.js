@@ -586,6 +586,9 @@ function _setEventHandlers(survey) {
             form.validate()
                 .then(valid => {
                     if (valid) {
+                        window.parent.postMessage(JSON.stringify({
+                            state: 'SUBMIT_FORM_CLICKED'
+                        }), '*');
                         if (settings.offline) {
                             return _saveRecord(survey, false);
                         } else {

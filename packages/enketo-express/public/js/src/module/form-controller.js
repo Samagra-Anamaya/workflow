@@ -59,7 +59,7 @@ export class FormController {
       }
       */
 
-    constructor(formSpec) {
+    constructor() {
         /* Valid States:
             INITIALIZED
             FORM_SUCCESS
@@ -71,13 +71,13 @@ export class FormController {
         */
         this._state = 'INITIALIZED';
         this._message = '';
-        this.formSpec = formSpec;
+        // this.formSpec = formSpec;
         this._parser = new DOMParser();
         this.formFiles = null;
 
-        this.formSpec.isSuccessExecute = () => this.executeMethod(this.formSpec.successCheck);
-        this.formSpec.onFormSuccessExecute = () => this.executeMethod(this.formSpec.onSuccess.sideEffect);
-        this.formSpec.onFormFailureExecute = () => this.executeMethod(this.formSpec.onFailure.sideEffect);
+        // this.formSpec.isSuccessExecute = () => this.executeMethod(this.formSpec.successCheck);
+        // this.formSpec.onFormSuccessExecute = () => this.executeMethod(this.formSpec.onSuccess.sideEffect);
+        // this.formSpec.onFormFailureExecute = () => this.executeMethod(this.formSpec.onFailure.sideEffect);
     }
 
     async executeMethod(functionString) {
@@ -149,8 +149,89 @@ export class FormController {
     }
 
 
-    async processForm(formData, formFiles) {
+    // async processForm(formData, formFiles) {
+    //     const doc = this._parser.parseFromString(formData, 'text/xml');
+
+    //     // Uploading images to Minio and replacing in formData
+    //     for (let i = 0; i < formFiles.length; i++) {
+    //         let minioUri = await this.uploadFile(formFiles[i]);
+    //         console.log(minioUri, formFiles[i].name);
+    //         if (minioUri) {
+    //             formData = formData.replace(formFiles[i].name, minioUri);
+    //         }
+    //     }
+
+    //     console.log("Updated FormData:", formData);
+
+    //     const parseRes = await fetch(`${settings.formManagerBaseURI}/parse`, {
+    //         method: "POST",
+    //         body: JSON.stringify({ xml: formData.toString() }),
+    //         headers: {
+    //             "Content-type": "application/json; charset=UTF-8"
+    //         }
+    //     }).then(res => res.json()).catch(e => {
+    //         this._state = 'FORM_FAILURE_OFFLINE';
+    //         this.formFiles = formFiles;
+    //         window.parent.postMessage(JSON.stringify({
+    //             state: this._state,
+    //             formDataXml: formData,
+    //             formFilesXml: formFiles
+    //         }), '*');
+    //     });
+
+    //     if (parseRes == undefined)
+    //         return Promise.resolve({
+    //             status: "offline",
+    //             message: "You are oflline. Your form data has been saved. Please re-submit using the submit button once back online"
+    //         });
+    //     this.formData = parseRes.data;
+
+    //     // for (let i = 0; i < formFiles.length; i++) {
+    //     //     const file = formFiles[i];
+    //     //     const fileURL = await this.uploadFile(file);
+    //     //     // console.log({ fileURL });
+    //     //     console.log(this.findKey)
+    //     //     const kk = this.findKey(this.formData, file.name, '$t', '');
+    //     //     this.formData = this.set(this.formData, kk.substring(1), fileURL);
+    //     // }
+    //     if (await this.formSpec.isSuccessExecute() === true) {
+    //         this._state = 'FORM_SUCCESS';
+    //         this._onFormSuccessData = await this.formSpec.onFormSuccessExecute();
+    //         this._state = 'ON_FORM_SUCCESS_COMPLETED';
+    //         this.nextForm = this.formSpec.onSuccess.next;
+    //         this._message = this.formSpec.messageOnSuccess;
+    //     } else {
+    //         this._state = 'FORM_FAILURE';
+    //         this._onFormFailureData = this.formSpec.onFormFailureExecute();
+    //         this._state = 'ON_FORM_FAILURE_COMPLETED';
+    //         this.nextForm = this.formSpec.onFailure.next;
+    //         this._message = this.formSpec.messageOnFailure;
+    //     }
+
+    //     return Promise.resolve({
+    //         state: this._state,
+    //         status: this._state.includes('FAILURE') ? 'failure' : 'success',
+    //         message: this._message,
+    //         nextForm: this.nextForm,
+    //         onFormSuccessData: this._onFormSuccessData,
+    //         onFormFailureData: this._onFormFailureData
+    //     });
+    // }
+
+    async processFormNew(formData, formFiles) {
         const doc = this._parser.parseFromString(formData, 'text/xml');
+
+        // Uploading images to Minio and replacing in formData
+        for (let i = 0; i < formFiles.length; i++) {
+            let minioUri = await this.uploadFile(formFiles[i]);
+            console.log(minioUri, formFiles[i].name);
+            if (minioUri) {
+                formData = formData.replace(formFiles[i].name, minioUri);
+            }
+        }
+
+        console.log("Updated FormData:", formData);
+
         const parseRes = await fetch(`${settings.formManagerBaseURI}/parse`, {
             method: "POST",
             body: JSON.stringify({ xml: formData.toString() }),
@@ -167,33 +248,19 @@ export class FormController {
             }), '*');
         });
 
-        if (parseRes == undefined)
-            return Promise.resolve({
-                status: "offline",
-                message: "You are oflline. Your form data has been saved. Please re-submit using the submit button once back online"
-            });
-        this.formData = parseRes.data;
-
-        // for (let i = 0; i < formFiles.length; i++) {
-        //     const file = formFiles[i];
-        //     const fileURL = await this.uploadFile(file);
-        //     // console.log({ fileURL });
-        //     console.log(this.findKey)
-        //     const kk = this.findKey(this.formData, file.name, '$t', '');
-        //     this.formData = this.set(this.formData, kk.substring(1), fileURL);
-        // }
-        if (await this.formSpec.isSuccessExecute() === true) {
-            this._state = 'FORM_SUCCESS';
-            this._onFormSuccessData = await this.formSpec.onFormSuccessExecute();
-            this._state = 'ON_FORM_SUCCESS_COMPLETED';
-            this.nextForm = this.formSpec.onSuccess.next;
-            this._message = this.formSpec.messageOnSuccess;
-        } else {
-            this._state = 'FORM_FAILURE';
-            this._onFormFailureData = this.formSpec.onFormFailureExecute();
+        if (parseRes == undefined) {
+            // this._state = 'FORM_FAILURE';
+            // this._onFormFailureData = this.formSpec.onFormFailureExecute();
             this._state = 'ON_FORM_FAILURE_COMPLETED';
-            this.nextForm = this.formSpec.onFailure.next;
-            this._message = this.formSpec.messageOnFailure;
+            // this.nextForm = this.formSpec.onFailure.next;
+            // this._message = this.formSpec.messageOnFailure;
+        } else {
+            this.formData = parseRes.data;
+            // this._state = 'FORM_SUCCESS';
+            // this._onFormSuccessData = await this.formSpec.onFormSuccessExecute();
+            this._state = 'ON_FORM_SUCCESS_COMPLETED';
+            // this.nextForm = this.formSpec.onSuccess.next;
+            // this._message = this.formSpec.messageOnSuccess;
         }
 
         return Promise.resolve({

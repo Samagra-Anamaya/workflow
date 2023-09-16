@@ -75,3 +75,8 @@ ports:
     onOpen: ignore
     visibility: public
     description: Minio API
+  
+  - port: 3560 
+    onOpen: ignore
+    visibility: public
+    description: Centro API

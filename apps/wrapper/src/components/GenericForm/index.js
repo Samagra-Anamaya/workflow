@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.module.css';
 import beautify from "xml-beautifier";
 import { getPrefillXML, saveFormSubmission } from '../../api';
-
-const ENKETO_URL = process.env.REACT_APP_ENKETO_URL
-const FORM_MANAGER_URL = process.env.REACT_APP_FORM_MANAGER_URL
-const HASURA_URL = process.env.REACT_APP_HASURA_URL
+import "@fortawesome/fontawesome-free/css/all.min.css";
+const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
+const FORM_MANAGER_URL = process.env.REACT_APP_FORM_MANAGER_URL;
+const HASURA_URL = process.env.REACT_APP_HASURA_URL;
 
 const GenericForm = (props) => {
   const { selectedFlow, setSelectedFlow } = props;
@@ -13,11 +13,18 @@ const GenericForm = (props) => {
   const [formData, setFormData] = useState("");
   const [formDataJson, setFormDataJSON] = useState("");
   const [isXml, setIsXml] = useState(false);
+  const [isCopied, setIsCopied] = useState(false); // State to track if data is copied
+
+  const textAreaRef = useRef(null); // Ref for textarea element
 
   // Encode string method to URI
   const encodeFunction = (func) => {
     return encodeURIComponent(JSON.stringify(func));
   }
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => JSON.parse(sessionStorage.getItem('theme')) ?? true
+  );
+
 
   const startingForm = formSpec.startingForm;
   const [fileUrls, setFileUrls] = useState({});
@@ -101,10 +108,19 @@ const GenericForm = (props) => {
     getForm();
   }, [])
 
+  const handleCopyToClipboard = () => {
+    textAreaRef.current.select();
+    document.execCommand("copy");
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 3000);
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.header + ' animate__animated animate__slideInLeft animate__faster'}>
-        <div onClick={() => setSelectedFlow({})}>Go Back</div>
+    <div className={`${styles.container} ${isDarkMode ? styles.dark : styles.light}`}>
+      <div className={`${styles.header} animate__animated animate__slideInLeft animate__faster`}>
+        <div onClick={() => setSelectedFlow({})} className={styles.back} >Go Back</div>
         <div>Workflow /{selectedFlow.name}</div>
       </div>
       {Object.keys(fileUrls)?.length > 0 && <div className={styles.imageLinks}>
@@ -113,10 +129,10 @@ const GenericForm = (props) => {
       </div>
       }
       {
-        selectedFlow.offline && <p className='animate__animated animate__fadeIn' style={{ color: '#fff', fontSize: '1.5rem' }}>Disable internet and try submitting the form</p>
+        selectedFlow.offline && <p className={`${styles.subDetails} animate__animated animate__fadeIn`}  style={{  fontSize: '1.5rem' }}>Disable internet and try submitting the form</p>
       }
       {
-        selectedFlow.submitToHasura && <p className='animate__animated animate__fadeIn' style={{ color: '#fff', fontSize: '1.5rem' }}>Submit the form and check <a style={{ color: '#ffc119' }} target="_blank" href={`${HASURA_URL}`}>Hasura</a></p>
+        selectedFlow.submitToHasura && <p className={`${styles.subDetails} animate__animated animate__fadeIn`}  style={{  fontSize: '1.5rem' }}>Submit the form and check <a style={{ color: '#ffc119' }} target="_blank" href={`${HASURA_URL}`}>Hasura</a></p>
       }
       <div className={styles.formContainer}>
         <iframe title='current-form'
@@ -126,15 +142,24 @@ const GenericForm = (props) => {
           }
         />
         <div className={styles.jsonResponse}>
+          <div className={styles.copyButtonContainer}>
+            <button className={`${styles.copyButton} ${isCopied ? styles.copied : ""}`} onClick={handleCopyToClipboard}>
+              <i className="fas fa-copy"></i>Copy
+            </button>
+            {isCopied && <span className={styles.copyButton}><i className="fas fa-check"></i>Copied</span>}
+          </div>
           <div className={styles.toggleBtn}>
-            <label class={styles.switch}>
+            <label className={styles.switch}>
               <input type="checkbox" value={isXml} onChange={e => handleFormView(e.target.checked)} />
-              <span class={styles.slider}></span>
+              <span className={styles.slider}></span>
             </label>
             {isXml ? <span className='animate__animated animate__fadeIn'>XML</span> : <span className='animate__animated animate__fadeIn'>JSON</span>}
           </div>
-          <textarea value={!isXml ? formData : formDataJson} className={styles.formText}>
-          </textarea>
+          <textarea
+            ref={textAreaRef}
+            value={!isXml ? formData : formDataJson}
+            className={styles.formText}
+          />
         </div>
       </div>
     </div>
