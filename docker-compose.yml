@@ -1,199 +1,199 @@
 version: '3'
 
 services:
-  # db:
-  #   image: postgres:12.9
-  #   environment:
-  #     PGDATA: /var/lib/postgresql/data/pgdata
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   healthcheck:
-  #     test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - db_net
-  #   restart: unless-stopped
-  #   volumes:
-  #     - db_data:/var/lib/postgresql/data
+  db:
+    image: postgres:12.9
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - db_net
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
-  # search:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-  #   environment:
-  #     cluster.name: fusionauth
-  #     bootstrap.memory_lock: "true"
-  #     discovery.type: single-node
-  #     ES_JAVA_OPTS: ${ES_JAVA_OPTS}
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD",
-  #         "curl",
-  #         "--fail",
-  #         "--write-out",
-  #         "'HTTP %{http_code}'",
-  #         "--silent",
-  #         "--output",
-  #         "/dev/null",
-  #         "http://localhost:9200/"
-  #       ]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - search_net
-  #   restart: unless-stopped
-  #   volumes:
-  #     - search_data:/usr/share/elasticsearch/data
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      cluster.name: fusionauth
+      bootstrap.memory_lock: "true"
+      discovery.type: single-node
+      ES_JAVA_OPTS: ${ES_JAVA_OPTS}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          "--write-out",
+          "'HTTP %{http_code}'",
+          "--silent",
+          "--output",
+          "/dev/null",
+          "http://localhost:9200/"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - search_net
+    restart: unless-stopped
+    volumes:
+      - search_data:/usr/share/elasticsearch/data
 
-  # fusionauth:
-  #   image: fusionauth/fusionauth-app:latest
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     search:
-  #       condition: service_healthy
-  #   environment:
-  #     DATABASE_URL: jdbc:postgresql://db:5432/fusionauth
-  #     DATABASE_ROOT_USERNAME: ${POSTGRES_USER}
-  #     DATABASE_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
-  #     DATABASE_USERNAME: ${DATABASE_USERNAME}
-  #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-  #     FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
-  #     FUSIONAUTH_APP_RUNTIME_MODE: development
-  #     FUSIONAUTH_APP_URL: http://fusionauth:9011
-  #     SEARCH_SERVERS: http://search:9200
-  #     SEARCH_TYPE: elasticsearch
-  #     FUSIONAUTH_APP_KICKSTART_FILE: /usr/local/fusionauth/kickstarts/kickstart.json
-  #   env_file:
-  #     - ./fusionauth.env
-  #   volumes:
-  #     - fa-config:/usr/local/fusionauth/config
-  #     - ./kickstart:/usr/local/fusionauth/kickstarts
-  #   networks:
-  #     - db_net
-  #     - search_net
-  #     - default
-  #   restart: unless-stopped
-  #   ports:
-  #     - 9011:9011
+  fusionauth:
+    image: fusionauth/fusionauth-app:latest
+    depends_on:
+      db:
+        condition: service_healthy
+      search:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/fusionauth
+      DATABASE_ROOT_USERNAME: ${POSTGRES_USER}
+      DATABASE_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
+      FUSIONAUTH_APP_RUNTIME_MODE: development
+      FUSIONAUTH_APP_URL: http://fusionauth:9011
+      SEARCH_SERVERS: http://search:9200
+      SEARCH_TYPE: elasticsearch
+      FUSIONAUTH_APP_KICKSTART_FILE: /usr/local/fusionauth/kickstarts/kickstart.json
+    env_file:
+      - ./fusionauth.env
+    volumes:
+      - fa-config:/usr/local/fusionauth/config
+      - ./kickstart:/usr/local/fusionauth/kickstarts
+    networks:
+      - db_net
+      - search_net
+      - default
+    restart: unless-stopped
+    ports:
+      - 9011:9011
 
-  # redis_main:
-  #   image: redis:5
-  #   volumes:
-  #     - ./redis_main_data/:/data/
-  #   restart: unless-stopped
+  redis_main:
+    image: redis:5
+    volumes:
+      - ./redis_main_data/:/data/
+    restart: unless-stopped
 
-  # redis_cache:
-  #   image: redis:5
-  #   volumes:
-  #     - ./redis_cache_data/:/data/
-  #   restart: unless-stopped
+  redis_cache:
+    image: redis:5
+    volumes:
+      - ./redis_cache_data/:/data/
+    restart: unless-stopped
 
-  # tsdb:
-  #   container_name: tsdb
-  #   image: timescale/timescaledb:2.0.0-pg12
-  #   restart: always
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - ./pgdata:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_USER: ${TSDB_POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${TSDB_POSTGRES_PASSWORD}
+  tsdb:
+    container_name: tsdb
+    image: timescale/timescaledb:2.0.0-pg12
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${TSDB_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${TSDB_POSTGRES_PASSWORD}
 
-  # gql:
-  #   image: hasura/graphql-engine:latest
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./data/migrations:/hasura-migrations
-  #     - ./data/metadata:/hasura-metadata
-  #   depends_on:
-  #     - tsdb
-  #     - fusionauth
-  #   restart: always
-  #   environment:
-  #     - HASURA_GRAPHQL_DATABASE_URL=${HASURA_GRAPHQL_DATABASE_URL}
-  #     - HASURA_GRAPHQL_ENABLE_CONSOLE=true # set to "false" to disable console
-  #     - HASURA_GRAPHQL_DEV_MODE=true
-  #     - HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log
-  #     - HASURA_GRAPHQL_MIGRATIONS_DISABLE_TRANSACTION=true
-  #     - HASURA_GRAPHQL_CONSOLE_ASSETS_DIR=/srv/console-assets
-  #     - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}
-  #     - HASURA_GRAPHQL_JWT_SECRET=${HASURA_GRAPHQL_JWT_SECRET}
+  gql:
+    image: hasura/graphql-engine:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data/migrations:/hasura-migrations
+      - ./data/metadata:/hasura-metadata
+    depends_on:
+      - tsdb
+      - fusionauth
+    restart: always
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL=${HASURA_GRAPHQL_DATABASE_URL}
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=true # set to "false" to disable console
+      - HASURA_GRAPHQL_DEV_MODE=true
+      - HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log
+      - HASURA_GRAPHQL_MIGRATIONS_DISABLE_TRANSACTION=true
+      - HASURA_GRAPHQL_CONSOLE_ASSETS_DIR=/srv/console-assets
+      - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}
+      - HASURA_GRAPHQL_JWT_SECRET=${HASURA_GRAPHQL_JWT_SECRET}
 
-  # minio:
-  #   image: minio/minio
-  #   ports:
-  #     - "9000:9000"
-  #     - "9001:9001"
-  #   volumes:
-  #     - minio-data:/data
-  #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_USERNAME}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
-  #   command: server --console-address ":9001" /data
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USERNAME}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+    command: server --console-address ":9001" /data
 
-  # createbuckets:
-  #   image: minio/mc
-  #   depends_on:
-  #     - minio
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #     /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_USERNAME} ${MINIO_PASSWORD};
-  #     /usr/bin/mc rm -r --force myminio/${MINIO_BUCKETNAME};
-  #     /usr/bin/mc mb myminio/${MINIO_BUCKETNAME};
-  #     /usr/bin/mc anonymous set public myminio/${MINIO_BUCKETNAME};
-  #     exit 0;
-  #     "
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_USERNAME} ${MINIO_PASSWORD};
+      /usr/bin/mc rm -r --force myminio/${MINIO_BUCKETNAME};
+      /usr/bin/mc mb myminio/${MINIO_BUCKETNAME};
+      /usr/bin/mc anonymous set public myminio/${MINIO_BUCKETNAME};
+      exit 0;
+      "
 
-  # enketo-express:
-  #   image: enketo-express
-  #   build:
-  #     dockerfile: enketo-express/Dockerfile
-  #     context: packages
-  #   depends_on:
-  #     - redis_main
-  #     - redis_cache
-  #   ports:
-  #     - 8065:8065
-  #   environment:
-  #     ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-  #     LESS_SECURE_ENCRYPTION_KEY: ${LESS_SECURE_ENCRYPTION_KEY}
-  #     REDIS_MAIN_HOST: redis_main
-  #     REDIS_MAIN_PORT: 6379
-  #     REDIS_CACHE_HOST: redis_cache
-  #     REDIS_CACHE_PORT: 6379
-  #     FORM_MANAGER_BASE_URI: ${FORM_MANAGER_BASE_URI}
+  enketo-express:
+    image: enketo-express
+    build:
+      dockerfile: enketo-express/Dockerfile
+      context: packages
+    depends_on:
+      - redis_main
+      - redis_cache
+    ports:
+      - 8065:8065
+    environment:
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      LESS_SECURE_ENCRYPTION_KEY: ${LESS_SECURE_ENCRYPTION_KEY}
+      REDIS_MAIN_HOST: redis_main
+      REDIS_MAIN_PORT: 6379
+      REDIS_CACHE_HOST: redis_cache
+      REDIS_CACHE_PORT: 6379
+      FORM_MANAGER_BASE_URI: ${FORM_MANAGER_BASE_URI}
   
-  # fm-cache:
-  #   image: redis:7
-  #   volumes:
-  #     - ./fm_redis_data/:/data/
-  #   restart: unless-stopped
+  fm-cache:
+    image: redis:7
+    volumes:
+      - ./fm_redis_data/:/data/
+    restart: unless-stopped
 
-  # form-manager:
-    # image: form-manager
-    # build: packages/form-manager
-    # depends_on:
-    #   - fm-cache
-    #   - minio
-    #   - createbuckets
-    # ports: 
-    #   - 3006:3006
-    # environment:
-    #   MINIO_USERNAME: ${MINIO_USERNAME}
-    #   MINIO_ENDPOINT: ${MINIO_ENDPOINT}
-    #   MINIO_PORT: ${MINIO_PORT}
-    #   MINIO_URL: ${MINIO_URL}
-    #   MINIO_PASSWORD: ${MINIO_PASSWORD}
-    #   MINIO_BUCKETNAME: ${MINIO_BUCKETNAME} 
-    #   REDIS_HOST: ${REDIS_HOST}
-    #   REDIS_PORT: ${REDIS_PORT}
-    #   FORM_MANAGER_URL: ${FORM_MANAGER_URL}
-    #   MINIO_USE_SSL: ${MINIO_USE_SSL}
+  form-manager:
+    image: form-manager
+    build: packages/form-manager
+    depends_on:
+      - fm-cache
+      - minio
+      - createbuckets
+    ports: 
+      - 3006:3006
+    environment:
+      MINIO_USERNAME: ${MINIO_USERNAME}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_PORT: ${MINIO_PORT}
+      MINIO_URL: ${MINIO_URL}
+      MINIO_PASSWORD: ${MINIO_PASSWORD}
+      MINIO_BUCKETNAME: ${MINIO_BUCKETNAME} 
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      FORM_MANAGER_URL: ${FORM_MANAGER_URL}
+      MINIO_USE_SSL: ${MINIO_USE_SSL}
 
 
   wrapper:
@@ -210,22 +210,22 @@ services:
     ports:
       - 3000:3000
   
-#   centro:
-#     image: centro
-#     build: packages/centro
-#     ports: 
-#       - 3560:3560
+  centro:
+    image: centro
+    build: packages/centro
+    ports: 
+      - 3560:3560
       
-# networks:
-#   db_net:
-#     driver: bridge
-#   search_net:
-#     driver: bridge
-#   default:
+networks:
+  db_net:
+    driver: bridge
+  search_net:
+    driver: bridge
+  default:
 
-# volumes:
-#   db_data:
-#   search_data:
-#   minio-data:
-#   fa-config:
-#   minio_storage: {}
+volumes:
+  db_data:
+  search_data:
+  minio-data:
+  fa-config:
+  minio_storage: {}
