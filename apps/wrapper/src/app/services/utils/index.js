@@ -1,6 +1,6 @@
 "use client"
 import Cookies from "js-cookie";
-import XMLParser from "react-xml-parser";
+// import XMLParser from "react-xml-parser";
 import localforage from "localforage";
 import { getMedicalAssessments, getPrefillXML, getSubmissionXML } from "../api";
 import axios from "axios";
@@ -117,7 +117,7 @@ export const getFromLocalForage = async (key, isLoggedIn = true, userData) => {
   }
 }
 
-export const setToLocalForage = async (key, value, isLoggedIn = true,user) => {
+export const setToLocalForage = async (key, value, isLoggedIn = true, user) => {
   // const user = getCookie("userData");
   console.log(user);
   if (isLoggedIn)
@@ -126,17 +126,18 @@ export const setToLocalForage = async (key, value, isLoggedIn = true,user) => {
     await localforage.setItem(key, value);
 }
 
-export const handleFormEvents = async (startingForm, afterFormSubmit, e,user) => {
+export const handleFormEvents = async (startingForm, afterFormSubmit, e, user) => {
   // const user = getCookie("userData");
   const appEnvs = await getFromLocalForage('appEnvs', false);
   const ENKETO_URL = process.env.NEXT_PUBLIC_ENKETO_URL;
-  
+
   if (
     e.origin == ENKETO_URL &&
     JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED"
   ) {
     console.log("Form Change Event------->", e)
-    var formData = new XMLParser().parseFromString(JSON.parse(e.data).formData);
+    // var formData = new XMLParser().parseFromString(JSON.parse(e.data).formData);
+    var formData = JSON.parse(e.data).formData;
     if (formData) {
       let images = JSON.parse(e.data).fileURLs;
       let prevData = await getFromLocalForage(startingForm + `${new Date().toISOString().split("T")[0]}`);
@@ -144,7 +145,7 @@ export const handleFormEvents = async (startingForm, afterFormSubmit, e,user) =>
       await setToLocalForage(startingForm + `${new Date().toISOString().split("T")[0]}`, {
         formData: JSON.parse(e.data).formData,
         imageUrls: { ...prevData?.imageUrls, ...images }
-      },true,user)
+      }, true, user)
     }
   }
   afterFormSubmit(e);

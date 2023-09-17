@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import { getDataFromHasura, saveDataToHasura } from "../../services/api";
 import { useUserData } from '../../../app/hooks/useAuth';
 import Linker from 'src/app/components/Link';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useSelector } from 'react-redux';
 const Page = () => {
   const [textData, setTextData] = useState();
   const [dateData, setDateData] = useState();
@@ -22,6 +22,7 @@ const Page = () => {
     { name: "distress", link: ROUTE_MAP.generic_form_test + "/distress" },
     { name: "cascading_pictures", link: ROUTE_MAP.generic_form_test + "/cascading_pictures" }
   ];
+  
   const formSubmitted = useSelector((state) => state.auth.formSubmitted); 
 
   useEffect(() => {

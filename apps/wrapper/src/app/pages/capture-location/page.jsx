@@ -19,7 +19,11 @@ const CaptureLocation = () => {
   const [disabled, setDisabled] = useState(true);
   const [distance, setDistance] = useState(9999);
   const [error, setError] = useState(false);
-  const isMobile = window.innerWidth < 769;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 769)
+  }, [])
 
   const getLocation = () => {
     if (navigator.geolocation && !loading) {
@@ -47,7 +51,7 @@ const CaptureLocation = () => {
         //   )
         // );
         send({ type: 'LOCATION_SUCCESS', lat: p.coords.latitude, long: p.coords.longitude });
-        dispatch(coordinates({lat: p.coords.latitude,long: p.coords.longitude}));
+        dispatch(coordinates({ lat: p.coords.latitude, long: p.coords.longitude }));
       });
     } else {
       send('LOCATION_ERROR');
@@ -151,7 +155,7 @@ const CaptureLocation = () => {
           </div>
         )} */}
         {current.matches('loading') && (
-          <Loader/>
+          <Loader />
         )}
         {/* {showMap && ( */}
         {current.matches('success') && (
@@ -193,7 +197,7 @@ const CaptureLocation = () => {
             }
             link={ROUTE_MAP.assessment_type} disabled={false}
           />}
-       
+
       </div>
     </CommonLayout>
   );

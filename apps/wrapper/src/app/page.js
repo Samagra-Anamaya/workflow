@@ -1,36 +1,19 @@
 "use client"
 import "./App.css";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getFromLocalForage, setToLocalForage } from "./services/utils";
 import toast, { Toaster } from 'react-hot-toast';
 import { saveDataToHasura } from "./services/api";
-import { useServiceWorker } from "./hooks/useServiceWorker";
 import CommonModal from "./components/Modal";
 import Login from "./pages/Default/page";
 
 function App() {
-  const { waitingWorker, showReload, reloadPage } = useServiceWorker();
   const [envModal, showEnvModal] = useState(false);
   const [envs, setEnvs] = useState({
     ENKETO_URL: "",
     ENKETO_MANAGER_URL: "",
     OPEN_ROSA_SERVER_URL: ""
   });
-
-  useEffect(() => {
-    if (showReload && waitingWorker) {
-      toast((t) => (
-        <span>
-          New Version Available
-          <button onClick={() => window.location.reload()}>
-            Refresh
-          </button>
-        </span>
-      ));
-    } else {
-
-    };
-  }, [waitingWorker, showReload, reloadPage]);
 
   useEffect(() => {
     window.addEventListener('online', async () => {
