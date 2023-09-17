@@ -12,25 +12,35 @@ COPY pnpm-lock.yaml /app/
 #Run command npm install to install packages
 RUN pnpm install
 
-#copy all the folder contents from local to container
+#copy all the folder contents from local to container & build
+FROM node:lts as builder
+WORKDIR /app
 COPY . .
-
-#specify env variables at runtime
-ARG REACT_APP_ENKETO_URL
-ARG REACT_APP_FORM_MANAGER_URL
-ARG REACT_APP_HASURA_URL
-
-ENV REACT_APP_ENKETO_URL $REACT_APP_ENKETO_URL
-ENV REACT_APP_FORM_MANAGER_URL $REACT_APP_FORM_MANAGER_URL
-ENV REACT_APP_HASURA_URL $REACT_APP_HASURA_URL
-
-
-#create a react production build
+COPY --from=dependencies /app/node_modules ./node_modules
 RUN npm run build
 
-#get the latest alpine image from nginx registry
-FROM nginx:alpine
+#specify env variables at runtime
+FROM node:lts as runner
+WORKDIR /app
+ARG NEXT_PUBLIC_ENKETO_URL
+ARG NEXT_PUBLIC_FORM_MANAGER_URL
+ARG NEXT_PUBLIC_HASURA_URL
+ARG NEXT_PUBLIC_USER_SERVICE_URL
+ARG NEXT_PUBLIC_APPLICATION_ID
 
-#we copy the output from first stage that is our react build
-#into nginx html directory where it will serve our index file
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
+ENV NEXT_PUBLIC_ENKETO_URL $NEXT_PUBLIC_ENKETO_URL
+ENV NEXT_PUBLIC_FORM_MANAGER_URL $NEXT_PUBLIC_FORM_MANAGER_URL
+ENV NEXT_PUBLIC_HASURA_URL $NEXT_PUBLIC_HASURA_URL
+ENV NEXT_PUBLIC_USER_SERVICE_URL $NEXT_PUBLIC_USER_SERVICE_URL
+ENV NEXT_PUBLIC_APPLICATION_ID $NEXT_PUBLIC_APPLICATION_ID
+ENV NODE_ENV production
+
+# If you are using a custom next.config.js file, uncomment this line.
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+EXPOSE 3000
+CMD ["npm", "run", "start"]

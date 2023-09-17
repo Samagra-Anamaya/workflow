@@ -1,0 +1,25 @@
+{
+    "forms": {
+        "medical_labs": {
+            "skipOnSuccessMessage": true,
+            "prefill": {},
+            "submissionURL": "",
+            "name": "medical_labs",
+            "successCheck": "async (formData) => { return true; }",
+            "onSuccess": {
+                "notificationMessage": "Form submitted successfully",
+                "sideEffect": "async (formData) => { console.log(formData); }"
+            },
+            "onFailure": {
+                "message": "Form submission failed",
+                "sideEffect": "async (formData) => { console.log(formData); }",
+                "next": {
+                    "type": "url",
+                    "id": "google"
+                }
+            }
+        }
+    },
+    "start": "medical_labs",
+    "metaData": {}
+}
