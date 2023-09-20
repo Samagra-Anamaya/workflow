@@ -2,7 +2,6 @@ version: '3'
 services:
   postgres:
     image: postgres:latest
-    container_name: my_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -11,3 +10,15 @@ services:
       - "5433:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+
+  submission-service:
+    build: .
+    image: submission
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}  
+    ports:
+      - 3002:3002
+     

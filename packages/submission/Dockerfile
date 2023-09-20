@@ -8,7 +8,7 @@ WORKDIR /app
 COPY prisma ./prisma/
 RUN npx prisma generate
 RUN ls prisma
-RUN ls prisma/generated
+# RUN ls prisma/generated
 COPY --from=install /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
