@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Submission {
+  id                   Int      @id @default(autoincrement())
+  submitter            User     @relation(fields: [submitterId], references: [userId])
+  submitterId          String
+  submissionData       Json
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  verificationIntitaed Boolean  @default(false)
+  isUpdated            Boolean @default(false)
+  verificationDate     DateTime
+  isVerified           Boolean  @default(false)
+  errors               Json?
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  userId      String       @unique
+  submissions Submission[]
+  mobile      String
+  active      Boolean @default(true)
+  surveyAssigned Int @default(0)
+  surveyCompleted Int @default(0)
+}
