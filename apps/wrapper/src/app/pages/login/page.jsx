@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button";
 import { useRouter } from 'next/navigation';
-import { loginMedical } from "../../services/api";
+import { userLogin } from "../../services/api";
 import ROUTE_MAP from "../../services/routing/routeMap";
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/store';
@@ -34,7 +34,7 @@ const Page = () => {
       }, 3000);
       return;
     }
-    const loginRes = await loginMedical(username, password);
+    const loginRes = await userLogin(username, password);
 
     if (loginRes?.params?.errMsg && loginRes.responseCode == "FAILURE") {
       setError(loginRes?.params?.errMsg);

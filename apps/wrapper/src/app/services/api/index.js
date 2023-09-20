@@ -4,7 +4,7 @@ import { getFromLocalForage, makeHasuraCalls } from "../utils";
 const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE_URL;
 const applicationId = process.env.NEXT_PUBLIC_APPLICATION_ID;
 
-export const loginMedical = async (username, pass) => {
+export const userLogin = async (username, pass) => {
   try {
     const res = await axios.post(BASE_URL + "login", {
       password: pass,
@@ -340,5 +340,5 @@ export const getDataFromHasura = (userData) => {
       `,
     variables: {},
   };
-  return makeHasuraCalls(query,userData);
+  return makeHasuraCalls(query, userData);
 };
