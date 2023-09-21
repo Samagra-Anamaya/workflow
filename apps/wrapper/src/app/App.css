@@ -4,16 +4,19 @@
   src: url("./fonts/Mulish-Bold.ttf");
   font-display: swap;
 }
+
 @font-face {
   font-family: Mulish-demi;
   src: url("./fonts/Mulish-Demi.ttf");
   font-display: swap;
 }
+
 @font-face {
   font-family: Mulish-medium;
   src: url("./fonts/Mulish-Medium.ttf");
   font-display: swap;
 }
+
 @font-face {
   font-family: Mulish-regular;
   src: url("./fonts/Mulish-Regular.ttf");
@@ -22,7 +25,19 @@
 
 body {
   font-family: Mulish-regular !important;
-  background: #f6f5f5;
+}
+
+.App {
+  height: 100vh;
+  width: 100vw;
+}
+
+@media only screen and (min-width: 600px) {
+  .App {
+    width: 40vw;
+    margin: auto;
+    border: 1px solid rgba(0, 0, 0, 0.2)
+  }
 }
 
 /* :disabled {
