@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import CommonLayout from "../../../components/CommonLayout";
 import { useParams } from "react-router-dom";
-import { getMedicalAssessments, getPrefillXML, saveFormSubmission } from "../../../services/api";
+import { getMedicalAssessments, getOfflineCapableForm, getPrefillXML, saveFormSubmission } from "../../../services/api";
 // import { StateContext } from "@/app/page";
-import { getCookie, getFormData, getFromLocalForage, getOfflineCapableForm, handleFormEvents, isImage, makeDataForPrefill, setCookie, setToLocalForage, updateFormData } from "../../../services/utils";
+import { getCookie, getFormData, getFromLocalForage, handleFormEvents, isImage, makeDataForPrefill, setCookie, setToLocalForage, updateFormData } from "../../../services/utils";
 import ROUTE_MAP from "../../../services/routing/routeMap";
 import { useUserData } from "src/app/hooks/useAuth";
 import { useRouter } from 'next/navigation'
