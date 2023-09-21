@@ -17,6 +17,7 @@ const SurveyPage = ({ params }) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const _currLocation = useSelector((state) => state?.userData?.currentLocation);
+    console.log(useSelector((state) => state))
 
     useEffect(() => {
         setHydrated(true);
@@ -35,7 +36,7 @@ const SurveyPage = ({ params }) => {
                     <p className={styles.textLight}>Status : {'{STATUS}'}</p>
                     <div className={styles.mainSeparator}></div>
                     <div className={styles.fullWidth}>
-                        <div className={styles.getStarted} onClick={() => router.push(`/pages/village-survey/${params.slug}`)}>
+                        <div className={styles.getStarted} onClick={() => router.push(`/pages/village-survey/${_currLocation.villageModule.enketoFormId}`)}>
                             <span>Get Started</span>
                             <img src="/assets/arrow-right-circle.png" />
                         </div>

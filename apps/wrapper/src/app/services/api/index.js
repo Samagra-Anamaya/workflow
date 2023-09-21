@@ -3,6 +3,8 @@ import { getFromLocalForage, makeHasuraCalls } from "../utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE_URL;
 const applicationId = process.env.NEXT_PUBLIC_APPLICATION_ID;
+const ENKETO_URL = process.env.NEXT_PUBLIC_ENKETO_EXPRESS_URL;
+const CENTRO_API = process.env.NEXT_PUBLIC_CENTRO_URL;
 
 export const userLogin = async (username, pass) => {
   try {
@@ -342,3 +344,27 @@ export const getDataFromHasura = (userData) => {
   };
   return makeHasuraCalls(query, userData);
 };
+
+export const getOfflineCapableForm = async (formId) => {
+  try {
+    if (navigator.onLine) {
+      let res = await axios.post(ENKETO_URL + "/api/v2/survey/offline",
+        {
+          server_url: CENTRO_API,
+          form_id: formId
+        },
+        {
+          headers: {
+            Authorization: 'Basic ' + btoa('enketorules:')
+          }
+        });
+      return res?.data?.offline_url || undefined;
+    } else {
+      let formUri = await getFromLocalForage('formUri');
+      console.log(formUri);
+      return formUri;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}

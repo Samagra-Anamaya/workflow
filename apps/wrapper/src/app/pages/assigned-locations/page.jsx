@@ -8,6 +8,7 @@ import LocationItem from "src/app/components/LocationItem";
 import { useScrollTrigger } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setAssignedLocations } from "src/app/redux/store";
+import CommonHeader from "src/app/components/Commonheader";
 
 const AssignedLocations = () => {
   const [hydrated, setHydrated] = React.useState(false);
@@ -22,24 +23,44 @@ const AssignedLocations = () => {
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Green Park',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Hauz Khas',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Malviya Nagar',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
     ]))
     setLocations([
@@ -48,30 +69,51 @@ const AssignedLocations = () => {
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Green Park',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Hauz Khas',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
       {
         location: 'Malviya Nagar',
         deadline: '2023-12-12',
         assignedBy: 'Gaurav Goel',
         iconUrl: 'https://content.jdmagicbox.com/comp/allahabad/p5/0532px532.x532.140814163535.e9p5/catalogue/uttar-pradesh-public-service-commision-allahabad-ho-allahabad-government-organisations-1mqu6fv.jpg',
+        villageModule: {
+          enketoFormId: 'Nursing Form-Medical (CRP)'
+        },
+        householdModule: {
+        }
       },
     ])
   }, [])
 
   return !hydrated ? null : (
     <div className={styles.container}>
+      <CommonHeader text={'Data Collection App'} showBack={false} sx={{ padding: 0, justifyContent: 'center', marginBottom: 30 }} />
       <div className={styles.enmCard}>
         <p>Welcome enumerator_id</p>
         <div className={styles.enmCardInfo}>

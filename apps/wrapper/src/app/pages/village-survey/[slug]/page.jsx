@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Icon } from 'semantic-ui-react'
 import CommonHeader from "src/app/components/Commonheader";
+import GenericOdkForm from "src/app/components/GenericOdkForm";
 
 
 const VillageSurveyPage = ({ params }) => {
@@ -26,7 +27,7 @@ const VillageSurveyPage = ({ params }) => {
     return !hydrated ? null : (
         <div className={styles.root}>
             <CommonHeader text={`${_currLocation.location} Village Survey`} onBack={() => router.back()} />
-
+            <GenericOdkForm formId={decodeURIComponent(params.slug)} />
         </div>
     );
 };
