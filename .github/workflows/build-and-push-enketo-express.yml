@@ -38,7 +38,8 @@ jobs:
         with:
           build-args: |
             "SERVER_RELEASE_VERSION=${{ github.sha }}"
-          context: packages/enketo-express/.
+          context: packages
+          file: packages/enketo-express/Dockerfile
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
