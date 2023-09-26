@@ -13,10 +13,25 @@ export class EnumeratorController {
 
   @Post()
   async create(@Body() user: any): Promise<any> {
-    const newSubmission = await this.prisma.user.create({
+    const newUser = await this.prisma.user.create({
       data: user,
     });
 
-    return newSubmission;
+    return newUser;
+  }
+
+  @Post('admin')
+  async createAdmin(@Body() user: any): Promise<any> {
+    const newUser = await this.prisma.admin.create({
+      data: user,
+    });
+
+    return newUser;
+  }
+
+  @Get('admin')
+  async findAllAdmin(): Promise<any> {
+    const users = await this.prisma.admin.findMany();
+    return users;
   }
 }

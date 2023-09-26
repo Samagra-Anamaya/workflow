@@ -4,5 +4,4 @@ export declare class EnumeratorService {
     private prisma;
     constructor(prisma: PrismaService);
     createUser(data: Prisma.UserCreateInput): Promise<User>;
-    saveSubmissionIdInUser(userId: string, submissionId: number): Promise<User | null>;
 }

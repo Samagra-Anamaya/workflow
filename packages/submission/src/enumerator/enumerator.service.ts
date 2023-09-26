@@ -13,17 +13,17 @@ export class EnumeratorService {
     });
   }
 
-  async saveSubmissionIdInUser(
-    userId: string,
-    submissionId: number,
-  ): Promise<User | null> {
-    return this.prisma.user.update({
-      where: { userId },
-      data: {
-        submissions: {
-          connect: { id: submissionId },
-        },
-      },
-    });
-  }
+  // async saveSubmissionIdInUser(
+  //   userId: string,
+  //   submissionId: number,
+  // ): Promise<User | null> {
+  //   return this.prisma.user.update({
+  //     where: { userId },
+  //     data: {
+  //       submissions: {
+  //         connect: { id: submissionId },
+  //       },
+  //     },
+  //   });
+  // }
 }

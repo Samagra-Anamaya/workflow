@@ -21,16 +21,6 @@ let EnumeratorService = class EnumeratorService {
             data,
         });
     }
-    async saveSubmissionIdInUser(userId, submissionId) {
-        return this.prisma.user.update({
-            where: { userId },
-            data: {
-                submissions: {
-                    connect: { id: submissionId },
-                },
-            },
-        });
-    }
 };
 exports.EnumeratorService = EnumeratorService;
 exports.EnumeratorService = EnumeratorService = __decorate([

@@ -17,17 +17,28 @@ let SubmissionService = class SubmissionService {
         this.prisma = prisma;
     }
     async createSubmission(data) {
+        const _data = {
+            ...data,
+        };
         const submission = await this.prisma.submission.create({
-            data,
+            data: _data,
         });
         return submission;
     }
     async getAllSubmissions() {
-        return this.prisma.submission.findMany();
+        return this.prisma.submission.findMany({
+            include: {
+                submitter: {},
+            },
+        });
     }
     async getSubmissionById(id) {
+        const _id = Number(id);
         return this.prisma.submission.findUnique({
-            where: { id },
+            where: { id: _id },
+            include: {
+                submitter: {},
+            },
         });
     }
     async updateSubmission(id, data) {

@@ -4,4 +4,6 @@ export declare class EnumeratorController {
     constructor(prisma: PrismaService);
     findAll(): Promise<any>;
     create(user: any): Promise<any>;
+    createAdmin(user: any): Promise<any>;
+    findAllAdmin(): Promise<any>;
 }

@@ -24,10 +24,20 @@ let EnumeratorController = class EnumeratorController {
         return users;
     }
     async create(user) {
-        const newSubmission = await this.prisma.user.create({
+        const newUser = await this.prisma.user.create({
             data: user,
         });
-        return newSubmission;
+        return newUser;
+    }
+    async createAdmin(user) {
+        const newUser = await this.prisma.admin.create({
+            data: user,
+        });
+        return newUser;
+    }
+    async findAllAdmin() {
+        const users = await this.prisma.admin.findMany();
+        return users;
     }
 };
 exports.EnumeratorController = EnumeratorController;
@@ -44,6 +54,19 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], EnumeratorController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('admin'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], EnumeratorController.prototype, "createAdmin", null);
+__decorate([
+    (0, common_1.Get)('admin'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], EnumeratorController.prototype, "findAllAdmin", null);
 exports.EnumeratorController = EnumeratorController = __decorate([
     (0, common_1.Controller)('enumerator'),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
