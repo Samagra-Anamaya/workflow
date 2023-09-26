@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  VERIFIED
+  PROCESSING
+  FAILED
+}
+
+model Submission {
+  id             Int              @id @default(autoincrement())
+  submitter      User             @relation(fields: [submitterId], references: [userId])
+  submitterId    String
+  submissionData Json
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  status         SubmissionStatus @default(SUBMITTED)
+  errors         Json?
+  meta           Json?
+}
+
+model User {
+  id              Int          @id @default(autoincrement())
+  userId          String       @unique
+  mobile          String       @unique
+  active          Boolean      @default(true)
+  surveyAssigned  Int          @default(0)
+  surveyCompleted Int          @default(0)
+  meta            Json?
+  submissions     Submission[]
+}
+
+model Admin {
+  userId       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mobile       String     @unique
+  active       Boolean    @default(true)
+  meta         Json?
+  isSuperAdmin Boolean    @default(false)
+  Schedule     Schedule[]
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  CANCEL
+  DONE
+  PROCESSING
+}
+
+model Schedule {
+  id           Int            @id @unique @default(autoincrement())
+  dateTime     DateTime       @default(now())
+  enumeratorId String
+  status       ScheduleStatus @default(SCHEDULED)
+  formId       String
+  locationId   String
+  meta         Json?
+  location     VillageData?   @relation(fields: [locationId], references: [spdpVillageId])
+  assignerId   String         @db.Uuid
+  assignedBy   Admin?         @relation(fields: [assignerId], references: [userId])
+}
+
+model VillageData {
+  villageLGDCode String
+  districtName   String
+  tehsilName     String
+  riCircleName   String
+  villageName    String
+  distLGDCode    String
+  blockLGDCode   String
+  gplgdCode      String
+  spdpVillageId  String     @id @unique
+  Schedule       Schedule[]
+}
