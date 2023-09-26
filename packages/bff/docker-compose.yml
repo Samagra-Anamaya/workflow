@@ -13,7 +13,7 @@ services:
 
   submission-service:
     build: .
-    image: submission
+    image: bff
     depends_on:
       - postgres
     restart: unless-stopped
