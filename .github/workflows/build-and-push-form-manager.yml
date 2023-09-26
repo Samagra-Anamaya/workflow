@@ -3,6 +3,7 @@ name: Build and Push Form Manager Image
 on:
   push:
     branches:
+      - dev
       - main
 
 env:

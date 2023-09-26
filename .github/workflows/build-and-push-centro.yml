@@ -3,6 +3,7 @@ name: Build and Push Centro Image
 on:
   push:
     branches:
+      - dev
       - main
 
 env:
