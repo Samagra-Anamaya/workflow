@@ -1,8 +1,9 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { UtilsService } from './utils.service';
 export declare class UtilsController {
-    private readonly prismaService;
-    constructor(prismaService: PrismaService);
-    getVillageData(limit: any): Promise<any | null>;
-    getSubmissionByCitizenId(id: number): Promise<any>;
-    uploadVillageData(): Promise<any | null>;
+    private readonly submissionService;
+    constructor(submissionService: UtilsService);
+    getSecureData(): string;
+    getVillageData(page: string, limit: string): Promise<any | null>;
+    getVillageById(id: number): Promise<any>;
+    addVillage(data: any): Promise<any>;
 }

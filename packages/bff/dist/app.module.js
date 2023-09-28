@@ -18,14 +18,37 @@ const submission_service_1 = require("./submission/submission.service");
 const schedule_module_1 = require("./schedule/schedule.module");
 const utils_module_1 = require("./utils/utils.module");
 const schedule_service_1 = require("./schedule/schedule.service");
+const auth_module_1 = require("./auth/auth.module");
+const auth_service_1 = require("./auth/auth.service");
+const passport_1 = require("@nestjs/passport");
+const jwt_1 = require("@nestjs/jwt");
+const auth_strategy_1 = require("./auth/auth.strategy");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, enumerator_module_1.EnumeratorModule, schedule_module_1.ScheduleModule, utils_module_1.UtilsModule],
+        imports: [
+            prisma_module_1.PrismaModule,
+            enumerator_module_1.EnumeratorModule,
+            schedule_module_1.ScheduleModule,
+            utils_module_1.UtilsModule,
+            auth_module_1.AuthModule,
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
+            jwt_1.JwtModule.register({
+                secret: 'your-secret-key',
+                signOptions: { expiresIn: '1h' },
+            }),
+        ],
         controllers: [app_controller_1.AppController, submission_controller_1.SubmissionController],
-        providers: [app_service_1.AppService, prisma_service_1.PrismaService, submission_service_1.SubmissionService, schedule_service_1.ScheduleService],
+        providers: [
+            app_service_1.AppService,
+            prisma_service_1.PrismaService,
+            submission_service_1.SubmissionService,
+            schedule_service_1.ScheduleService,
+            auth_service_1.AuthService,
+            auth_strategy_1.JwtStrategy,
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

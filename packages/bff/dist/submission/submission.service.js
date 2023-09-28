@@ -20,7 +20,7 @@ let SubmissionService = class SubmissionService {
         const submission = await this.prisma.submission.create({
             data,
         });
-        const newVillageData = await this.prisma.villageData.update({
+        const villageData = await this.prisma.villageData.update({
             where: {
                 spdpVillageId: data.spdpVillageId,
             },
@@ -28,17 +28,43 @@ let SubmissionService = class SubmissionService {
                 surveySubmitted: { increment: 1 },
             },
         });
-        console.log({ newVillageData });
-        return submission;
+        return { result: { submission, villageData } };
     }
-    async getAllSubmissions() {
-        return this.prisma.submission.findMany({});
-    }
-    async getSubmissionByVillageId(id) {
-        const _id = Number(id);
-        return this.prisma.submission.findMany({
-            where: { spdpVillageId: _id },
+    async getSubmissions(page, pageSize) {
+        const skip = (page - 1) * pageSize;
+        const submissions = await this.prisma.submission.findMany({
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: 'desc' },
         });
+        const totalCount = await this.prisma.submission.count();
+        return {
+            result: {
+                submissions,
+                totalCount,
+                currentPage: page,
+                totalPages: Math.ceil(totalCount / pageSize),
+            },
+        };
+    }
+    async getSubmissionByVillageId(id, page, pageSize) {
+        const _id = Number(id);
+        const skip = (page - 1) * pageSize;
+        const submissions = await this.prisma.submission.findMany({
+            where: { spdpVillageId: _id },
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: 'desc' },
+        });
+        const totalCount = await this.prisma.submission.count();
+        return {
+            result: {
+                submissions,
+                totalCount,
+                currentPage: page,
+                totalPages: Math.ceil(totalCount / pageSize),
+            },
+        };
     }
     async getSubmissionByCitizenId(id) {
         return this.prisma.submission.findMany({
@@ -46,10 +72,11 @@ let SubmissionService = class SubmissionService {
         });
     }
     async updateSubmission(id, data) {
-        return this.prisma.submission.update({
+        const updateSubmission = await this.prisma.submission.update({
             where: { id },
             data,
         });
+        return { result: { updateSubmission } };
     }
     async deleteSubmission(id) {
         return this.prisma.submission.delete({

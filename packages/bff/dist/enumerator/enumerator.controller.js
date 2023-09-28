@@ -32,7 +32,7 @@ let EnumeratorController = class EnumeratorController {
         return newUser;
     }
     async createEnumerators(user) {
-        return this.enumeratorService.createEnumerators();
+        return this.enumeratorService.createUser(user);
     }
     async createAdmin(user) {
         const newUser = await this.prisma.admin.create({

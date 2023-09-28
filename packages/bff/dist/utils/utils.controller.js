@@ -14,36 +14,39 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UtilsController = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
-const village_data_1 = require("./village-data");
+const auth_guard_1 = require("../auth/auth.guard");
+const utils_service_1 = require("./utils.service");
 let UtilsController = class UtilsController {
-    constructor(prismaService) {
-        this.prismaService = prismaService;
+    constructor(submissionService) {
+        this.submissionService = submissionService;
     }
-    async getVillageData(limit) {
-        return this.prismaService.villageData.findMany({
-            take: 1000,
-        });
+    getSecureData() {
+        return `Hello! This is secure data.`;
     }
-    async getSubmissionByCitizenId(id) {
-        return this.prismaService.villageData.findFirst({
-            where: {
-                spdpVillageId: Number(id),
-            },
-        });
+    async getVillageData(page, limit) {
+        return this.submissionService.getVillages(Number(page) || 1, Number(limit) || 10);
     }
-    async uploadVillageData() {
-        return await this.prismaService.villageData.createMany({
-            data: village_data_1.villageRecords,
-        });
+    async getVillageById(id) {
+        return this.submissionService.getVillageById(id);
+    }
+    async addVillage(data) {
+        return this.submissionService.addVillage(data);
     }
 };
 exports.UtilsController = UtilsController;
 __decorate([
-    (0, common_1.Get)('villageData'),
-    __param(0, (0, common_1.Query)()),
+    (0, common_1.Get)('secure'),
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UtilsController.prototype, "getSecureData", null);
+__decorate([
+    (0, common_1.Get)('villageData'),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UtilsController.prototype, "getVillageData", null);
 __decorate([
@@ -52,15 +55,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], UtilsController.prototype, "getSubmissionByCitizenId", null);
+], UtilsController.prototype, "getVillageById", null);
 __decorate([
-    (0, common_1.Post)('csv'),
+    (0, common_1.Post)('/addVillage'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UtilsController.prototype, "uploadVillageData", null);
+], UtilsController.prototype, "addVillage", null);
 exports.UtilsController = UtilsController = __decorate([
     (0, common_1.Controller)('utils'),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [utils_service_1.UtilsService])
 ], UtilsController);
 //# sourceMappingURL=utils.controller.js.map
