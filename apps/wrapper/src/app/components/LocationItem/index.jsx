@@ -4,23 +4,23 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setCurrentLocation } from "src/app/redux/store";
 import styles from './index.module.scss';
+import Link from 'next/link'
 
 const LocationItem = (props) => {
-    const { location, deadline, assignedBy, iconUrl, sx } = props;
     const dispatch = useDispatch();
     const router = useRouter();
 
     return (
-        <div className={styles.container} onClick={() => { dispatch(setCurrentLocation(props)); router.push(`/pages/survey/${location}`) }} style={{ ...sx }}>
-            <div>
-                <img src={iconUrl} />
+        <Link href={'/pages/survey'}>
+            <div className={styles.container} onClick={() => { dispatch(setCurrentLocation(props)) }} style={{ ...props.sx }}>
+                <div>
+                    <img src={"/assets/uplogo.png"} />
+                </div>
+                <div>
+                    <p>{props?.villageName} - {props?.villageCode}</p>
+                </div>
             </div>
-            <div>
-                <p>{location}</p>
-                <p>Deadline: {deadline}</p>
-                <p>Assigned By: {assignedBy}</p>
-            </div>
-        </div>
+        </Link>
     );
 };
 

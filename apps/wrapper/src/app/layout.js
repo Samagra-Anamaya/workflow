@@ -3,9 +3,32 @@ import './globals.css'
 import 'animate.css';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js'
-
+import Pwa from 'src/pwa';
+import { OfflineSyncProvider } from 'offline-sync-handler';
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({ children }) {
+  const [hydrated, setHydrated] = useState(false);
+
+  const onSyncSuccess = (response) => {
+    if (response?.data?.status == 201 && !navigator.onLine)
+      toast(`☁️  ${response?.data?.data?.submissionData?.beneficiaryName}'s data synced with server `, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+  };
+
+  useEffect(() => {
+    setHydrated(true);
+  }, [])
 
   return (
     <html lang="en">
@@ -48,9 +71,25 @@ export default function RootLayout({ children }) {
         <meta property="og:image" content="https://yourdomain.com/icons/apple-touch-icon.png" />
       </head>
       <body >
-        <Provider store={store} data-testid="redux-provider">
-          {children}
+        {hydrated ? <Provider store={store} data-testid="redux-provider">
+          <OfflineSyncProvider onSyncSuccess={onSyncSuccess}>
+            {children}
+          </OfflineSyncProvider>
         </Provider>
+          : null}
+        <Pwa />
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
 
     </html>

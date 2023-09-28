@@ -1,8 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import CommonLayout from "../../components/CommonLayout";
 import ROUTE_MAP from "../../services/routing/routeMap";
-import Linker from "src/app/components/Link";
 import styles from './index.module.scss';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -59,7 +57,7 @@ const Home = () => {
       if (userIsAdminForPortal(loggedInUser.user.registrations)) {
         router.push(ROUTE_MAP.admin);
       } else {
-        router.push(ROUTE_MAP.root);
+        window.location.reload();
       }
       return;
     }
@@ -102,7 +100,6 @@ const Home = () => {
           sx={{ mb: 3 }}
         />
         <Button variant="outlined" color="primary" fullWidth type="submit" sx={{ padding: 1 }}>Login</Button>
-        <Button color="primary" fullWidth type="submit" sx={{ padding: 2 }}>Forgot Password?</Button>
 
       </form>
     </div>
