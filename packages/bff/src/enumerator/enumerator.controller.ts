@@ -28,8 +28,7 @@ export class EnumeratorController {
 
   @Post('createEnumerators')
   async createEnumerators(@Body() user: any): Promise<any> {
-    return this.enumeratorService.createEnumerators();
-    
+    return this.enumeratorService.createUser(user);
   }
 
   @Post('admin')

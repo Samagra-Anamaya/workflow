@@ -7,6 +7,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { Submission } from '@prisma/client';
@@ -21,13 +22,27 @@ export class SubmissionController {
   }
 
   @Get()
-  async getAllSubmissions(): Promise<any> {
-    return this.submissionService.getAllSubmissions();
+  async getAllSubmissions(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ): Promise<any> {
+    return this.submissionService.getSubmissions(
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
   }
 
   @Get(':id')
-  async getSubmissionByVillageId(@Param('id') id: number): Promise<any> {
-    return this.submissionService.getSubmissionByVillageId(id);
+  async getSubmissionByVillageId(
+    @Param('id') id: number,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ): Promise<any> {
+    return this.submissionService.getSubmissionByVillageId(
+      id,
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
   }
 
   @Get('/citizen/:id')

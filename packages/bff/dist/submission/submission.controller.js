@@ -22,11 +22,11 @@ let SubmissionController = class SubmissionController {
     async createSubmission(data) {
         return this.submissionService.createSubmission(data);
     }
-    async getAllSubmissions() {
-        return this.submissionService.getAllSubmissions();
+    async getAllSubmissions(page, limit) {
+        return this.submissionService.getSubmissions(Number(page) || 1, Number(limit) || 10);
     }
-    async getSubmissionByVillageId(id) {
-        return this.submissionService.getSubmissionByVillageId(id);
+    async getSubmissionByVillageId(id, page, limit) {
+        return this.submissionService.getSubmissionByVillageId(id, Number(page) || 1, Number(limit) || 10);
     }
     async getSubmissionByCitizenId(id) {
         return this.submissionService.getSubmissionByCitizenId(id);
@@ -48,15 +48,19 @@ __decorate([
 ], SubmissionController.prototype, "createSubmission", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "getAllSubmissions", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, String, String]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "getSubmissionByVillageId", null);
 __decorate([
