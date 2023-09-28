@@ -23,6 +23,15 @@ let ScheduleService = class ScheduleService {
         const schedule = await this.prisma.schedule.create({
             data: _data,
         });
+        const enumerator = await this.prisma.user.update({
+            where: {
+                userId: _data?.enumeratorId,
+            },
+            data: {
+                surveyAssigned: { increment: 1 },
+            },
+        });
+        console.log({ enumerator });
         return schedule;
     }
     async getAllSchedules() {
@@ -34,11 +43,9 @@ let ScheduleService = class ScheduleService {
         });
     }
     async getScheduleByEnumerator(id) {
-        return this.prisma.schedule.findMany({
-            where: { enumeratorId: id },
-            include: {
-                location: {},
-                assignedBy: {},
+        return this.prisma.villageData.findMany({
+            where: {
+                spdpVillageId: Number(id),
             },
         });
     }

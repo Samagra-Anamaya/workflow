@@ -1,0 +1,7 @@
+.turbo
+node_modules
+.idea
+.env
+/dist
+pgdata
+.DS_Store

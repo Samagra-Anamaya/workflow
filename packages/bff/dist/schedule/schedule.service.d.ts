@@ -5,5 +5,5 @@ export declare class ScheduleService {
     constructor(prisma: PrismaService);
     createSchedule(data: any): Promise<Schedule>;
     getAllSchedules(): Promise<Schedule[]>;
-    getScheduleByEnumerator(id: string): Promise<Schedule[]>;
+    getScheduleByEnumerator(id: string): Promise<any[]>;
 }

@@ -15,9 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnumeratorController = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const enumerator_service_1 = require("./enumerator.service");
 let EnumeratorController = class EnumeratorController {
-    constructor(prisma) {
+    constructor(prisma, enumeratorService) {
         this.prisma = prisma;
+        this.enumeratorService = enumeratorService;
     }
     async findAll() {
         const users = await this.prisma.user.findMany();
@@ -28,6 +30,9 @@ let EnumeratorController = class EnumeratorController {
             data: user,
         });
         return newUser;
+    }
+    async createEnumerators(user) {
+        return this.enumeratorService.createEnumerators();
     }
     async createAdmin(user) {
         const newUser = await this.prisma.admin.create({
@@ -55,6 +60,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], EnumeratorController.prototype, "create", null);
 __decorate([
+    (0, common_1.Post)('createEnumerators'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], EnumeratorController.prototype, "createEnumerators", null);
+__decorate([
     (0, common_1.Post)('admin'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -69,6 +81,7 @@ __decorate([
 ], EnumeratorController.prototype, "findAllAdmin", null);
 exports.EnumeratorController = EnumeratorController = __decorate([
     (0, common_1.Controller)('enumerator'),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        enumerator_service_1.EnumeratorService])
 ], EnumeratorController);
 //# sourceMappingURL=enumerator.controller.js.map

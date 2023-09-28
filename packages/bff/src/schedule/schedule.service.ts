@@ -22,6 +22,21 @@ export class ScheduleService {
       //@ts-ignore
       data: _data,
     });
+
+    // const enumerator = await this.prisma.user.findUnique({
+    //   where: {
+    //     userId: _data?.enumeratorId,
+    //   },
+    // });
+    const enumerator = await this.prisma.user.update({
+      where: {
+        userId: _data?.enumeratorId,
+      },
+      data: {
+        surveyAssigned: { increment: 1 },
+      },
+    });
+    console.log({ enumerator });
     return schedule;
   }
 
@@ -34,14 +49,19 @@ export class ScheduleService {
     });
   }
 
-  async getScheduleByEnumerator(id: string): Promise<Schedule[]> {
-    return this.prisma.schedule.findMany({
-      where: { enumeratorId: id },
-      include: {
-        location: {},
-        assignedBy: {},
+  async getScheduleByEnumerator(id: string): Promise<any[]> {
+    return this.prisma.villageData.findMany({
+      where: {
+        spdpVillageId: Number(id),
       },
     });
+    // return this.prisma.schedule.findMany({
+    //   where: { enumeratorId: id },
+    //   include: {
+    //     location: {},
+    //     assignedBy: {},
+    //   },
+    // });
   }
 
   // async updateSubmission(

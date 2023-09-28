@@ -1,9 +1,6 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query, Param } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { map, dropRight } from 'lodash';
-import * as fs from 'fs';
-const filePath = './data.csv';
-
+import { villageRecords } from './village-data';
 @Controller('utils')
 export class UtilsController {
   constructor(private readonly prismaService: PrismaService) {}
@@ -16,40 +13,20 @@ export class UtilsController {
       take: 1000,
     });
   }
+
+  @Get('/villageData/:id')
+  async getSubmissionByCitizenId(@Param('id') id: number): Promise<any> {
+    return this.prismaService.villageData.findFirst({
+      where: {
+        spdpVillageId: Number(id),
+      },
+    });
+  }
+
   @Post('csv')
-  async uploadCSV() {
-    fs.readFile(filePath, 'utf8', async (err, data) => {
-      dropRight(
-        map(data.split('\n'), async (e) => {
-          if (true) {
-            const colArray = e.split(',');
-            if (
-              colArray[1]?.replaceAll('"', '') !== '' &&
-              colArray[1]?.replaceAll('"', '')
-            ) {
-              const obj = {
-                districtName: colArray[1]?.replaceAll('"', ''),
-                tehsilName: colArray[2]?.replaceAll('"', ''),
-                riCircleName: colArray[3]?.replaceAll('"', ''),
-                villageName: colArray[4]?.replaceAll('"', ''),
-                distLGDCode: colArray[5]?.replaceAll('"', ''),
-                blockLGDCode: colArray[6]?.replaceAll('"', ''),
-                gplgdCode: colArray[7]?.replaceAll('"', ''),
-                villageLGDCode: colArray[8]?.replaceAll('"', ''),
-                spdpVillageId: colArray[9]?.replaceAll('"', ''),
-              };
-              const rr = await this.prismaService.villageData.create({
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                data: obj,
-              });
-              console.log({ rr });
-              return obj;
-            } else return;
-          }
-        }),
-        3,
-      );
+  async uploadVillageData(): Promise<any | null> {
+    return await this.prismaService.villageData.createMany({
+      data: villageRecords,
     });
   }
 }

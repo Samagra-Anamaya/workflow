@@ -17,27 +17,33 @@ enum SubmissionStatus {
   FAILED
 }
 
+
 model Submission {
   id             Int              @id @default(autoincrement())
-  submitter      User             @relation(fields: [submitterId], references: [userId])
   submitterId    String
   submissionData Json
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   status         SubmissionStatus @default(SUBMITTED)
+  spdpVillageId  Int              @default(0)
+  citizenId      String?           
   errors         Json?
   meta           Json?
 }
 
+
+enum defaultPassword {
+  ABCD
+}
+
 model User {
-  id              Int          @id @default(autoincrement())
-  userId          String       @unique
-  mobile          String       @unique
-  active          Boolean      @default(true)
-  surveyAssigned  Int          @default(0)
-  surveyCompleted Int          @default(0)
+  id              Int     @id @default(autoincrement())
+  userId          String  @unique
+  password        String?
   meta            Json?
-  submissions     Submission[]
+  active          Boolean @default(true)
+  surveyAssigned  Int     @default(0)
+  surveyCompleted Int     @default(0)
 }
 
 model Admin {
@@ -62,22 +68,43 @@ model Schedule {
   enumeratorId String
   status       ScheduleStatus @default(SCHEDULED)
   formId       String
-  locationId   String
+  locationId   Int
   meta         Json?
   location     VillageData?   @relation(fields: [locationId], references: [spdpVillageId])
   assignerId   String         @db.Uuid
   assignedBy   Admin?         @relation(fields: [assignerId], references: [userId])
 }
 
+enum VillageDataStatus {
+  ASSIGNED
+  COMPLETED
+  PROCESSING
+  UNASSIGNED
+}
+
+enum TspBlockStatus {
+  Y
+  N
+}
+
 model VillageData {
-  villageLGDCode String
-  districtName   String
-  tehsilName     String
-  riCircleName   String
-  villageName    String
-  distLGDCode    String
-  blockLGDCode   String
-  gplgdCode      String
-  spdpVillageId  String     @id @unique
-  Schedule       Schedule[]
+  id            Int
+  stateCode     Int
+  stateName     String
+  districtCode  Int
+  districtName  String
+  itdaName      String
+  blockCode     Int
+  blockName     String
+  isTspBlock    String
+  gpCode        Int
+  gpName        String
+  surveySubmitted   Int  @default(0)
+  surveyToConduct   Int  @default(0)
+  spdpVillageId Int               @id @unique
+  villageName   String
+  Schedule      Schedule[]
+  meta          Json?
+  submissions   Json?
+  status        VillageDataStatus @default(UNASSIGNED)
 }

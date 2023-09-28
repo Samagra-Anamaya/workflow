@@ -3,5 +3,6 @@ export declare class UtilsController {
     private readonly prismaService;
     constructor(prismaService: PrismaService);
     getVillageData(limit: any): Promise<any | null>;
-    uploadCSV(): Promise<void>;
+    getSubmissionByCitizenId(id: number): Promise<any>;
+    uploadVillageData(): Promise<any | null>;
 }
