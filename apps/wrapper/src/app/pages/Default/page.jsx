@@ -1,6 +1,6 @@
 "use client"
-import React from "react";
-import MedicalAssessor from "../medical-assessor/page";
+import React, { useEffect } from "react";
+import AssignedLocations from "../assigned-locations/page";
 import { useUserData } from "src/app/hooks/useAuth";
 import { useMachine } from '@xstate/react';
 import authMachine from "src/app/xstate/stateMachine";
@@ -15,11 +15,19 @@ const Login = () => {
   } else {
     send("UNAUTHENTICATED");
   }
-  return current.matches("authenticated") ? (
-    <MedicalAssessor />
-  ) : (
-    <Home />
-  );
+
+  console.log("hello", current, isAuthenticated)
+
+  if (current) {
+    console.log(current.value)
+    return current.matches("authenticated") ? (
+      <AssignedLocations />
+    ) : (
+      <Home />
+    );
+  }
+  else
+    return <div>hello</div>
 };
 
 export default Login;
