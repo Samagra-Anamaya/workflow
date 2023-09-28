@@ -3,9 +3,10 @@ import { Submission } from '@prisma/client';
 export declare class SubmissionController {
     private submissionService;
     constructor(submissionService: SubmissionService);
-    createSubmission(data: any): Promise<Submission>;
-    getAllSubmissions(): Promise<Submission[]>;
-    getSubmissionById(id: number): Promise<Submission | null>;
+    createSubmission(data: any): Promise<any>;
+    getAllSubmissions(): Promise<any>;
+    getSubmissionByVillageId(id: number): Promise<any>;
+    getSubmissionByCitizenId(id: string): Promise<any>;
     updateSubmission(id: number, data: any): Promise<Submission | null>;
-    deleteSubmission(id: number): Promise<Submission | null>;
+    deleteSubmission(id: number): Promise<any>;
 }

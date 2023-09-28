@@ -25,8 +25,11 @@ let SubmissionController = class SubmissionController {
     async getAllSubmissions() {
         return this.submissionService.getAllSubmissions();
     }
-    async getSubmissionById(id) {
-        return this.submissionService.getSubmissionById(id);
+    async getSubmissionByVillageId(id) {
+        return this.submissionService.getSubmissionByVillageId(id);
+    }
+    async getSubmissionByCitizenId(id) {
+        return this.submissionService.getSubmissionByCitizenId(id);
     }
     async updateSubmission(id, data) {
         return this.submissionService.updateSubmission(id, data);
@@ -55,7 +58,14 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], SubmissionController.prototype, "getSubmissionById", null);
+], SubmissionController.prototype, "getSubmissionByVillageId", null);
+__decorate([
+    (0, common_1.Get)('/citizen/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], SubmissionController.prototype, "getSubmissionByCitizenId", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),

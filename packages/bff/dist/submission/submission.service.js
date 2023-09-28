@@ -17,28 +17,32 @@ let SubmissionService = class SubmissionService {
         this.prisma = prisma;
     }
     async createSubmission(data) {
-        const _data = {
-            ...data,
-        };
         const submission = await this.prisma.submission.create({
-            data: _data,
+            data,
         });
+        const newVillageData = await this.prisma.villageData.update({
+            where: {
+                spdpVillageId: data.spdpVillageId,
+            },
+            data: {
+                surveySubmitted: { increment: 1 },
+            },
+        });
+        console.log({ newVillageData });
         return submission;
     }
     async getAllSubmissions() {
+        return this.prisma.submission.findMany({});
+    }
+    async getSubmissionByVillageId(id) {
+        const _id = Number(id);
         return this.prisma.submission.findMany({
-            include: {
-                submitter: {},
-            },
+            where: { spdpVillageId: _id },
         });
     }
-    async getSubmissionById(id) {
-        const _id = Number(id);
-        return this.prisma.submission.findUnique({
-            where: { id: _id },
-            include: {
-                submitter: {},
-            },
+    async getSubmissionByCitizenId(id) {
+        return this.prisma.submission.findMany({
+            where: { citizenId: id },
         });
     }
     async updateSubmission(id, data) {

@@ -1,10 +1,16 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EnumeratorService } from './enumerator.service';
 
 @Controller('enumerator')
 export class EnumeratorController {
   //constructor(private readonly enumeratorService: EnumeratorService) {}
-  constructor(private readonly prisma: PrismaService) {}
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly enumeratorService: EnumeratorService,
+  ) {}
+
   @Get()
   async findAll(): Promise<any> {
     const users = await this.prisma.user.findMany();
@@ -18,6 +24,12 @@ export class EnumeratorController {
     });
 
     return newUser;
+  }
+
+  @Post('createEnumerators')
+  async createEnumerators(@Body() user: any): Promise<any> {
+    return this.enumeratorService.createEnumerators();
+    
   }
 
   @Post('admin')

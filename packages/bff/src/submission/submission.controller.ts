@@ -16,18 +16,23 @@ export class SubmissionController {
   constructor(private submissionService: SubmissionService) {}
 
   @Post()
-  async createSubmission(@Body() data: any): Promise<Submission> {
+  async createSubmission(@Body() data: any): Promise<any> {
     return this.submissionService.createSubmission(data);
   }
 
   @Get()
-  async getAllSubmissions(): Promise<Submission[]> {
+  async getAllSubmissions(): Promise<any> {
     return this.submissionService.getAllSubmissions();
   }
 
   @Get(':id')
-  async getSubmissionById(@Param('id') id: number): Promise<Submission | null> {
-    return this.submissionService.getSubmissionById(id);
+  async getSubmissionByVillageId(@Param('id') id: number): Promise<any> {
+    return this.submissionService.getSubmissionByVillageId(id);
+  }
+
+  @Get('/citizen/:id')
+  async getSubmissionByCitizenId(@Param('id') id: string): Promise<any> {
+    return this.submissionService.getSubmissionByCitizenId(id);
   }
 
   @Put(':id')
@@ -39,7 +44,7 @@ export class SubmissionController {
   }
 
   @Delete(':id')
-  async deleteSubmission(@Param('id') id: number): Promise<Submission | null> {
+  async deleteSubmission(@Param('id') id: number): Promise<any> {
     return this.submissionService.deleteSubmission(id);
   }
 }

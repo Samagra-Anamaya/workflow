@@ -15,9 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UtilsController = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const lodash_1 = require("lodash");
-const fs = require("fs");
-const filePath = './data.csv';
+const village_data_1 = require("./village-data");
 let UtilsController = class UtilsController {
     constructor(prismaService) {
         this.prismaService = prismaService;
@@ -27,34 +25,16 @@ let UtilsController = class UtilsController {
             take: 1000,
         });
     }
-    async uploadCSV() {
-        fs.readFile(filePath, 'utf8', async (err, data) => {
-            (0, lodash_1.dropRight)((0, lodash_1.map)(data.split('\n'), async (e) => {
-                if (true) {
-                    const colArray = e.split(',');
-                    if (colArray[1]?.replaceAll('"', '') !== '' &&
-                        colArray[1]?.replaceAll('"', '')) {
-                        const obj = {
-                            districtName: colArray[1]?.replaceAll('"', ''),
-                            tehsilName: colArray[2]?.replaceAll('"', ''),
-                            riCircleName: colArray[3]?.replaceAll('"', ''),
-                            villageName: colArray[4]?.replaceAll('"', ''),
-                            distLGDCode: colArray[5]?.replaceAll('"', ''),
-                            blockLGDCode: colArray[6]?.replaceAll('"', ''),
-                            gplgdCode: colArray[7]?.replaceAll('"', ''),
-                            villageLGDCode: colArray[8]?.replaceAll('"', ''),
-                            spdpVillageId: colArray[9]?.replaceAll('"', ''),
-                        };
-                        const rr = await this.prismaService.villageData.create({
-                            data: obj,
-                        });
-                        console.log({ rr });
-                        return obj;
-                    }
-                    else
-                        return;
-                }
-            }), 3);
+    async getSubmissionByCitizenId(id) {
+        return this.prismaService.villageData.findFirst({
+            where: {
+                spdpVillageId: Number(id),
+            },
+        });
+    }
+    async uploadVillageData() {
+        return await this.prismaService.villageData.createMany({
+            data: village_data_1.villageRecords,
         });
     }
 };
@@ -67,11 +47,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UtilsController.prototype, "getVillageData", null);
 __decorate([
+    (0, common_1.Get)('/villageData/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UtilsController.prototype, "getSubmissionByCitizenId", null);
+__decorate([
     (0, common_1.Post)('csv'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UtilsController.prototype, "uploadCSV", null);
+], UtilsController.prototype, "uploadVillageData", null);
 exports.UtilsController = UtilsController = __decorate([
     (0, common_1.Controller)('utils'),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])

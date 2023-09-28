@@ -1,11 +1,12 @@
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Submission, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 export declare class SubmissionService {
     private prisma;
     constructor(prisma: PrismaService);
-    createSubmission(data: Prisma.SubmissionCreateInput): Promise<Submission>;
-    getAllSubmissions(): Promise<Submission[]>;
-    getSubmissionById(id: number): Promise<Submission | null>;
-    updateSubmission(id: number, data: Prisma.SubmissionUpdateInput): Promise<Submission | null>;
-    deleteSubmission(id: number): Promise<Submission | null>;
+    createSubmission(data: Prisma.SubmissionCreateInput): Promise<any>;
+    getAllSubmissions(): Promise<any[]>;
+    getSubmissionByVillageId(id: number): Promise<any>;
+    getSubmissionByCitizenId(id: string): Promise<any>;
+    updateSubmission(id: number, data: Prisma.SubmissionUpdateInput): Promise<any>;
+    deleteSubmission(id: number): Promise<any>;
 }

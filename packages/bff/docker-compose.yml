@@ -11,14 +11,14 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
 
-  submission-service:
-    build: .
-    image: bff
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    environment:
-      DATABASE_URL: ${DATABASE_URL}  
-    ports:
-      - 3002:3002
+  # submission-service:
+  #   build: .
+  #   image: bff
+  #   depends_on:
+  #     - postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     DATABASE_URL: ${DATABASE_URL}  
+  #   ports:
+  #     - 3002:3002
      

@@ -1,23 +1,40 @@
-FROM node:16 AS install
-WORKDIR /app
-COPY package.json ./
-RUN yarn install
+FROM node:16 AS builder
 
-FROM node:16 as build
+# Create app directory
 WORKDIR /app
+
+# copy dependency files
+COPY package.json ./
+COPY package-lock.json ./
 COPY prisma ./prisma/
-RUN npx prisma generate
-RUN ls prisma
-# RUN ls prisma/generated
-COPY --from=install /app/node_modules ./node_modules
+
+# Install app dependencies
+RUN npm install
+# Required if not done in postinstall
+# RUN npx prisma generate
+
 COPY . .
+
 RUN npm run build
 
 FROM node:16
+
 WORKDIR /app
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package*.json ./
-COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/node_modules ./node_modules
-EXPOSE 3002
-CMD [ "npm", "run", "start:migrate:prod" ]
+
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+
+ARG ENV
+ENV CI_ENV=${ENV}
+
+ARG SERVER_RELEASE_VERSION
+ENV SERVER_RELEASE_VERSION=${SERVER_RELEASE_VERSION}
+
+EXPOSE 3000
+CMD ["/bin/sh", "-c", "if [ \"$CI_ENV\" = \"CI\" ]; then npm run start:migrate:ci; else npm run start:migrate:prod; fi"]
+# CMD [ "npm", "run", "start:prod" ]
