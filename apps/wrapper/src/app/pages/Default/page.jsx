@@ -1,12 +1,12 @@
 "use client"
 import React, { useEffect } from "react";
 import AssignedLocations from "../assigned-locations/page";
-import { useUserData } from "src/app/hooks/useAuth";
 import { useMachine } from '@xstate/react';
 import authMachine from "src/app/xstate/stateMachine";
 import Home from "../Home/page";
+import { useSelector } from "react-redux";
 const Login = () => {
-  const userData = useUserData();
+  const userData = useSelector((state) => state?.userData)
   const [current, send] = useMachine(authMachine);
 
   const isAuthenticated = userData?.isAuthenticated;
@@ -16,11 +16,10 @@ const Login = () => {
     send("UNAUTHENTICATED");
   }
 
-  console.log("hello", current, isAuthenticated)
+  console.log("assadasd--->", current, current.value)
 
   if (current) {
-    console.log(current.value)
-    return current.matches("authenticated") ? (
+    return current.value == "authenticated" ? (
       <AssignedLocations />
     ) : (
       <Home />

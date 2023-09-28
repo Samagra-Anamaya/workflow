@@ -9,13 +9,14 @@ import { useRouter } from 'next/navigation'
 import formSubmissionMachine from "src/app/xstate/formSubmissionMachine";
 import { useMachine } from '@xstate/react';
 import SuccessPopup from "src/app/components/popup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { coordinates, form } from "src/app/redux/store";
 import { getOfflineCapableForm } from "src/app/services/api";
 
 // import Loader from "@/app/components/Loader";
 const GenericOdkForm = (props) => {
     const dispatch = useDispatch();
+    const formStates = useSelector((state) => state.userData.forms)
     const router = useRouter()
     const user = useUserData();
     const scheduleId = useRef();
@@ -151,9 +152,10 @@ const GenericOdkForm = (props) => {
     }, []);
 
     const getSurveyUrl = async () => {
-        let surveyUrl = await getOfflineCapableForm(formName);
-        console.log("SurveyURL:", surveyUrl);
-        setSurveyUrl(surveyUrl);
+        let surveyUrl = await getOfflineCapableForm(formName, dispatch);
+        console.log("SURVERY URL --> ", surveyUrl ? surveyUrl : formStates[formName])
+        console.log("SURVERY URL from state --> ", formStates[formName])
+        surveyUrl ? setSurveyUrl(surveyUrl) : setSurveyUrl(formStates[formName])
     }
 
 
