@@ -7,7 +7,7 @@ const authSlice = createSlice({
   initialState: {
     isAuthenticated: false,
     user: null,
-    location:null,
+    location: null,
     formSubmitted: [],
   },
   reducers: {
@@ -19,8 +19,8 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
     },
-    coordinates:(state,action)=>{
-      state.location=action.payload;
+    coordinates: (state, action) => {
+      state.location = action.payload;
     },
     form: (state, action) => {
       state.formSubmitted.push(action.payload); // Push the new form name into the array
@@ -28,20 +28,40 @@ const authSlice = createSlice({
   },
 });
 
+const userDataSlice = createSlice({
+  name: 'userData',
+  initialState: {
+    assignedLocations: [],
+    currentLocation: {}
+  },
+  reducers: {
+    setCurrentLocation: (state, action) => {
+      state.currentLocation = action.payload;
+    },
+    setAssignedLocations: (state, action) => {
+      state.assignedLocations = action.payload;
+    }
+  }
+})
+
 const persistConfig = {
   key: 'root', // key for the root of the storage
   storage, // storage to use (e.g., localStorage)
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authSlice.reducer);
+const persistedUserDataReduces = persistReducer(persistConfig, userDataSlice.reducer);
 
- const store = configureStore({
+const store = configureStore({
   reducer: {
-    auth: persistedAuthReducer, // use the persisted auth reducer
+    // Using persisted reducers 
+    auth: persistedAuthReducer,
+    userData: persistedUserDataReduces
   },
 });
 
 const persistor = persistStore(store);
 
-export const { login, logoutUser,coordinates,form } = authSlice.actions;
+export const { login, logoutUser, coordinates, form } = authSlice.actions;
+export const { setCurrentLocation, setAssignedLocations } = userDataSlice.actions;
 export { store, persistor };

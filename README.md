@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/workflow/tree/dev)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Anamaya/workflow/tree/feat/new-app-changes)
 
 </div>
 
