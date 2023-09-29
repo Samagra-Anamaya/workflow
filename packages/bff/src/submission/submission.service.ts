@@ -7,7 +7,7 @@ import { Prisma } from '@prisma/client';
 export class SubmissionService {
   constructor(private prisma: PrismaService) {}
 
-  async createSubmission(data: Prisma.SubmissionCreateInput): Promise<any> {
+  async createSubmission(data: any): Promise<any> {
     const submission = await this.prisma.submission.create({
       data,
     });
@@ -26,6 +26,18 @@ export class SubmissionService {
     return { result: { submission, villageData } };
   }
 
+  async searchSubmissions(aadhar: string) {
+    const submissions = await this.prisma.submission.findMany({
+      where: {
+        submissionData: {
+          path: ['name'],
+          string_contains: aadhar,
+        },
+      },
+    });
+
+    return submissions;
+  }
   async getSubmissions(page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
     const submissions = await this.prisma.submission.findMany({

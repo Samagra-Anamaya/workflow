@@ -6,6 +6,7 @@ export declare class SubmissionController {
     createSubmission(data: any): Promise<any>;
     getAllSubmissions(page: string, limit: string): Promise<any>;
     getSubmissionByVillageId(id: number, page: string, limit: string): Promise<any>;
+    searchSubmission(name: string): Promise<any>;
     getSubmissionByCitizenId(id: string): Promise<any>;
     updateSubmission(id: number, data: any): Promise<Submission | null>;
     deleteSubmission(id: number): Promise<any>;

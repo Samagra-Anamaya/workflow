@@ -1,9 +1,22 @@
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, SubmissionTest } from '@prisma/client';
 export declare class SubmissionService {
     private prisma;
     constructor(prisma: PrismaService);
-    createSubmission(data: Prisma.SubmissionCreateInput): Promise<any>;
+    createSubmission(data: SubmissionTest): Promise<any>;
+    searchSubmissions(aadhar: string): Promise<{
+        id: number;
+        submitterId: string;
+        submissionData: Prisma.JsonValue;
+        createdAt: Date;
+        capturedAt: Date;
+        updatedAt: Date;
+        status: import(".prisma/client").$Enums.SubmissionStatus;
+        spdpVillageId: number;
+        citizenId: string;
+        errors: Prisma.JsonValue;
+        meta: Prisma.JsonValue;
+    }[]>;
     getSubmissions(page: number, pageSize: number): Promise<{
         result: {
             submissions: {

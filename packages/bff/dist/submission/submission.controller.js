@@ -28,6 +28,9 @@ let SubmissionController = class SubmissionController {
     async getSubmissionByVillageId(id, page, limit) {
         return this.submissionService.getSubmissionByVillageId(id, Number(page) || 1, Number(limit) || 10);
     }
+    async searchSubmission(name) {
+        return this.submissionService.searchSubmissions(name);
+    }
     async getSubmissionByCitizenId(id) {
         return this.submissionService.getSubmissionByCitizenId(id);
     }
@@ -63,6 +66,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, String, String]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "getSubmissionByVillageId", null);
+__decorate([
+    (0, common_1.Get)('/search/:name'),
+    __param(0, (0, common_1.Param)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], SubmissionController.prototype, "searchSubmission", null);
 __decorate([
     (0, common_1.Get)('/citizen/:id'),
     __param(0, (0, common_1.Param)('id')),

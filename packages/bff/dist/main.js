@@ -16,7 +16,7 @@ async function bootstrap() {
     };
     const document = swagger_1.SwaggerModule.createDocument(app, config, options);
     swagger_1.SwaggerModule.setup('api', app, document);
-    await app.listen(3000);
+    await app.listen(3002);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
