@@ -405,3 +405,13 @@ export const getVillageDetails = async (id) => {
     return null;
   }
 }
+
+export const getVillageSubmissions = async (id, page) => {
+  try {
+    let res = await axios.get(BACKEND_SERVICE_URL + `/submissions/${id}?limit=5&page=${page}`);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}

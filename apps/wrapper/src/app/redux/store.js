@@ -80,7 +80,7 @@ const userDataSlice = createSlice({
 
         const currCitIndex = citArray.findIndex((el) => el.citizenId == action.payload.id)
 
-        let newCitizenArray = [...citArray.slice(0, currCitIndex), { ...citArray[currCitIndex], status: 'SUBMITTED', submissionData: action.payload.data }, ...citArray.slice(currCitIndex + 1)]
+        let newCitizenArray = [...citArray.slice(0, currCitIndex), { ...citArray[currCitIndex], status: 'SUBMITTED', submissionData: action.payload.data, capturedAt: action.payload.capturedAt }, ...citArray.slice(currCitIndex + 1)]
 
         let newCurrLocation = {
           ...state.currentLocation,
