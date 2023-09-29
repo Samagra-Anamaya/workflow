@@ -56,13 +56,15 @@ let SubmissionService = class SubmissionService {
             take: pageSize,
             orderBy: { createdAt: 'desc' },
         });
-        const totalCount = await this.prisma.submission.count();
+        const totalSubmissions = await this.prisma.submission.findMany({
+            where: { spdpVillageId: _id },
+        });
         return {
             result: {
                 submissions,
-                totalCount,
+                totalCount: totalSubmissions?.length,
                 currentPage: page,
-                totalPages: Math.ceil(totalCount / pageSize),
+                totalPages: Math.ceil(totalSubmissions?.length / pageSize),
             },
         };
     }

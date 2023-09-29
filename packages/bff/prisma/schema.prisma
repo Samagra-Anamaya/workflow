@@ -23,6 +23,7 @@ model Submission {
   submitterId    String
   submissionData Json
   createdAt      DateTime         @default(now())
+  capturedAt     DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   status         SubmissionStatus @default(SUBMITTED)
   spdpVillageId  Int              @default(0)

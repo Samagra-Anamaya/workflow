@@ -11,6 +11,7 @@ export declare class SubmissionService {
                 submitterId: string;
                 submissionData: Prisma.JsonValue;
                 createdAt: Date;
+                capturedAt: Date;
                 updatedAt: Date;
                 status: import(".prisma/client").$Enums.SubmissionStatus;
                 spdpVillageId: number;
