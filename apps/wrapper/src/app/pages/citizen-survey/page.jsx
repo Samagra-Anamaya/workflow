@@ -65,6 +65,8 @@ const CitizenSurveyPage = ({ params }) => {
         try {
             setLoading(true);
             e.preventDefault();
+            let capturedAt = new Date()
+            capturedAt.toISOString().slice(0, 19).replace('T', ' ')
             const config = {
                 method: 'POST',
                 url: BACKEND_SERVICE_URL + `/submissions`,
@@ -72,19 +74,20 @@ const CitizenSurveyPage = ({ params }) => {
                     submissionData: formState,
                     spdpVillageId: _currLocation.villageCode,
                     citizenId: currCitizen.citizenId,
-                    submitterId: user.id
+                    submitterId: user.id,
+                    capturedAt
                 },
             };
             const response = await sendRequest(config);
-            if (response?.status == 'SUBMITTED') {
-                dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState }))
+            if (response?.result?.submission?.status == 'SUBMITTED') {
+                dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
                 setLoading(false);
                 showSubmittedModal(true);
             } else {
                 // Either an error or offline
                 if (!navigator.onLine) {
                     // Submitted Offline
-                    dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState }))
+                    dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
                     setLoading(false);
                     showSubmittedModal(true);
                 } else

@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
 
 
 
@@ -101,8 +102,11 @@
     .citizenContainer {
         display: flex;
         flex-direction: column;
+        align-items: center;
         width: 100%;
+        justify-content: space-between;
         padding: 2rem;
+        height: 100%;
 
         & p:nth-child(1) {
             font-size: 1.5rem;
@@ -156,5 +160,10 @@
             cursor: pointer;
             margin-top: 1rem;
         }
+
+        .submissionContainer {
+            width: 100%;
+        }
+
     }
 }
