@@ -17,7 +17,7 @@ let SubmissionService = class SubmissionService {
         this.prisma = prisma;
     }
     async createSubmission(data) {
-        const submission = await this.prisma.submission.create({
+        const submission = await this.prisma.submissionTest.create({
             data,
         });
         const villageData = await this.prisma.villageData.update({
@@ -29,6 +29,17 @@ let SubmissionService = class SubmissionService {
             },
         });
         return { result: { submission, villageData } };
+    }
+    async searchSubmissions(aadhar) {
+        const submissions = await this.prisma.submission.findMany({
+            where: {
+                submissionData: {
+                    path: ['name'],
+                    string_contains: aadhar,
+                },
+            },
+        });
+        return submissions;
     }
     async getSubmissions(page, pageSize) {
         const skip = (page - 1) * pageSize;

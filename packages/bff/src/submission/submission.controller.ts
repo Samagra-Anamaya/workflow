@@ -45,6 +45,10 @@ export class SubmissionController {
     );
   }
 
+  @Get('/search/:name')
+  async searchSubmission(@Param('name') name: string): Promise<any> {
+    return this.submissionService.searchSubmissions(name);
+  }
   @Get('/citizen/:id')
   async getSubmissionByCitizenId(@Param('id') id: string): Promise<any> {
     return this.submissionService.getSubmissionByCitizenId(id);
