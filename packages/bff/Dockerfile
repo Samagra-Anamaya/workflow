@@ -11,7 +11,7 @@ COPY prisma ./prisma/
 # Install app dependencies
 RUN npm install
 # Required if not done in postinstall
-# RUN npx prisma generate
+RUN npx prisma generate
 
 COPY . .
 
