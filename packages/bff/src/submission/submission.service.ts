@@ -60,14 +60,16 @@ export class SubmissionService {
       orderBy: { createdAt: 'desc' }, // Change to 'asc' for ascending order
     });
 
-    const totalCount = await this.prisma.submission.count();
+    const totalSubmissions = await this.prisma.submission.findMany({
+      where: { spdpVillageId: _id },
+    });
 
     return {
       result: {
         submissions,
-        totalCount,
+        totalCount: totalSubmissions?.length,
         currentPage: page,
-        totalPages: Math.ceil(totalCount / pageSize),
+        totalPages: Math.ceil(totalSubmissions?.length / pageSize),
       },
     };
   }
