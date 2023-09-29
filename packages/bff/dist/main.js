@@ -11,9 +11,12 @@ async function bootstrap() {
         .setVersion('1.0')
         .addTag('anamaya')
         .build();
-    const document = swagger_1.SwaggerModule.createDocument(app, config);
+    const options = {
+        operationIdFactory: (controllerKey, methodKey) => methodKey,
+    };
+    const document = swagger_1.SwaggerModule.createDocument(app, config, options);
     swagger_1.SwaggerModule.setup('api', app, document);
-    await app.listen(3002);
+    await app.listen(3000);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
