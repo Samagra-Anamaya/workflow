@@ -11,14 +11,13 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
 
-  # submission-service:
-  #   build: .
-  #   image: bff
-  #   depends_on:
-  #     - postgres
-  #   restart: unless-stopped
-  #   environment:
-  #     DATABASE_URL: ${DATABASE_URL}  
-  #   ports:
-  #     - 3002:3002
+  submission-service:
+    image: ghcr.io/samagra-anamaya/workflow-bff:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}  
+    ports:
+      - 3000:3000
      
