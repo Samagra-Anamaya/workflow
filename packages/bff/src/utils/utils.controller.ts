@@ -1,43 +1,35 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Query,
-  Param,
-  UseGuards,
-  Body,
-} from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/auth.guard';
+import { Controller, Get, Post, Query, Param, Body } from '@nestjs/common';
+
 import { UtilsService } from './utils.service';
+import { CreateVillageDto } from './dto/util.dto';
 @Controller('utils')
 export class UtilsController {
-  constructor(private readonly submissionService: UtilsService) {}
+  constructor(private readonly utilService: UtilsService) {}
 
-  @Get('secure')
-  @UseGuards(JwtAuthGuard)
-  getSecureData() {
-    return `Hello! This is secure data.`;
-  }
+  // @Get('secure')
+  // @UseGuards(JwtAuthGuard)
+  // getSecureData() {
+  //   return `Hello! This is secure data.`;
+  // }
 
   @Get('villageData')
   async getVillageData(
     @Query('page') page: string,
     @Query('limit') limit: string,
   ): Promise<any | null> {
-    return this.submissionService.getVillages(
-      Number(page) || 1,
-      Number(limit) || 10,
-    );
+    const validatedLimit = Number(limit) || 10;
+    const validatedPage = Number(page) || 1;
+    return this.utilService.getVillages(validatedPage, validatedLimit);
   }
 
   @Get('/villageData/:id')
   async getVillageById(@Param('id') id: number): Promise<any> {
-    return this.submissionService.getVillageById(id);
+    return this.utilService.getVillageById(id);
   }
 
   @Post('/addVillage')
-  async addVillage(@Body() data: any): Promise<any> {
-    return this.submissionService.addVillage(data);
+  async addVillage(@Body() data: CreateVillageDto): Promise<any> {
+    return this.utilService.addVillage(data);
   }
 
   // @Post('csv')

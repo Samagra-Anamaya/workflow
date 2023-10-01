@@ -11,35 +11,65 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubmissionService = void 0;
 const common_1 = require("@nestjs/common");
+const logger_1 = require("../common/logger");
 const prisma_service_1 = require("../prisma/prisma.service");
 let SubmissionService = class SubmissionService {
     constructor(prisma) {
         this.prisma = prisma;
+        this.logger = new logger_1.CustomLogger('SubmissionService');
     }
     async createSubmission(data) {
-        const submission = await this.prisma.submissionTest.create({
-            data,
-        });
-        const villageData = await this.prisma.villageData.update({
-            where: {
-                spdpVillageId: data.spdpVillageId,
-            },
-            data: {
-                surveySubmitted: { increment: 1 },
-            },
-        });
-        return { result: { submission, villageData } };
-    }
-    async searchSubmissions(aadhar) {
-        const submissions = await this.prisma.submission.findMany({
-            where: {
-                submissionData: {
-                    path: ['name'],
-                    string_contains: aadhar,
+        try {
+            const village = await this.prisma.villageData.findFirst({
+                where: { spdpVillageId: data.spdpVillageId },
+            });
+            if (!village) {
+                throw new common_1.NotFoundException(`Village with spdpVillageId ${data.spdpVillageId} not found`);
+            }
+            const submission = await this.prisma.submission.create({
+                data,
+            });
+            const villageData = await this.prisma.villageData.update({
+                where: {
+                    spdpVillageId: data.spdpVillageId,
                 },
-            },
-        });
-        return submissions;
+                data: {
+                    surveySubmitted: { increment: 1 },
+                },
+            });
+            return { result: { submission, villageData } };
+        }
+        catch (error) {
+            this.logger.error(error);
+            throw new common_1.HttpException(error.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async searchSubmissions(text) {
+        try {
+            const submissions = await this.prisma.submission.findMany({
+                where: {
+                    OR: [
+                        {
+                            submissionData: {
+                                path: ['aadharNumber'],
+                                string_contains: text,
+                            },
+                        },
+                        {
+                            submissionData: {
+                                path: ['beneficiaryName'],
+                                string_contains: text,
+                            },
+                        },
+                    ],
+                },
+            });
+            return submissions;
+        }
+        catch (error) {
+            this.logger.error(error);
+            throw new common_1.HttpException(error.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async getSubmissions(page, pageSize) {
         const skip = (page - 1) * pageSize;
@@ -59,23 +89,30 @@ let SubmissionService = class SubmissionService {
         };
     }
     async getSubmissionByVillageId(id, page, pageSize) {
-        const _id = Number(id);
+        const village = await this.prisma.villageData.findFirst({
+            where: { spdpVillageId: id },
+        });
+        if (!village) {
+            throw new common_1.NotFoundException(`Village with spdpVillageId ${id} not found`);
+        }
         const skip = (page - 1) * pageSize;
-        const submissions = await this.prisma.submission.findMany({
-            where: { spdpVillageId: _id },
-            skip,
-            take: pageSize,
-            orderBy: { createdAt: 'desc' },
-        });
-        const totalSubmissions = await this.prisma.submission.findMany({
-            where: { spdpVillageId: _id },
-        });
+        const [submissions, total] = await Promise.all([
+            this.prisma.submission.findMany({
+                where: { spdpVillageId: id },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+            }),
+            this.prisma.submission.count({
+                where: { spdpVillageId: id },
+            }),
+        ]);
         return {
             result: {
                 submissions,
-                totalCount: totalSubmissions?.length,
+                totalCount: total,
                 currentPage: page,
-                totalPages: Math.ceil(totalSubmissions?.length / pageSize),
+                totalPages: Math.ceil(total / pageSize),
             },
         };
     }
@@ -84,17 +121,27 @@ let SubmissionService = class SubmissionService {
             where: { citizenId: id },
         });
     }
-    async updateSubmission(id, data) {
-        const updateSubmission = await this.prisma.submission.update({
-            where: { id },
-            data,
-        });
-        return { result: { updateSubmission } };
-    }
-    async deleteSubmission(id) {
-        return this.prisma.submission.delete({
-            where: { id },
-        });
+    async updateSubmission(id, newdata) {
+        try {
+            const submission = await this.prisma.submission.findFirst({
+                where: {
+                    id,
+                },
+            });
+            if (!submission) {
+                throw new common_1.NotFoundException(`Submission with id: ${id} not found`);
+            }
+            const updateSubmission = await this.prisma.submission.update({
+                where: { id },
+                data: {
+                    submissionData: newdata,
+                },
+            });
+            return { result: { updateSubmission } };
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 };
 exports.SubmissionService = SubmissionService;

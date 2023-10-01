@@ -35,7 +35,7 @@ export class UtilsService {
       orderBy: { spdpVillageId: 'asc' }, // Change to 'desc' for ascending order
     });
 
-    const totalCount = await this.prisma.user.count();
+    const totalCount = await this.prisma.villageData.count();
 
     return {
       result: {

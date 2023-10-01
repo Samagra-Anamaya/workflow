@@ -18,11 +18,9 @@ const submission_service_1 = require("./submission/submission.service");
 const schedule_module_1 = require("./schedule/schedule.module");
 const utils_module_1 = require("./utils/utils.module");
 const schedule_service_1 = require("./schedule/schedule.service");
-const auth_module_1 = require("./auth/auth.module");
-const auth_service_1 = require("./auth/auth.service");
 const passport_1 = require("@nestjs/passport");
 const jwt_1 = require("@nestjs/jwt");
-const auth_strategy_1 = require("./auth/auth.strategy");
+const logger_1 = require("./common/logger");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,7 +31,6 @@ exports.AppModule = AppModule = __decorate([
             enumerator_module_1.EnumeratorModule,
             schedule_module_1.ScheduleModule,
             utils_module_1.UtilsModule,
-            auth_module_1.AuthModule,
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.register({
                 secret: 'your-secret-key',
@@ -46,8 +43,7 @@ exports.AppModule = AppModule = __decorate([
             prisma_service_1.PrismaService,
             submission_service_1.SubmissionService,
             schedule_service_1.ScheduleService,
-            auth_service_1.AuthService,
-            auth_strategy_1.JwtStrategy,
+            logger_1.CustomLogger,
         ],
     })
 ], AppModule);

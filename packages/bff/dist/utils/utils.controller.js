@@ -14,33 +14,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UtilsController = void 0;
 const common_1 = require("@nestjs/common");
-const auth_guard_1 = require("../auth/auth.guard");
 const utils_service_1 = require("./utils.service");
+const util_dto_1 = require("./dto/util.dto");
 let UtilsController = class UtilsController {
-    constructor(submissionService) {
-        this.submissionService = submissionService;
-    }
-    getSecureData() {
-        return `Hello! This is secure data.`;
+    constructor(utilService) {
+        this.utilService = utilService;
     }
     async getVillageData(page, limit) {
-        return this.submissionService.getVillages(Number(page) || 1, Number(limit) || 10);
+        const validatedLimit = Number(limit) || 10;
+        const validatedPage = Number(page) || 1;
+        return this.utilService.getVillages(validatedPage, validatedLimit);
     }
     async getVillageById(id) {
-        return this.submissionService.getVillageById(id);
+        return this.utilService.getVillageById(id);
     }
     async addVillage(data) {
-        return this.submissionService.addVillage(data);
+        return this.utilService.addVillage(data);
     }
 };
 exports.UtilsController = UtilsController;
-__decorate([
-    (0, common_1.Get)('secure'),
-    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UtilsController.prototype, "getSecureData", null);
 __decorate([
     (0, common_1.Get)('villageData'),
     __param(0, (0, common_1.Query)('page')),
@@ -60,7 +52,7 @@ __decorate([
     (0, common_1.Post)('/addVillage'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [util_dto_1.CreateVillageDto]),
     __metadata("design:returntype", Promise)
 ], UtilsController.prototype, "addVillage", null);
 exports.UtilsController = UtilsController = __decorate([

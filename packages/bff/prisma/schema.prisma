@@ -4,6 +4,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  log             = ["debug", "query"]
 }
 
 datasource db {
@@ -19,7 +20,7 @@ enum SubmissionStatus {
 }
 
 model Submission {
-  id             Int              @id @default(autoincrement())
+  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   submitterId    String
   submissionData Json
   createdAt      DateTime         @default(now())
@@ -31,7 +32,6 @@ model Submission {
   errors         Json?
   meta           Json?
 }
-
 
 enum defaultPassword {
   ABCD

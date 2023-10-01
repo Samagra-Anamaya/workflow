@@ -8,6 +8,7 @@ import {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   const config = new DocumentBuilder()
     .setTitle('Anamaya Bff')
     .setDescription('APIs for Anamaya')
@@ -20,6 +21,8 @@ async function bootstrap() {
   };
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
+
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();
