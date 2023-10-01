@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     width: 100%;
+    height: 100vh;
 
     .commonHeading {
         font-size: 1.5rem;
@@ -63,6 +63,23 @@
 
         img {
             height: 4rem;
+        }
+    }
+
+    .qrContainer {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: -4rem;
+
+        & p:nth-child(2) {
+            font-size: 1.4rem;
+            text-align: center;
+            opacity: 0.7;
+            padding: 2rem;
         }
     }
 }
