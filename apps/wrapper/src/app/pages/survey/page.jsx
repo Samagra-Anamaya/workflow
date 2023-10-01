@@ -85,7 +85,7 @@ const SurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()}
+            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()} showLogout={false}
                 sx={{ justifyContent: 'space-between !important', padding: '2rem 0rem' }} />
             <div className={styles.locationItem}>
                 <div>

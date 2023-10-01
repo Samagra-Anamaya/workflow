@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 110vh;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
@@ -12,6 +12,7 @@
     backdrop-filter: blur(2px);
     overflow: hidden;
     -ms-overflow-style: none;
+    overflow-y: hidden;
     /* IE and Edge */
     scrollbar-width: none;
     /* Firefox */
@@ -40,5 +41,6 @@
         width: 90%;
         max-width: 90%;
         height: 45%;
+        overflow: hidden;
     }
 }

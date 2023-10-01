@@ -120,7 +120,7 @@ const CitizenSurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`Citizen Survey`} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
+            <CommonHeader text={`Citizen Survey`} showLogout={false} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
             {!mode ?
                 <>
 
