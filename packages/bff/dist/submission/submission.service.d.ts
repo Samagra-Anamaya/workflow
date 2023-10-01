@@ -1,36 +1,36 @@
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma, SubmissionTest } from '@prisma/client';
 export declare class SubmissionService {
     private prisma;
+    private logger;
     constructor(prisma: PrismaService);
-    createSubmission(data: SubmissionTest): Promise<any>;
-    searchSubmissions(aadhar: string): Promise<{
-        id: number;
+    createSubmission(data: any): Promise<any>;
+    searchSubmissions(text: string): Promise<{
+        id: string;
         submitterId: string;
-        submissionData: Prisma.JsonValue;
+        submissionData: import(".prisma/client").Prisma.JsonValue;
         createdAt: Date;
         capturedAt: Date;
         updatedAt: Date;
         status: import(".prisma/client").$Enums.SubmissionStatus;
         spdpVillageId: number;
         citizenId: string;
-        errors: Prisma.JsonValue;
-        meta: Prisma.JsonValue;
+        errors: import(".prisma/client").Prisma.JsonValue;
+        meta: import(".prisma/client").Prisma.JsonValue;
     }[]>;
     getSubmissions(page: number, pageSize: number): Promise<{
         result: {
             submissions: {
-                id: number;
+                id: string;
                 submitterId: string;
-                submissionData: Prisma.JsonValue;
+                submissionData: import(".prisma/client").Prisma.JsonValue;
                 createdAt: Date;
                 capturedAt: Date;
                 updatedAt: Date;
                 status: import(".prisma/client").$Enums.SubmissionStatus;
                 spdpVillageId: number;
                 citizenId: string;
-                errors: Prisma.JsonValue;
-                meta: Prisma.JsonValue;
+                errors: import(".prisma/client").Prisma.JsonValue;
+                meta: import(".prisma/client").Prisma.JsonValue;
             }[];
             totalCount: number;
             currentPage: number;
@@ -39,6 +39,5 @@ export declare class SubmissionService {
     }>;
     getSubmissionByVillageId(id: number, page: number, pageSize: number): Promise<any>;
     getSubmissionByCitizenId(id: string): Promise<any>;
-    updateSubmission(id: number, data: Prisma.SubmissionUpdateInput): Promise<any>;
-    deleteSubmission(id: number): Promise<any>;
+    updateSubmission(id: string, newdata: any): Promise<any>;
 }

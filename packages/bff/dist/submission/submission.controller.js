@@ -15,30 +15,63 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubmissionController = void 0;
 const common_1 = require("@nestjs/common");
 const submission_service_1 = require("./submission.service");
+const submission_dto_1 = require("./dto/submission.dto");
+const exception_filter_1 = require("../exceptions/exception-filter");
+const logger_1 = require("../common/logger");
 let SubmissionController = class SubmissionController {
     constructor(submissionService) {
         this.submissionService = submissionService;
+        this.logger = new logger_1.CustomLogger('SubmissionController');
     }
-    async createSubmission(data) {
-        return this.submissionService.createSubmission(data);
+    async createSubmission(createSubmissionDto) {
+        return this.submissionService.createSubmission(createSubmissionDto);
     }
-    async getAllSubmissions(page, limit) {
-        return this.submissionService.getSubmissions(Number(page) || 1, Number(limit) || 10);
+    async getAllSubmissions(query) {
+        try {
+            const page = Number(query.page) || 1;
+            const limit = Number(query.limit) || 10;
+            return this.submissionService.getSubmissions(page, limit);
+        }
+        catch (error) {
+            this.logger.error(error);
+            throw error;
+        }
     }
     async getSubmissionByVillageId(id, page, limit) {
-        return this.submissionService.getSubmissionByVillageId(id, Number(page) || 1, Number(limit) || 10);
+        const validatedId = Number(id);
+        const validatedPage = Number(page) || 1;
+        const validatedLimit = Number(limit) || 10;
+        if (isNaN(validatedId) || isNaN(validatedPage) || isNaN(validatedLimit)) {
+            throw new common_1.BadRequestException('Invalid input parameters');
+        }
+        return await this.submissionService.getSubmissionByVillageId(validatedId, validatedPage, validatedLimit);
     }
     async searchSubmission(name) {
-        return this.submissionService.searchSubmissions(name);
+        if (!name || name.trim().length === 0) {
+            throw new common_1.BadRequestException('Invalid input: name cannot be empty');
+        }
+        try {
+            return await this.submissionService.searchSubmissions(name);
+        }
+        catch (error) {
+            this.logger.error(error);
+            throw new common_1.InternalServerErrorException('Failed to search submissions');
+        }
     }
     async getSubmissionByCitizenId(id) {
-        return this.submissionService.getSubmissionByCitizenId(id);
+        if (!id || id.trim().length === 0) {
+            throw new common_1.BadRequestException('Invalid input: ID cannot be empty');
+        }
+        try {
+            return await this.submissionService.getSubmissionByCitizenId(id);
+        }
+        catch (error) {
+            this.logger.error(error);
+            throw new common_1.InternalServerErrorException('Failed to retrieve submission by citizen ID');
+        }
     }
     async updateSubmission(id, data) {
-        return this.submissionService.updateSubmission(id, data);
-    }
-    async deleteSubmission(id) {
-        return this.submissionService.deleteSubmission(id);
+        return await this.submissionService.updateSubmission(id, data);
     }
 };
 exports.SubmissionController = SubmissionController;
@@ -46,15 +79,14 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [submission_dto_1.CreateSubmissionDto]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "createSubmission", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Query)('limit')),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [submission_dto_1.GetAllSubmissionsDto]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "getAllSubmissions", null);
 __decorate([
@@ -67,8 +99,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "getSubmissionByVillageId", null);
 __decorate([
-    (0, common_1.Get)('/search/:name'),
-    __param(0, (0, common_1.Param)('name')),
+    (0, common_1.Get)('/search/:text'),
+    __param(0, (0, common_1.Param)('text')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
@@ -85,18 +117,12 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [String, submission_dto_1.UpdateSubmissionDto]),
     __metadata("design:returntype", Promise)
 ], SubmissionController.prototype, "updateSubmission", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], SubmissionController.prototype, "deleteSubmission", null);
 exports.SubmissionController = SubmissionController = __decorate([
     (0, common_1.Controller)('submissions'),
+    (0, common_1.UseFilters)(exception_filter_1.PrismaExceptionFilter),
     __metadata("design:paramtypes", [submission_service_1.SubmissionService])
 ], SubmissionController);
 //# sourceMappingURL=submission.controller.js.map

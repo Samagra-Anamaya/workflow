@@ -1,30 +1,30 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
-import { Schedule } from '@prisma/client';
+// import { Schedule } from '@prisma/client';
 
 @Controller('schedule')
 export class ScheduleController {
   constructor(private scheduleService: ScheduleService) {}
 
-  @Post()
-  async createSubmission(@Body() data: any): Promise<any> {
-    return this.scheduleService.createSchedule(data);
-  }
+  // @Post()
+  // async createSubmission(@Body() data: any): Promise<any> {
+  //   return this.scheduleService.createSchedule(data);
+  // }
 
-  @Get()
-  async getAllSubmissions(): Promise<Schedule[]> {
-    return this.scheduleService.getAllSchedules();
-  }
+  // @Get()
+  // async getAllSubmissions(): Promise<Schedule[]> {
+  //   return this.scheduleService.getAllSchedules();
+  // }
 
   // @Get(':id')
   // async getSubmissionById(@Param('id') id: number): Promise<Schedule | null> {
   //   return this.scheduleService.getSubmissionById(id);
   // }
   //   getScheduleByEnumerator
-  @Get('enumerator/:id')
-  async getScheduleByEnumeratorId(@Param('id') id: string): Promise<any> {
-    return this.scheduleService.getScheduleByEnumerator(id);
-  }
+  // @Get('enumerator/:id')
+  // async getScheduleByEnumeratorId(@Param('id') id: string): Promise<any> {
+  //   return this.scheduleService.getScheduleByEnumerator(id);
+  // }
   // @Put(':id')
   // async updateSubmission(
   //   @Param('id') id: number,

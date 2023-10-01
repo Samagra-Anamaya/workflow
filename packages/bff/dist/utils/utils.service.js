@@ -41,7 +41,7 @@ let UtilsService = class UtilsService {
             take: pageSize,
             orderBy: { spdpVillageId: 'asc' },
         });
-        const totalCount = await this.prisma.user.count();
+        const totalCount = await this.prisma.villageData.count();
         return {
             result: {
                 villages,

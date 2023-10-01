@@ -9,11 +9,9 @@ import { SubmissionService } from './submission/submission.service';
 import { ScheduleModule } from './schedule/schedule.module';
 import { UtilsModule } from './utils/utils.module';
 import { ScheduleService } from './schedule/schedule.service';
-import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './auth/auth.strategy';
+import { CustomLogger } from './common/logger';
 
 @Module({
   imports: [
@@ -21,7 +19,6 @@ import { JwtStrategy } from './auth/auth.strategy';
     EnumeratorModule,
     ScheduleModule,
     UtilsModule,
-    AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'your-secret-key', // Change this to your secret key
@@ -34,8 +31,7 @@ import { JwtStrategy } from './auth/auth.strategy';
     PrismaService,
     SubmissionService,
     ScheduleService,
-    AuthService,
-    JwtStrategy,
+    CustomLogger,
   ],
 })
 export class AppModule {}
