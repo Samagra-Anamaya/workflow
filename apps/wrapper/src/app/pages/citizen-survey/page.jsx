@@ -10,7 +10,8 @@ import CommonModal from "../../components/Modal";
 import Lottie from 'react-lottie';
 import { useOfflineSyncContext } from 'offline-sync-handler';
 import CitizenForm from '../../components/CitizenForm';
-
+import QrReader from 'react-qr-scanner'
+import * as  XMLParser from 'react-xml-parser';
 const BACKEND_SERVICE_URL = process.env.NEXT_PUBLIC_BACKEND_SERVICE_URL;
 
 // Lottie Options
@@ -44,6 +45,8 @@ const CitizenSurveyPage = ({ params }) => {
     const [isMobile, setIsMobile] = useState(true);
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    const [formEditable, setFormEditable] = useState(false);
 
     console.log("CURR CITIZEN -->", currCitizen)
 
@@ -100,6 +103,21 @@ const CitizenSurveyPage = ({ params }) => {
         }
     }
 
+    const handleScannedAadhaar = (data) => {
+        if (data?.length) {
+            var xml = new XMLParser().parseFromString(data);
+            console.log(xml)
+            let dob = xml?.attributes?.dob.split("/");
+            setFormState({
+                beneficiaryName: xml?.attributes?.name,
+                aadharNumber: xml?.attributes?.uid,
+                dateOfBirth: `${dob[2]}-${dob[1]}-${dob[0]}`,
+                gender: xml?.attributes?.gender == 'F' ? 'female' : xml?.attributes?.gender == 'M' ? 'male' : 'other'
+            })
+            setShowForm(true);
+        }
+    }
+
     return !hydrated ? null : (
         <div className={styles.root}>
             <CommonHeader text={`Citizen Survey`} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
@@ -116,17 +134,31 @@ const CitizenSurveyPage = ({ params }) => {
                         <img src="/assets/survey.png" style={{ opacity: 0.6 }} />
                     </div>
                 </>
-                :
-                <CitizenForm handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
+                : mode == 'manual' && !showForm ?
+                    <CitizenForm mode={mode} formEditable={currCitizen?.status == 'SUBMITTED' ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
+                    : !showForm && <div className={styles.qrContainer}>
+                        <QrReader
+                            delay={100}
+                            style={{
+                                height: 240,
+                                width: 320,
+                            }}
+                            onError={(err) => console.log(err)}
+                            onScan={(data) => handleScannedAadhaar(data?.text)}
+                        />
+                        <p>Align QR Code within the scanner</p>
+                    </div>
             }
+
+            {showForm && <CitizenForm mode={mode} formEditable={formEditable} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />}
 
             {submittedModal && <CommonModal>
                 <div className={styles.submitModal}>
                     <div>
                         <Lottie options={defaultOptions}
                             style={{ marginTop: -40 }}
-                            height={isMobile ? 300 : 300}
-                            width={isMobile ? 300 : 300}
+                            height={200}
+                            width={200}
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center', alignItems: 'center' }}>

@@ -45,7 +45,9 @@ const SurveyPage = ({ params }) => {
     /* Utility Functions */
     const addNewCitizen = () => {
         const newCitId = uuidv4();
-        dispatch(addCitizen({ id: newCitId, formId: 'household-citizen' }))
+        // dispatch(addCitizen({ id: newCitId, formId: 'household-citizen' }))
+        dispatch(setCurrentCitizen({ citizenId: newCitId }));
+        router.push(`/pages/citizen-survey`)
     }
 
     const getVillageData = async () => {
@@ -83,7 +85,8 @@ const SurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()} sx={{ justifyContent: 'space-between !important', padding: '2rem 0rem' }} />
+            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()}
+                sx={{ justifyContent: 'space-between !important', padding: '2rem 0rem' }} />
             <div className={styles.locationItem}>
                 <div>
                     <img src={"/assets/uplogo.png"} />

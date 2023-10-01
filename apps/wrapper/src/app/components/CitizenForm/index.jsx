@@ -5,23 +5,24 @@ import { TextField, Button, InputLabel, Select, MenuItem, FormControl } from '@m
 import CircularProgress from '@mui/material/CircularProgress';
 
 const CitizenForm = (props) => {
-    const { handleSubmit, setFormState, formState, currCitizen, submittedModal, loading } = props;
+    const { handleSubmit, setFormState, formState, currCitizen, submittedModal, loading, formEditable, mode } = props;
+    console.log("FORM EDITABLE -->", formEditable)
     return (
         <form onSubmit={handleSubmit} className={styles.userForm}>
             <TextField
                 variant='standard'
-                label={currCitizen?.status == 'SUBMITTED' ? "" : "Beneficiary Name"}
+                label={!formEditable ? "" : "Beneficiary Name"}
                 onChange={e => setFormState((prevState) => ({ ...prevState, beneficiaryName: e.target.value }))}
                 value={formState?.beneficiaryName}
                 required
                 sx={{ mb: 4, width: '80%' }}
-                disabled={currCitizen?.status == 'SUBMITTED' ? true : false}
+                disabled={!formEditable ? true : false}
 
             />
             <TextField
                 type={"text"}
                 variant='standard'
-                label={currCitizen?.status == 'SUBMITTED' ? "" : "Aadhar Number"}
+                label={!formEditable ? "" : "Aadhar Number"}
                 onChange={e => {
                     if (/^[0-9]*$/.test(e.target.value))
                         setFormState((prevState) => ({ ...prevState, aadharNumber: e.target.value })
@@ -30,21 +31,21 @@ const CitizenForm = (props) => {
                 value={formState?.aadharNumber}
                 required
                 inputProps={{ maxLength: 12, minLength: 12 }}
-                disabled={currCitizen?.status == 'SUBMITTED' ? true : false}
+                disabled={!formEditable ? true : false}
                 sx={{ mb: 4, width: '80%' }}
             />
             <TextField
                 type="date"
                 variant='standard'
-                label={currCitizen?.status == 'SUBMITTED' ? "" : formState?.dateOfBirth ? 'Date Of Birth' : ''}
+                label={!formEditable ? "" : formState?.dateOfBirth ? 'Date Of Birth' : ''}
                 onChange={e => setFormState((prevState) => ({ ...prevState, dateOfBirth: e.target.value }))}
                 value={formState?.dateOfBirth}
                 required
-                disabled={currCitizen?.status == 'SUBMITTED' ? true : false}
+                disabled={!formEditable ? true : false}
                 sx={{ mb: 4, width: '80%' }}
 
             />
-            {currCitizen?.status == 'SUBMITTED'
+            {!formEditable
                 ?
                 <TextField
                     type="text"
@@ -71,7 +72,11 @@ const CitizenForm = (props) => {
                         <MenuItem value={'other'}>Other</MenuItem>
                     </Select>
                 </FormControl>}
-            {!(currCitizen?.status == 'SUBMITTED') && !submittedModal && <Button variant="contained" size="large" type="submit" sx={{ mb: 4, width: '80%' }} className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit'} </Button>}
+            {mode == 'qr' ?
+                !submittedModal && <Button variant="contained" size="large" type="submit" sx={{ mb: 4, width: '80%' }} className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit'} </Button>
+                :
+                formEditable && !submittedModal && <Button variant="contained" size="large" type="submit" sx={{ mb: 4, width: '80%' }} className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit'} </Button>
+            }
         </form>
     )
 };
