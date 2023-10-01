@@ -32,6 +32,9 @@ dependencies:
   '@xstate/react':
     specifier: ^3.2.2
     version: 3.2.2(@types/react@18.2.22)(react@18.2.0)(xstate@4.38.2)
+  '@yudiel/react-qr-scanner':
+    specifier: ^1.1.10
+    version: 1.1.10(react-dom@18.2.0)(react@18.2.0)
   animate.css:
     specifier: ^4.1.1
     version: 4.1.1
@@ -86,9 +89,6 @@ dependencies:
   react-otp-input:
     specifier: ^3.0.2
     version: 3.0.4(react-dom@18.2.0)(react@18.2.0)
-  react-qr-scanner:
-    specifier: 1.0.0-alpha.11
-    version: 1.0.0-alpha.11(react-dom@18.2.0)(react@18.2.0)
   react-redux:
     specifier: ^8.1.1
     version: 8.1.2(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -3254,8 +3254,19 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: false
 
-  /@zxing/library@0.19.3:
-    resolution: {integrity: sha512-RUv5svewpDoD0ymXleOP8yVTO5BLkR0zn5coGC/Vs1671u0OBJ4xdtR8WVWf08OcvrieEMHdSfQY3ZKtqII/hg==}
+  /@yudiel/react-qr-scanner@1.1.10(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-+YIHbnocynkkGgyMK8MMkn1NBnJRwJntdm4shQ+linm4NdGdSAavLYxJYwnk2PixZyVu/GZ3Uc2aM0XWlBq+Zw==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      '@zxing/library': 0.20.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@zxing/library@0.20.0:
+    resolution: {integrity: sha512-6Ev6rcqVjMakZFIDvbUf0dtpPGeZMTfyxYg4HkVWioWeN7cRcnUWT3bU6sdohc82O1nPXcjq6WiGfXX2Pnit6A==}
     engines: {node: '>= 10.4.0'}
     dependencies:
       ts-custom-error: 3.3.1
@@ -7015,18 +7026,6 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-fast-compare: 3.2.2
       warning: 4.0.3
-    dev: false
-
-  /react-qr-scanner@1.0.0-alpha.11(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-TdaygL+4U9iapskJgK5Ilb1Cw4wwzQ3bVpIfzzbrEsxPaEJzmjQ7VuMz8E9hBQGCU4Ee+YtgglE3byEtgtRpkA==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0
-      react-dom: ^17.0.0 || ^18.0.0
-    dependencies:
-      '@zxing/library': 0.19.3
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-redux@8.1.2(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):

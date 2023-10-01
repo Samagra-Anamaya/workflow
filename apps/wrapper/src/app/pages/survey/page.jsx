@@ -12,6 +12,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { TextField } from "@mui/material";
 
 const SurveyPage = ({ params }) => {
     /* Component States and Refs*/
@@ -85,7 +86,7 @@ const SurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()}
+            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()} showLogout={false}
                 sx={{ justifyContent: 'space-between !important', padding: '2rem 0rem' }} />
             <div className={styles.locationItem}>
                 <div>
@@ -108,8 +109,6 @@ const SurveyPage = ({ params }) => {
             {currTab == 1 &&
                 <div className={styles.citizenContainer + ` animate__animated animate__fadeInUp`}>
                     <></>
-                    {/* <p>Citizens</p>
-                <div className={styles.separator}></div> */}
                     {citizens?.length != 0 &&
                         citizens?.map((el, i) => {
                             if (el?.status != 'SUBMITTED') return <div key={el.citizenId} className={styles.householdBtn}
@@ -126,6 +125,12 @@ const SurveyPage = ({ params }) => {
             {currTab == 0 &&
                 <div className={styles.citizenContainer + ` animate__animated animate__fadeInUp`}>
                     <div className={styles.submissionContainer}>
+                        <TextField
+                            label="Search submission here ..."
+                            type="search"
+                            variant="outlined"
+                            style={{ width: '90%' }}
+                        />
                         {prevSubmissions?.length > 0 && prevSubmissions?.map(el => <div key={el.citizenId} className={styles.submittedCitizen}
                             onClick={() => { dispatch(setCurrentCitizen(el)); router.push(`/pages/citizen-survey`) }}>
                             {el?.submissionData?.beneficiaryName}

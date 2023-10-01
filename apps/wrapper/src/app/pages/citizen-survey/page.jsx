@@ -10,8 +10,9 @@ import CommonModal from "../../components/Modal";
 import Lottie from 'react-lottie';
 import { useOfflineSyncContext } from 'offline-sync-handler';
 import CitizenForm from '../../components/CitizenForm';
-import QrReader from 'react-qr-scanner'
-import * as  XMLParser from 'react-xml-parser';
+// import QrReader from 'react-qr-scanner'
+import { QrScanner } from '@yudiel/react-qr-scanner';
+
 const BACKEND_SERVICE_URL = process.env.NEXT_PUBLIC_BACKEND_SERVICE_URL;
 
 // Lottie Options
@@ -103,8 +104,9 @@ const CitizenSurveyPage = ({ params }) => {
         }
     }
 
-    const handleScannedAadhaar = (data) => {
+    const handleScannedAadhaar = async (data) => {
         if (data?.length) {
+            var XMLParser = require('react-xml-parser');
             var xml = new XMLParser().parseFromString(data);
             console.log(xml)
             let dob = xml?.attributes?.dob.split("/");
@@ -120,7 +122,7 @@ const CitizenSurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`Citizen Survey`} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
+            <CommonHeader text={`Citizen Survey`} showLogout={false} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
             {!mode ?
                 <>
 
@@ -137,7 +139,7 @@ const CitizenSurveyPage = ({ params }) => {
                 : mode == 'manual' && !showForm ?
                     <CitizenForm mode={mode} formEditable={currCitizen?.status == 'SUBMITTED' ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
                     : !showForm && <div className={styles.qrContainer}>
-                        <QrReader
+                        {/* <QrReader
                             delay={100}
                             style={{
                                 height: 240,
@@ -145,6 +147,10 @@ const CitizenSurveyPage = ({ params }) => {
                             }}
                             onError={(err) => console.log(err)}
                             onScan={(data) => handleScannedAadhaar(data?.text)}
+                        /> */}
+                        <QrScanner
+                            onDecode={(result) => handleScannedAadhaar(result)}
+                            onError={(error) => console.log(error?.message)}
                         />
                         <p>Align QR Code within the scanner</p>
                     </div>
