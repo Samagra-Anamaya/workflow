@@ -7,12 +7,40 @@ import {
 } from '@nestjs/common';
 import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
-
+import { concat } from 'lodash';
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class SubmissionService {
   private logger: CustomLogger;
   constructor(private prisma: PrismaService) {
     this.logger = new CustomLogger('SubmissionService');
+  }
+
+  async searchByAadhaar(aadhaar: string, villageId: string): Promise<any> {
+    const submissions = await this.prisma.submission.findMany({
+      where: {
+        spdpVillageId: Number(villageId),
+      },
+    });
+
+    const matchingSubmissions = [];
+    for (const submission of submissions) {
+      if (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        submission.submissionData.aadharNumber &&
+        (await bcrypt.compare(
+          aadhaar,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          submission.submissionData.aadharNumber,
+        ))
+      ) {
+        matchingSubmissions.push(submission);
+      }
+    }
+
+    return matchingSubmissions;
   }
 
   async createSubmission(data: any): Promise<any> {
@@ -26,6 +54,12 @@ export class SubmissionService {
           `Village with spdpVillageId ${data.spdpVillageId} not found`,
         );
       }
+      const saltRounds = 10; // Number of salt rounds for bcrypt
+      const hashedAadhar = await bcrypt.hash(
+        data?.submissionData?.aadharNumber,
+        saltRounds,
+      );
+      data.submissionData.aadharNumber = hashedAadhar;
       const submission = await this.prisma.submission.create({
         data,
       });
@@ -48,28 +82,18 @@ export class SubmissionService {
     }
   }
 
-  async searchSubmissions(text: string) {
+  async searchSubmissions(villageId: string, text: string) {
     try {
-      const submissions = await this.prisma.submission.findMany({
-        where: {
-          OR: [
-            {
-              submissionData: {
-                path: ['aadharNumber'],
-                string_contains: text,
-              },
-            },
-            {
-              submissionData: {
-                path: ['beneficiaryName'],
-                string_contains: text,
-              },
-            },
-          ],
-        },
-      });
+      const matchingAadhar = await this.searchByAadhaar(text, villageId);
 
-      return submissions;
+      const submissions = await this.prisma.$queryRawUnsafe(
+        `SELECT * FROM "public"."Submission"
+        WHERE 
+          "spdpVillageId" = ${villageId} AND 
+          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'`,
+      );
+
+      return { result: { submissions: concat(submissions, matchingAadhar) } };
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

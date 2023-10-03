@@ -71,14 +71,22 @@ export class SubmissionController {
     );
   }
 
-  @Get('/search/:text')
-  async searchSubmission(@Param('text') name: string): Promise<any> {
-    if (!name || name.trim().length === 0) {
+  @Get('/search/:villageId/:text')
+  async searchSubmission(
+    @Param('villageId') villageId: string,
+    @Param('text') name: string,
+  ): Promise<any> {
+    if (
+      !name ||
+      name.trim().length === 0 ||
+      !villageId ||
+      villageId.trim().length === 0
+    ) {
       throw new BadRequestException('Invalid input: name cannot be empty');
     }
 
     try {
-      return await this.submissionService.searchSubmissions(name);
+      return await this.submissionService.searchSubmissions(villageId, name);
     } catch (error) {
       this.logger.error(error);
       // Handle specific errors (e.g., database connection, query failure)
