@@ -6,3 +6,5 @@ node_modules
 pgdata
 .DS_Store
 /apps/wrapper/scripts
+/packages/bff/dist
+
