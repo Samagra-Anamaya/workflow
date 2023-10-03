@@ -36,7 +36,8 @@ const userDataSlice = createSlice({
     assignedLocations: [],
     currentLocation: {},
     currentCitizen: {},
-    forms: {}
+    forms: {},
+    searchQuery: {},
   },
   reducers: {
     login: (state, action) => {
@@ -92,6 +93,9 @@ const userDataSlice = createSlice({
     },
     setCurrentCitizen: (state, action) => {
       state.currentCitizen = action.payload
+    },
+    updateSearchQuery: (state, action) => {
+      state.searchQuery = { ...state.searchQuery, [action.payload.villageId]: action.payload.query }
     }
   }
 })
@@ -121,7 +125,8 @@ export const {
   addCitizen,
   saveCitizenFormData,
   addFormUri,
-  setCurrentCitizen
+  setCurrentCitizen,
+  updateSearchQuery
 } = userDataSlice.actions;
 
 export { store, persistor };

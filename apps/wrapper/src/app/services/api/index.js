@@ -415,3 +415,13 @@ export const getVillageSubmissions = async (id, page) => {
     return null;
   }
 }
+
+export const searchCitizen = async (query) => {
+  try {
+    let res = await axios.get(BACKEND_SERVICE_URL + `/submissions/search/${query}`);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}

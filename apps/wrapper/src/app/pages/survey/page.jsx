@@ -5,17 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import CommonHeader from "src/app/components/Commonheader";
 import { v4 as uuidv4 } from 'uuid';
-import { addCitizen, setCurrentCitizen } from "../../redux/store";
-import { getVillageDetails, getVillageSubmissions } from "../../services/api";
+import { addCitizen, setCurrentCitizen, updateSearchQuery } from "../../redux/store";
+import { getVillageDetails, getVillageSubmissions, searchCitizen } from "../../services/api";
 import Pagination from '@mui/material/Pagination';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { TextField } from "@mui/material";
+import { debounce } from "debounce";
 
 const SurveyPage = ({ params }) => {
     /* Component States and Refs*/
+    const userData = useSelector((state) => state?.userData);
     const _currLocation = useSelector((state) => state?.userData?.currentLocation);
     const [hydrated, setHydrated] = React.useState(false);
     const [citizens, setCitizens] = useState(_currLocation?.citizens || []);
@@ -24,6 +26,8 @@ const SurveyPage = ({ params }) => {
     const [currPage, setCurrPage] = React.useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [prevSubmissions, setPrevSubmissions] = useState([]);
+    const [prevTempSubmissions, setPrevTempSubmissions] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -31,8 +35,8 @@ const SurveyPage = ({ params }) => {
     useEffect(() => {
         setHydrated(true);
         console.log(_currLocation)
+        setSearchQuery(userData?.searchQuery?.[_currLocation.villageCode] || "")
         getVillageData();
-        getVillageSubmissionData();
     }, [])
 
     useEffect(() => {
@@ -42,6 +46,16 @@ const SurveyPage = ({ params }) => {
     useEffect(() => {
         getVillageSubmissionData();
     }, [currPage])
+
+    useEffect(() => {
+        async function searchCitizens() {
+            if (searchQuery?.length) {
+                let res = await searchCitizen(searchQuery)
+                setPrevSubmissions(res);
+            } else setPrevSubmissions(prevTempSubmissions)
+        }
+        searchCitizens();
+    }, [searchQuery])
 
     /* Utility Functions */
     const addNewCitizen = () => {
@@ -69,12 +83,18 @@ const SurveyPage = ({ params }) => {
                 console.log("PREV SUBMISSIONS -->", data);
                 if (Object.keys(data)?.length) {
                     setPrevSubmissions(data?.result?.submissions);
+                    setPrevTempSubmissions(data?.result?.submissions)
                     setTotalPages(data?.result?.totalPages)
                 }
             }
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const searchCitizenSubmission = async (e) => {
+        setSearchQuery(e.target.value);
+        dispatch(updateSearchQuery({ villageId: _currLocation.villageCode, query: e.target.value }))
     }
 
     function a11yProps(index) {
@@ -126,9 +146,11 @@ const SurveyPage = ({ params }) => {
                 <div className={styles.citizenContainer + ` animate__animated animate__fadeInUp`}>
                     <div className={styles.submissionContainer}>
                         <TextField
-                            label="Search submission here ..."
+                            label="Search submissions here ..."
                             type="search"
                             variant="outlined"
+                            value={searchQuery}
+                            onChange={searchCitizenSubmission}
                             style={{ width: '90%' }}
                         />
                         {prevSubmissions?.length > 0 && prevSubmissions?.map(el => <div key={el.citizenId} className={styles.submittedCitizen}
@@ -136,7 +158,7 @@ const SurveyPage = ({ params }) => {
                             {el?.submissionData?.beneficiaryName}
                         </div>)}
                     </div>
-                    <Pagination count={totalPages} color="primary" onChange={(event, page) => setCurrPage(page)} className={styles.paginationContainer} />
+                    {!searchQuery && <Pagination count={totalPages} color="primary" onChange={(event, page) => setCurrPage(page)} className={styles.paginationContainer} />}
 
                 </div>
             }
