@@ -416,9 +416,9 @@ export const getVillageSubmissions = async (id, page) => {
   }
 }
 
-export const searchCitizen = async (query) => {
+export const searchCitizen = async (villageId, query) => {
   try {
-    let res = await axios.get(BACKEND_SERVICE_URL + `/submissions/search/${query}`);
+    let res = await axios.get(BACKEND_SERVICE_URL + `/submissions/search/${villageId}/${query}`);
     return res.data;
   } catch (err) {
     console.log(err);

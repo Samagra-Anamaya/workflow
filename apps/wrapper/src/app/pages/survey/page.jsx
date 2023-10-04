@@ -50,8 +50,8 @@ const SurveyPage = ({ params }) => {
     useEffect(() => {
         async function searchCitizens() {
             if (searchQuery?.length) {
-                let res = await searchCitizen(searchQuery)
-                setPrevSubmissions(res);
+                let res = await searchCitizen(_currLocation.villageCode, searchQuery)
+                setPrevSubmissions(res?.result?.submissions || []);
             } else setPrevSubmissions(prevTempSubmissions)
         }
         searchCitizens();
