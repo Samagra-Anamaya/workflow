@@ -42,7 +42,8 @@ export class SubmissionController {
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
 
-      return this.submissionService.getSubmissions(page, limit);
+      //   return this.submissionService.getSubmissions(page, limit);
+      return this.submissionService.getSubmissionsWorkflow({ page, limit });
     } catch (error) {
       // Handle the error appropriately (e.g., logging, throwing, or returning an error response)
       this.logger.error(error);

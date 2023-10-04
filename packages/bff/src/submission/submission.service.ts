@@ -8,11 +8,20 @@ import {
 import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { concat } from 'lodash';
+import { Client } from '@temporalio/client';
 import * as bcrypt from 'bcrypt';
+import { submissionWorkflow } from 'src/temporal-workflows/submission/submission-workflow';
+import { WorkflowClient } from '@temporalio/client';
+import { InjectTemporalClient } from 'nestjs-temporal';
+
 @Injectable()
 export class SubmissionService {
   private logger: CustomLogger;
-  constructor(private prisma: PrismaService) {
+  private readonly client: Client;
+  constructor(
+    private prisma: PrismaService,
+    @InjectTemporalClient() private readonly temporalClient: WorkflowClient,
+  ) {
     this.logger = new CustomLogger('SubmissionService');
   }
 
@@ -193,4 +202,30 @@ export class SubmissionService {
   //     where: { id },
   //   });
   // }
+
+  async getSubmissionsWorkflow(data: any): Promise<void> {
+    try {
+      const result = await this.temporalClient.start(submissionWorkflow, {
+        workflowId: `submission-${new Date().valueOf()}`,
+        args: [data],
+        retry: {
+          maximumAttempts: 3,
+        },
+        taskQueue: 'submission-queries',
+      });
+
+      // Handle the workflow result if needed
+      console.log('Workflow started with result:', result);
+      // result
+      //   .result()
+      //   .then((res) => {
+      //     console.log({ res });
+      //   })
+      //   .catch((error) => console.log({ error }));
+      return result.result();
+    } catch (error) {
+      // Handle any errors from starting the workflow
+      console.error('Failed to start workflow:', error);
+    }
+  }
 }

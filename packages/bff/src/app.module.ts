@@ -12,6 +12,7 @@ import { ScheduleService } from './schedule/schedule.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomLogger } from './common/logger';
+import { SubmissionModule } from './submission/submission.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CustomLogger } from './common/logger';
       secret: 'your-secret-key', // Change this to your secret key
       signOptions: { expiresIn: '1h' }, // Adjust token expiration as needed
     }),
+    SubmissionModule,
   ],
   controllers: [AppController, SubmissionController],
   providers: [
