@@ -7,11 +7,13 @@ import {
 } from '@nestjs/common';
 import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { concat } from 'lodash';
+import { map } from 'lodash';
 import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class SubmissionService {
   private logger: CustomLogger;
+
   constructor(private prisma: PrismaService) {
     this.logger = new CustomLogger('SubmissionService');
   }
@@ -21,6 +23,7 @@ export class SubmissionService {
       where: {
         spdpVillageId: Number(villageId),
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     const matchingSubmissions = [];
@@ -37,10 +40,62 @@ export class SubmissionService {
         ))
       ) {
         matchingSubmissions.push(submission);
+        break;
       }
     }
 
     return matchingSubmissions;
+  }
+
+  async bulkSubmission(data: any): Promise<any> {
+    try {
+      const result = {};
+
+      for (const villageId of Object.keys(data)) {
+        const village = await this.prisma.villageData.findFirst({
+          where: { spdpVillageId: Number(villageId) },
+        });
+
+        if (!village) {
+          throw new NotFoundException(
+            `Village with spdpVillageId ${villageId} not found`,
+          );
+        }
+        const submissionsData = await Promise.all(
+          map(data?.[villageId], async (record) => {
+            const saltRounds = 3; // Number of salt rounds for bcrypt
+            const hashedAadhar = await bcrypt.hash(
+              record?.submissionData?.aadharNumber,
+              saltRounds,
+            );
+            record.submissionData.aadharNumber = hashedAadhar;
+            return record;
+          }),
+        );
+
+        const submissions = await this.prisma.submission.createMany({
+          data: submissionsData,
+        });
+
+        const newVillageData = await this.prisma.villageData.update({
+          where: {
+            spdpVillageId: Number(villageId),
+          },
+          data: {
+            surveySubmitted: { increment: Number(submissionsData?.length) },
+          },
+        });
+        result[villageId] = {
+          submissions: submissions,
+          villageData: newVillageData,
+        };
+      }
+
+      return result;
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async createSubmission(data: any): Promise<any> {
@@ -54,7 +109,7 @@ export class SubmissionService {
           `Village with spdpVillageId ${data.spdpVillageId} not found`,
         );
       }
-      const saltRounds = 10; // Number of salt rounds for bcrypt
+      const saltRounds = 3; // Number of salt rounds for bcrypt
       const hashedAadhar = await bcrypt.hash(
         data?.submissionData?.aadharNumber,
         saltRounds,
@@ -84,16 +139,19 @@ export class SubmissionService {
 
   async searchSubmissions(villageId: string, text: string) {
     try {
-      const matchingAadhar = await this.searchByAadhaar(text, villageId);
-
-      const submissions = await this.prisma.$queryRawUnsafe(
-        `SELECT * FROM "public"."Submission"
+      let submissions;
+      if (!Number.isNaN(Number(text))) {
+        submissions = await this.searchByAadhaar(text, villageId);
+      } else {
+        submissions = await this.prisma.$queryRawUnsafe(
+          `SELECT * FROM "public"."Submission"
         WHERE 
           "spdpVillageId" = ${villageId} AND 
-          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'`,
-      );
+          "submissionData"->>'beneficiaryName' ILIKE '%${text}%' LIMIT 10`,
+        );
+      }
 
-      return { result: { submissions: concat(submissions, matchingAadhar) } };
+      return { result: { submissions } };
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,7 +167,6 @@ export class SubmissionService {
     });
 
     const totalCount = await this.prisma.submission.count();
-
     return {
       result: {
         submissions,
