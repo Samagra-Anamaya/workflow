@@ -23,7 +23,6 @@ export class AuthGuard implements CanActivate {
     });
 
     this.getKey = (header: jwt.JwtHeader, callback: any) => {
-      console.log({ header });
       this.client.getSigningKey(header.kid, (err, key: any) => {
         if (err) {
           this.logger.error(`Error fetching signing key: ${err}`);
@@ -42,7 +41,7 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const bearerToken = request.headers.authorization?.split(' ')[1];
-    console.log({ bearerToken });
+
     if (!bearerToken) {
       return false;
     }
