@@ -7,21 +7,14 @@ import {
 } from '@nestjs/common';
 import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { concat } from 'lodash';
-import { Client } from '@temporalio/client';
+import { map } from 'lodash';
 import * as bcrypt from 'bcrypt';
-import { submissionWorkflow } from 'src/temporal-workflows/submission/submission-workflow';
-import { WorkflowClient } from '@temporalio/client';
-import { InjectTemporalClient } from 'nestjs-temporal';
 
 @Injectable()
 export class SubmissionService {
   private logger: CustomLogger;
-  private readonly client: Client;
-  constructor(
-    private prisma: PrismaService,
-    @InjectTemporalClient() private readonly temporalClient: WorkflowClient,
-  ) {
+
+  constructor(private prisma: PrismaService) {
     this.logger = new CustomLogger('SubmissionService');
   }
 
@@ -30,6 +23,7 @@ export class SubmissionService {
       where: {
         spdpVillageId: Number(villageId),
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     const matchingSubmissions = [];
@@ -46,10 +40,62 @@ export class SubmissionService {
         ))
       ) {
         matchingSubmissions.push(submission);
+        break;
       }
     }
 
     return matchingSubmissions;
+  }
+
+  async bulkSubmission(data: any): Promise<any> {
+    try {
+      const result = {};
+
+      for (const villageId of Object.keys(data)) {
+        const village = await this.prisma.villageData.findFirst({
+          where: { spdpVillageId: Number(villageId) },
+        });
+
+        if (!village) {
+          throw new NotFoundException(
+            `Village with spdpVillageId ${villageId} not found`,
+          );
+        }
+        const submissionsData = await Promise.all(
+          map(data?.[villageId], async (record) => {
+            const saltRounds = 3; // Number of salt rounds for bcrypt
+            const hashedAadhar = await bcrypt.hash(
+              record?.submissionData?.aadharNumber,
+              saltRounds,
+            );
+            record.submissionData.aadharNumber = hashedAadhar;
+            return record;
+          }),
+        );
+
+        const submissions = await this.prisma.submission.createMany({
+          data: submissionsData,
+        });
+
+        const newVillageData = await this.prisma.villageData.update({
+          where: {
+            spdpVillageId: Number(villageId),
+          },
+          data: {
+            surveySubmitted: { increment: Number(submissionsData?.length) },
+          },
+        });
+        result[villageId] = {
+          submissions: submissions,
+          villageData: newVillageData,
+        };
+      }
+
+      return result;
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async createSubmission(data: any): Promise<any> {
@@ -63,7 +109,7 @@ export class SubmissionService {
           `Village with spdpVillageId ${data.spdpVillageId} not found`,
         );
       }
-      const saltRounds = 10; // Number of salt rounds for bcrypt
+      const saltRounds = 3; // Number of salt rounds for bcrypt
       const hashedAadhar = await bcrypt.hash(
         data?.submissionData?.aadharNumber,
         saltRounds,
@@ -93,16 +139,19 @@ export class SubmissionService {
 
   async searchSubmissions(villageId: string, text: string) {
     try {
-      const matchingAadhar = await this.searchByAadhaar(text, villageId);
-
-      const submissions = await this.prisma.$queryRawUnsafe(
-        `SELECT * FROM "public"."Submission"
+      let submissions;
+      if (!Number.isNaN(Number(text))) {
+        submissions = await this.searchByAadhaar(text, villageId);
+      } else {
+        submissions = await this.prisma.$queryRawUnsafe(
+          `SELECT * FROM "public"."Submission"
         WHERE 
           "spdpVillageId" = ${villageId} AND 
-          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'`,
-      );
+          "submissionData"->>'beneficiaryName' ILIKE '%${text}%' LIMIT 10`,
+        );
+      }
 
-      return { result: { submissions: concat(submissions, matchingAadhar) } };
+      return { result: { submissions } };
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -118,7 +167,6 @@ export class SubmissionService {
     });
 
     const totalCount = await this.prisma.submission.count();
-
     return {
       result: {
         submissions,
@@ -203,29 +251,50 @@ export class SubmissionService {
   //   });
   // }
 
-  async getSubmissionsWorkflow(data: any): Promise<void> {
-    try {
-      const result = await this.temporalClient.start(submissionWorkflow, {
-        workflowId: `submission-${new Date().valueOf()}`,
-        args: [data],
-        retry: {
-          maximumAttempts: 3,
-        },
-        taskQueue: 'submission-queries',
-      });
+  // async getSubmissionsWorkflow(data: any): Promise<any> {
+  //   try {
+  //     // const workflow = await this.temporalClient.start('example', {
+  //     //   workflowId: `submission-${new Date().valueOf()}`,
+  //     //   args: [data],
+  //     //   retry: {
+  //     //     maximumAttempts: 3,
+  //     //   },
+  //     //   taskQueue: 'submission-queries',
+  //     // });
+  //     const handle = await this.temporalClient.start('example', {
+  //       args: ['Temporal'],
+  //       taskQueue: 'default',
+  //       workflowId: 'wf-id-' + Math.floor(Math.random() * 1000),
+  //     });
+  //     handle
+  //       .result()
+  //       .then((res) => {
+  //         console.log({ res });
+  //       })
+  //       .catch((err) => {
+  //         console.log({ err });
+  //       });
 
-      // Handle the workflow result if needed
-      console.log('Workflow started with result:', result);
-      // result
-      //   .result()
-      //   .then((res) => {
-      //     console.log({ res });
-      //   })
-      //   .catch((error) => console.log({ error }));
-      return result.result();
-    } catch (error) {
-      // Handle any errors from starting the workflow
-      console.error('Failed to start workflow:', error);
-    }
-  }
+  //     console.log(`Started workflow ${handle.workflowId}`);
+
+  //     // Handle the workflow result if needed
+  //     // console.log('Workflow started with result:', workflow);
+
+  //     // const workflowResult = await workflow.result();
+
+  //     // Log the workflow result
+  //     // console.log('Workflow result:', workflowResult);
+
+  //     // const rr = handle.client.execute('example', {
+  //     //   args: ['Temporal'],
+  //     //   taskQueue: 'default',
+  //     //   workflowId: 'wf-id-' + Math.floor(Math.random() * 1000),
+  //     // });
+  //     // return rr;
+  //     return handle.workflowId;
+  //   } catch (error) {
+  //     // Handle any errors from starting the workflow
+  //     console.error('Failed to start workflow:', error);
+  //   }
+  // }
 }

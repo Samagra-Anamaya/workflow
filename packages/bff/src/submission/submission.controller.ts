@@ -10,18 +10,23 @@ import {
   UseFilters,
   BadRequestException,
   InternalServerErrorException,
+  // UseGuards,
+  // Headers,
 } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { Submission } from '@prisma/client';
 import {
+  BulkSubmissionDto,
   CreateSubmissionDto,
   GetAllSubmissionsDto,
   UpdateSubmissionDto,
 } from './dto/submission.dto';
 import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
 import { CustomLogger } from 'src/common/logger';
+//import { AuthGuard } from 'src/common/auth-gaurd';
 
 @Controller('submissions')
+// @UseGuards(AuthGuard)
 @UseFilters(PrismaExceptionFilter)
 export class SubmissionController {
   private logger: CustomLogger;
@@ -36,14 +41,23 @@ export class SubmissionController {
     return this.submissionService.createSubmission(createSubmissionDto);
   }
 
+  @Post('/bulk')
+  async createBulkSubmission(
+    @Body() bulkData: BulkSubmissionDto,
+  ): Promise<any> {
+    return this.submissionService.bulkSubmission(bulkData);
+  }
+
   @Get()
-  async getAllSubmissions(@Query() query: GetAllSubmissionsDto): Promise<any> {
+  async getAllSubmissions(
+    @Query() query: GetAllSubmissionsDto,
+    //@Headers('authorization') authorization: string,
+  ): Promise<any> {
     try {
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
 
-      //   return this.submissionService.getSubmissions(page, limit);
-      return this.submissionService.getSubmissionsWorkflow({ page, limit });
+      return this.submissionService.getSubmissions(page, limit);
     } catch (error) {
       // Handle the error appropriately (e.g., logging, throwing, or returning an error response)
       this.logger.error(error);

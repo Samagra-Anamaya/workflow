@@ -74,3 +74,24 @@ export class UpdateSubmissionDto {
   @ApiProperty()
   data: SubmissionData;
 }
+
+class BulkSubmissionDto {
+  @ApiProperty({
+    type: CreateSubmissionDto,
+    isArray: true,
+    description:
+      'An array of village submissions.Replace VillageId_x with proper villageId',
+  })
+  // You can also use `isArray: false` if it's not an array
+  villageId_1: CreateSubmissionDto[];
+
+  @ApiProperty({
+    type: CreateSubmissionDto,
+    isArray: true,
+    description:
+      'An array of village submissions.Replace VillageId_x with proper villageId',
+  })
+  villageId_2: CreateSubmissionDto[];
+}
+
+export { BulkSubmissionDto };
