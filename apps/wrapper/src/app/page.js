@@ -13,6 +13,8 @@ function App() {
     <div className="App">
       <Login />
       <Toaster />
+      <div className="color-halo-1"></div>
+      <div className="color-halo-2"></div>
     </div >
   );
 

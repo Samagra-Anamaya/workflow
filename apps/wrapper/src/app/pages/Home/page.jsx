@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ROUTE_MAP from "../../services/routing/routeMap";
 import styles from './index.module.scss';
 import Button from "@mui/material/Button";
@@ -8,6 +8,7 @@ import { userLogin } from "../../services/api";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { login } from '../../redux/store';
+import GovtBanner from '../../components/GovtBanner';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const Home = () => {
   const [usernameError, setUsernameError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   // Utility function to check if user is admin
   function userIsAdminForPortal(registrations) {
@@ -26,6 +28,13 @@ const Home = () => {
       currentRegistration.roles.includes("Admin")
     );
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000)
+
+  }, [])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -73,35 +82,46 @@ const Home = () => {
 
   return (
     <div className={styles.root}>
-      <div className={styles.text}>
-        <h2> Data Collection App</h2>
-        <p> Welcome Back</p>
-      </div>
-      <form autoComplete="off" onSubmit={handleSubmit}>
-        <TextField
-          label="Username"
-          onChange={e => setUsername(e.target.value)}
-          required
-          variant="outlined"
-          sx={{ mb: 3 }}
-          fullWidth
-          value={username}
-          error={usernameError}
-        />
-        <TextField
-          label="Password"
-          onChange={e => setPassword(e.target.value)}
-          required
-          variant="outlined"
-          type="password"
-          value={password}
-          error={passwordError}
-          fullWidth
-          sx={{ mb: 3 }}
-        />
-        <Button variant="outlined" color="primary" fullWidth type="submit" sx={{ padding: 1 }}>Login</Button>
-
-      </form>
+      {loading ?
+        <div className="animate__animated animate__fadeIn">
+          <GovtBanner />
+        </div>
+        :
+        <>
+          <div className={styles.loginContainer}>
+            <GovtBanner />
+            <div className={styles.text + " animate__animated animate__fadeInDown"}>
+              <p> Data Collection App</p>
+            </div>
+            <div className={styles.loginFormContainer}>
+              <p className={styles.loginText}><strong>Login to your account</strong></p>
+              <form autoComplete="off" onSubmit={handleSubmit} className={styles.loginForm + " animate__animated animate__fadeInDown"}>
+                <TextField
+                  label="Username"
+                  onChange={e => setUsername(e.target.value)}
+                  required
+                  variant="filled"
+                  sx={{ mb: 3 }}
+                  fullWidth
+                  value={username}
+                  error={usernameError}
+                />
+                <TextField
+                  label="Password"
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  variant="filled"
+                  type="password"
+                  value={password}
+                  error={passwordError}
+                  fullWidth
+                  sx={{ mb: 3 }}
+                />
+                <Button variant="contained" color="success" type="submit" sx={{ padding: 1, width: '80%', height: '4rem', fontSize: 16, marginTop: 5 }}>Login</Button>
+              </form>
+            </div>
+          </div>
+        </>}
     </div>
   );
 };

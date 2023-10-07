@@ -73,9 +73,9 @@ const CitizenForm = (props) => {
                     </Select>
                 </FormControl>}
             {mode == 'qr' ?
-                !submittedModal && <Button variant="contained" size="large" type="submit" sx={{ mb: 4, width: '80%' }} className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit'} </Button>
+                !submittedModal && <Button variant="contained" color="success" size="large" type="submit" className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit Form'} </Button>
                 :
-                formEditable && !submittedModal && <Button variant="contained" size="large" type="submit" sx={{ mb: 4, width: '80%' }} className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit'} </Button>
+                formEditable && !submittedModal && <Button variant="contained" color="success" size="large" type="submit" className={styles.submitBtn}>{loading ? <CircularProgress color="inherit" /> : 'Submit Form'} </Button>
             }
         </form>
     )

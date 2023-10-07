@@ -32,6 +32,29 @@ body {
   width: 100vw;
 }
 
+.color-halo-1 {
+  position: absolute;
+  top: -150px;
+  right: -150px;
+  background: radial-gradient(circle, #FFE5D0, transparent, transparent);
+  height: 25rem;
+  z-index: -1;
+  width: 25rem;
+  border-radius: 50%;
+}
+
+.color-halo-2 {
+  position: absolute;
+  top: 25%;
+  left: -200px;
+  background: radial-gradient(circle, #FFCBD3, transparent, transparent);
+  height: 25rem;
+  width: 25rem;
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.8;
+}
+
 @media only screen and (min-width: 600px) {
   .App {
     width: 40vw;

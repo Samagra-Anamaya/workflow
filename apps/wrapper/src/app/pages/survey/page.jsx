@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './index.module.scss';
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { TextField } from "@mui/material";
 import { debounce } from "debounce";
+import GovtBanner from "../../components/GovtBanner";
+import SelectionItem from '../../components/SelectionItem';
 
 const SurveyPage = ({ params }) => {
     /* Component States and Refs*/
@@ -30,9 +32,11 @@ const SurveyPage = ({ params }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter();
     const dispatch = useDispatch();
+    const containerRef = useRef();
 
     /* Use Effects */
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setHydrated(true);
         console.log(_currLocation)
         setSearchQuery(userData?.searchQuery?.[_currLocation.villageCode] || "")
@@ -56,6 +60,13 @@ const SurveyPage = ({ params }) => {
         }
         searchCitizens();
     }, [searchQuery])
+
+    useEffect(() => {
+        if (containerRef.current) {
+            console.log("ref->", containerRef.current)
+            containerRef.current.scrollIntoView();
+        }
+    })
 
     /* Utility Functions */
     const addNewCitizen = () => {
@@ -92,76 +103,51 @@ const SurveyPage = ({ params }) => {
         }
     }
 
-    const searchCitizenSubmission = async (e) => {
-        setSearchQuery(e.target.value);
-        dispatch(updateSearchQuery({ villageId: _currLocation.villageCode, query: e.target.value }))
-    }
-
-    function a11yProps(index) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
-
     return !hydrated ? null : (
-        <div className={styles.root}>
-            <CommonHeader text={`${_currLocation?.villageName} Survey`} onBack={() => router.back()} showLogout={false}
-                sx={{ justifyContent: 'space-between !important', padding: '2rem 0rem' }} />
-            <div className={styles.locationItem}>
-                <div>
-                    <img src={"/assets/uplogo.png"} />
-                </div>
-                <div>
-                    <p>{_currLocation?.villageName} - {_currLocation?.villageCode}</p>
-                </div>
-            </div>
-            <div style={{ fontSize: 18, marginBottom: 10 }}>Surveys to conduct: {villageData?.surveyToConduct}</div>
-            <div style={{ fontSize: 18 }}>Total surveys completed: {villageData?.surveySubmitted}</div>
+        <div className={styles.container} ref={containerRef} >
+            <GovtBanner sx={{ paddingTop: '2rem' }} />
+            <CommonHeader
+                onBack={() => router.back()}
+                text={'Hello there 👋'}
+                subText={`Enumerator ID : ${userData?.user?.user?.username}`}
+                showLogout={false}
+                sx={{ justifyContent: 'space-between !important', padding: '2rem 1rem' }}
+            />
 
-
-            <Box sx={{ marginTop: 2, borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={currTab} onChange={(event, newValue) => setCurrTab(newValue)} aria-label="basic tabs example" >
-                    <Tab label="Previous Submissions" {...a11yProps(0)} />
-                    <Tab label="Create Submission" {...a11yProps(1)} />
-                </Tabs>
-            </Box>
-            {currTab == 1 &&
-                <div className={styles.citizenContainer + ` animate__animated animate__fadeInUp`}>
-                    <></>
-                    {citizens?.length != 0 &&
-                        citizens?.map((el, i) => {
-                            if (el?.status != 'SUBMITTED') return <div key={el.citizenId} className={styles.householdBtn}
-                                onClick={() => { dispatch(setCurrentCitizen(el)); router.push(`/pages/citizen-survey`) }}>
-                                Citizen {i + 1}
-                            </div>
-                        }
-                        )}
-                    <div className={styles.addNewBtn} onClick={addNewCitizen}>
-                        + Add New
-                    </div>
-                </div>
-            }
-            {currTab == 0 &&
-                <div className={styles.citizenContainer + ` animate__animated animate__fadeInUp`}>
-                    <div className={styles.submissionContainer}>
-                        <TextField
-                            label="Search submissions here ..."
-                            type="search"
-                            variant="outlined"
-                            value={searchQuery}
-                            onChange={searchCitizenSubmission}
-                            style={{ width: '90%' }}
-                        />
-                        {prevSubmissions?.length > 0 && prevSubmissions?.map(el => <div key={el.citizenId} className={styles.submittedCitizen}
-                            onClick={() => { dispatch(setCurrentCitizen(el)); router.push(`/pages/citizen-survey`) }}>
-                            {el?.submissionData?.beneficiaryName}
-                        </div>)}
-                    </div>
-                    {!searchQuery && <Pagination count={totalPages} color="primary" onChange={(event, page) => setCurrPage(page)} className={styles.paginationContainer} />}
-
-                </div>
-            }
+            <SelectionItem
+                key={_currLocation.id}
+                leftImage={'/assets/villageIcon.png'}
+                mainText={_currLocation.villageName}
+                mainSubtext={"Village Code - " + _currLocation.villageCode}
+                sx={{ width: '90%', background: '#fff', minHeight: '15vh' }}
+                mode={1}
+            />
+            <SelectionItem
+                key={_currLocation.id}
+                leftImage={'/assets/citizen.png'}
+                sx={{ width: '90%' }}
+                rightImage={'/assets/circleArrow.png'}
+                onClick={addNewCitizen}
+                mainText={'Add New Citizen'}
+            />
+            <SelectionItem
+                key={_currLocation.id}
+                onClick={() => { }}
+                leftImage={'/assets/assessment.png'}
+                rightImage={'/assets/circleArrow.png'}
+                sx={{ width: '90%' }}
+                mainText={'View Completed Entries'}
+                href="/pages/completed-entries"
+            />
+            <SelectionItem
+                key={_currLocation.id}
+                onClick={() => { }}
+                leftImage={'/assets/unresolvedFlags.png'}
+                sx={{ width: '90%' }}
+                mainText={'Unresolved Flags'}
+                rightImage={'/assets/circleArrow.png'}
+                href="/pages/unresolved-flags"
+            />
 
         </div >
     );

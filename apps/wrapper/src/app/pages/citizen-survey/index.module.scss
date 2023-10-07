@@ -15,54 +15,47 @@
 
     .collectionMode {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         width: 80%;
-        background: red;
-        padding: 1rem 0rem;
-        margin-top: 3rem;
-        margin-bottom: 1rem;
         border-radius: 0.5rem;
-        justify-content: space-evenly;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        padding: 2rem;
+        background: #007922;
         align-items: center;
-        align-items: center;
-        appearance: none;
-        background-color: #FCFCFD;
-        border-radius: 4px;
-        border-width: 0;
-        box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-        box-sizing: border-box;
-        color: #36395A;
-        cursor: pointer;
-        line-height: 1;
-        list-style: none;
-        overflow: hidden;
-        position: relative;
-        text-align: left;
-        text-decoration: none;
-        transition: box-shadow .15s, transform .15s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        white-space: nowrap;
-        will-change: box-shadow, transform;
-        font-size: 18px;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: bolder;
+        margin-bottom: 2rem;
+        gap: 1rem;
 
-        &:focus {
-            box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+        &>div:nth-child(1) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 0.5rem;
+            width: 5rem;
+            height: 5rem;
+
+            img {
+                width: 60%;
+            }
         }
 
-        &:hover {
-            box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
-            transform: translateY(-2px);
-        }
+        &>div:nth-child(3) {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-evenly;
+            background: #fff;
+            border-radius: 0.5rem;
+            color: #007922;
+            margin-top: -1rem;
+            padding: 0.25rem;
 
-        &:active {
-            box-shadow: #D6D6E7 0 3px 7px inset;
-            transform: translateY(2px);
-        }
-
-        img {
-            height: 4rem;
+            img {
+                width: 25%;
+            }
         }
     }
 

@@ -47,56 +47,6 @@
         }
     }
 
-    // .surveyInfoContainer {
-    //     display: flex;
-    //     flex-direction: row;
-    //     width: 90%;
-
-    //     .surveyBox {
-    //         display: flex;
-    //         flex-direction: column;
-    //         width: 50%;
-    //         height: 6rem;
-    //         align-items: center;
-    //         justify-content: center;
-    //         border-radius: 0.5rem;
-    //         transition: 0.5s;
-    //         background-size: 200% auto;
-    //         color: white;
-    //         border: 0px;
-    //         font-weight: 700;
-    //         box-shadow: 0px 0px 14px -7px #f09819;
-    //         background-image: linear-gradient(45deg, #FF512F 0%, #F09819 51%, #FF512F 100%);
-    //         cursor: pointer;
-    //         user-select: none;
-    //         -webkit-user-select: none;
-    //         touch-action: manipulation;
-
-    //         & p:nth-child(1) {
-    //             line-height: 0rem;
-    //             font-size: 2rem;
-    //         }
-
-    //         & p:nth-child(2) {
-    //             font-size: 1.2rem;
-    //             line-height: 0rem;
-    //         }
-
-
-    //         &:hover {
-    //             background-position: right center;
-    //             /* change the direction of the change here */
-    //             color: #fff;
-    //             text-decoration: none;
-    //         }
-
-    //         &:active {
-    //             transform: scale(0.95);
-    //         }
-    //     }
-
-    // }
-
     .citizenContainer {
         display: flex;
         flex-direction: column;
@@ -164,6 +114,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: -4rem;
+            margin-bottom: 2rem;
         }
 
     }

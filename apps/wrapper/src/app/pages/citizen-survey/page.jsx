@@ -12,6 +12,7 @@ import { useOfflineSyncContext } from 'offline-sync-handler';
 import CitizenForm from '../../components/CitizenForm';
 // import QrReader from 'react-qr-scanner'
 import { QrScanner } from '@yudiel/react-qr-scanner';
+import GovtBanner from "../../components/GovtBanner";
 
 const BACKEND_SERVICE_URL = process.env.NEXT_PUBLIC_BACKEND_SERVICE_URL;
 
@@ -66,6 +67,7 @@ const CitizenSurveyPage = ({ params }) => {
 
     /* Util Functions */
     const handleSubmit = async (e) => {
+        if (loading) return;
         try {
             setLoading(true);
             e.preventDefault();
@@ -109,12 +111,31 @@ const CitizenSurveyPage = ({ params }) => {
             var XMLParser = require('react-xml-parser');
             var xml = new XMLParser().parseFromString(data);
             console.log(xml)
-            let dob = xml?.attributes?.dob.split("/");
+            let dob = "";
+            let gender = "";
+
+            // Handling DOB discrepancy
+            if (xml?.attributes?.dob?.includes("/")) {
+                let dobArr = xml?.attributes?.dob.split("/");
+                dob = `${dobArr[2]}-${dobArr[1]}-${dobArr[0]}`;
+            }
+            else {
+                let dobArr = xml?.attributes?.dob.split("-");
+                dob = `${dobArr[0]}-${dobArr[1]}-${dobArr[2]}`;
+            }
+
+            // Handling gender discrepancy
+            if (xml?.attributes?.gender?.length == 1) {
+                gender = xml?.attributes?.gender == 'F' ? 'female' : xml?.attributes?.gender == 'M' ? 'male' : 'other';
+            } else {
+                gender = xml?.attributes?.gender?.toLowerCase();
+            }
+
             setFormState({
                 beneficiaryName: xml?.attributes?.name,
                 aadharNumber: xml?.attributes?.uid,
-                dateOfBirth: `${dob[2]}-${dob[1]}-${dob[0]}`,
-                gender: xml?.attributes?.gender == 'F' ? 'female' : xml?.attributes?.gender == 'M' ? 'male' : 'other'
+                dateOfBirth: dob,
+                gender: gender
             })
             setShowForm(true);
         }
@@ -122,18 +143,30 @@ const CitizenSurveyPage = ({ params }) => {
 
     return !hydrated ? null : (
         <div className={styles.root}>
-            <CommonHeader text={`Citizen Survey`} showLogout={false} onBack={() => router.back()} sx={{ padding: '2rem 0rem' }} />
+            <GovtBanner sx={{ paddingTop: '2rem' }} />
+            <CommonHeader
+                onBack={() => router.back()}
+                text={'Citizen Survey'}
+                showLogout={false}
+                sx={{ justifyContent: 'space-between !important', padding: '2rem 1rem' }} />
+
             {!mode ?
                 <>
-
-                    <p className={styles.commonHeading}>How do you want to fill survey?</p>
                     <div className={styles.collectionMode} onClick={() => setMode('qr')}>
-                        <div>Scan Aadhar QR</div>
-                        <img src="/assets/scanQr.png" />
+                        <div><img src="/assets/qr.png" /></div>
+                        <p>Scan Aadhar QR</p>
+                        <div>
+                            <span>Scan</span>
+                            <img src="/assets/circleArrowGreen.png" />
+                        </div>
                     </div>
                     <div className={styles.collectionMode} onClick={() => setMode('manual')}>
-                        <div>Fill Manually</div>
-                        <img src="/assets/survey.png" style={{ opacity: 0.6 }} />
+                        <div><img src="/assets/docFill.png" /></div>
+                        <p>Fill Form Manually</p>
+                        <div>
+                            <span>Fill Form</span>
+                            <img src="/assets/circleArrowGreen.png" />
+                        </div>
                     </div>
                 </>
                 : mode == 'manual' && !showForm ?
@@ -170,7 +203,7 @@ const CitizenSurveyPage = ({ params }) => {
                     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                         <p style={{ fontSize: '1.5rem', marginTop: -40, fontWeight: 600 }}>Citizen Data Submitted</p>
                         <p>You will get edit access after next cycle</p>
-                        <div onClick={() => router.back()} style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#1e2061', height: '2.5rem', borderRadius: '0.25rem', color: '#fff', marginTop: 30 }}>Go to village list</div>
+                        <div onClick={() => router.back()} style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#017922', height: '3.5rem', borderRadius: '0.75rem', color: '#fff', marginTop: 30 }}>End Survey</div>
                     </div>
                 </div>
             </CommonModal>}

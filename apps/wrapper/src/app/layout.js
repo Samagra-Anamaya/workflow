@@ -10,6 +10,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { analytics } from './services/firebase/firebase';
 import { logEvent } from "firebase/analytics";
+import 'semantic-ui-css/semantic.min.css'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 
 export default function RootLayout({ children }) {
   const [hydrated, setHydrated] = useState(false);
@@ -117,6 +123,8 @@ export default function RootLayout({ children }) {
           pauseOnHover
           theme="light"
         />
+        <div className="color-halo-1"></div>
+        <div className="color-halo-2"></div>
       </body>
 
     </html>

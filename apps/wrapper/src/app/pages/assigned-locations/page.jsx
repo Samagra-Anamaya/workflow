@@ -1,9 +1,12 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './index.module.scss';
-import LocationItem from "src/app/components/LocationItem";
+import SelectionItem from "src/app/components/SelectionItem";
 import { useSelector } from "react-redux";
-import CommonHeader from "src/app/components/Commonheader";
+import { useDispatch } from "react-redux";
+import GovtBanner from "../../components/GovtBanner";
+import { setCurrentLocation } from "../../redux/store";
+import CommonHeader from '../../components/Commonheader';
 
 const AssignedLocations = () => {
 
@@ -11,35 +14,62 @@ const AssignedLocations = () => {
   const assignedLocations = useSelector((state) => state?.userData?.assignedLocations);
   const user = useSelector((state) => state?.userData?.user);
   const [locations, setLocations] = useState([]);
-
+  const dispatch = useDispatch();
+  const containerRef = useRef();
 
   useEffect(() => {
     setHydrated(true);
     setLocations(assignedLocations || []);
   }, [])
 
+  useEffect(() => {
+    if (containerRef.current) {
+      console.log("ref->", containerRef.current)
+      containerRef.current.scrollIntoView();
+    }
+  })
+
   console.log("AL ----->", locations)
   console.log("User", user)
 
   return !hydrated ? null : (
-    <div className={styles.container}>
-      <CommonHeader text={'Data Collection App'} showBack={false} sx={{ padding: 0, justifyContent: 'center', marginBottom: 30 }} />
+    <div className={styles.container + " animate__animated animate__fadeIn"} ref={containerRef}>
+      <GovtBanner />
       <div className={styles.mainContent}>
-        <div className={styles.enmCard}>
-          <p>Welcome {user?.user?.username}</p>
-          <div className={styles.enmCardInfo}>
-            <div>Villages in GP: {assignedLocations?.length || 0}</div>
-            <div className={styles.separator}></div>
-            <div>Completed Villages: NA</div>
+        <CommonHeader
+          text={'Hello there 👋'}
+          subText={`Enumerator ID : ${user?.user?.username}`}
+          showBack={false}
+        />
+        <div className={styles.userInfoCard}>
+          <img src="/assets/infoHeaderIcon.png" />
+          <div className={styles.infoitem}>
+            <div>Total Villages Assigned</div>
+            <div>{locations?.length}</div>
+          </div>
+          <div className={styles.infoitem}>
+            <div>Total Entries Made</div>
+            <div>6</div>
+          </div>
+          <div className={styles.infoitem}>
+            <div>Total Unresolved Flags</div>
+            <div>0</div>
           </div>
         </div>
-        <div className={styles.divider}></div>
-        <div>
-          <h3>Assigned Villages</h3>
-          {locations?.length > 0 && locations?.map(el => <LocationItem key={el.id} {...el} />)}
+        <div className={styles.assignedLocations}>
+          <p>Assigned Villages</p>
+          {locations?.length > 0 && locations?.map(el => <SelectionItem
+            key={el.villageCode}
+            onClick={() => { dispatch(setCurrentLocation(el)) }}
+            leftImage={'/assets/villageIcon.png'}
+            mainText={el.villageName}
+            mainSubtext={"Village Code - " + el.villageCode}
+            rightImage={'/assets/circleArrow.png'}
+            href="/pages/survey"
+          />)}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
