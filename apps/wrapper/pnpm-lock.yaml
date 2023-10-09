@@ -74,9 +74,9 @@ dependencies:
   next-pwa:
     specifier: ^5.6.0
     version: 5.6.0(@babel/core@7.22.20)(next@13.4.9)(webpack@5.88.2)
-  offline-sync-handler:
-    specifier: ^0.1.10
-    version: 0.1.10(react-dom@18.2.0)(react@18.2.0)
+  offline-sync-handler-test:
+    specifier: ^0.1.55
+    version: 0.1.55(react@18.2.0)
   postcss:
     specifier: 8.4.25
     version: 8.4.25
@@ -6600,8 +6600,8 @@ packages:
       has-symbols: 1.0.3
       object-keys: 1.1.1
 
-  /offline-sync-handler@0.1.10(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-QyhyZn5OBFoR1Eb8a/7bi+hs6WAlFUP8DNVThSZ2B/Yq4jXsrfCn5H9v2I+yorQcH1DQ63QsYJO0AEq0liZBVA==}
+  /offline-sync-handler-test@0.1.55(react@18.2.0):
+    resolution: {integrity: sha512-P2vnZUoGx0o9f8pvKuSrmk2eBF9jEpnHOPD7Zp8UTei05Ble6rk2Y/MDnKB16RHV0vHuqkVfchEBjomPcpmNSw==}
     engines: {node: '>=10'}
     peerDependencies:
       react: '>=16'
@@ -6609,11 +6609,9 @@ packages:
       axios: 1.5.0
       localforage: 1.10.0
       react: 18.2.0
-      react-toastify: 9.1.3(react-dom@18.2.0)(react@18.2.0)
       underscore: 1.13.6
     transitivePeerDependencies:
       - debug
-      - react-dom
     dev: false
 
   /once@1.4.0:

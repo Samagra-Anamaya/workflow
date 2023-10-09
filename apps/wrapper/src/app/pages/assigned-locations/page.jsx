@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import GovtBanner from "../../components/GovtBanner";
 import { clearSubmissions, setCurrentLocation } from "../../redux/store";
 import CommonHeader from '../../components/Commonheader';
-import { useOfflineSyncContext } from 'offline-sync-handler';
+import { useOfflineSyncContext } from 'offline-sync-handler-test';
 import CommonModal from "../../components/Modal";
 import CircularProgress from '@mui/material/CircularProgress';
 

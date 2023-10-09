@@ -8,7 +8,7 @@ import * as submissionLottie from 'public/lottie/submission.json';
 import { saveCitizenFormData } from "../../redux/store";
 import CommonModal from "../../components/Modal";
 import Lottie from 'react-lottie';
-import { useOfflineSyncContext } from 'offline-sync-handler';
+import { useOfflineSyncContext } from 'offline-sync-handler-test';
 import CitizenForm from '../../components/CitizenForm';
 // import QrReader from 'react-qr-scanner'
 import { QrScanner } from '@yudiel/react-qr-scanner';

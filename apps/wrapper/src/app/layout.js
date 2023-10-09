@@ -4,7 +4,7 @@ import 'animate.css';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js'
 import Pwa from 'src/pwa';
-import { OfflineSyncProvider } from 'offline-sync-handler';
+import { OfflineSyncProvider } from 'offline-sync-handler-test';
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
