@@ -57,15 +57,14 @@ const CitizenSurveyPage = ({ params }) => {
         setHydrated(true);
         if (window.innerWidth < 769) setIsMobile(true)
         else setIsMobile(false);
-        if (Object.keys(currCitizen)?.length) {
-            if (currCitizen?.status == 'SUBMITTED') {
-                setMode('manual')
-                setFormState(currCitizen.submissionData)
-            } else if (Object.keys(currCitizen?.submissionData)?.length > 0) {
-                setMode('manual')
-                setFormState(currCitizen.submissionData)
-            }
+        if (currCitizen?.status == 'SUBMITTED') {
+            setMode('manual')
+            setFormState(currCitizen.submissionData)
+        } else if (currCitizen?.submissionData && Object.keys(currCitizen?.submissionData)?.length > 0) {
+            setMode('manual')
+            setFormState(currCitizen.submissionData)
         }
+
     }, [])
 
     /* Util Functions */
@@ -182,7 +181,7 @@ const CitizenSurveyPage = ({ params }) => {
                     </div>
                 </>
                 : mode == 'manual' && !showForm ?
-                    <CitizenForm mode={mode} formEditable={(currCitizen?.status == 'SUBMITTED' || Object.keys(currCitizen?.submissionData)?.length > 0) ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
+                    <CitizenForm mode={mode} formEditable={(currCitizen?.status == 'SUBMITTED' || (currCitizen?.submissionData && Object?.keys(currCitizen?.submissionData))?.length > 0) ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
                     : !showForm && <div className={styles.qrContainer}>
                         <QrScanner
                             onDecode={(result) => handleScannedAadhaar(result)}

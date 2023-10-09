@@ -38,7 +38,6 @@ const SavedEntries = ({ params }) => {
         setHydrated(true);
         console.log(_currLocation)
         setSearchQuery(userData?.searchQuery?.[_currLocation.villageCode] || "")
-        getVillageData();
     }, [])
 
     useEffect(() => {
@@ -46,7 +45,7 @@ const SavedEntries = ({ params }) => {
     }, [_currLocation])
 
     useEffect(() => {
-        getVillageSubmissionData();
+        
     }, [currPage])
 
     useEffect(() => {
@@ -59,46 +58,10 @@ const SavedEntries = ({ params }) => {
         searchCitizens();
     }, [searchQuery])
 
-    const getVillageData = async () => {
-        try {
-            if (_currLocation?.villageCode) {
-                let data = await getVillageDetails(_currLocation.villageCode);
-                if (Object.keys(data?.result)?.length) setVillageData(data?.result);
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    const getVillageSubmissionData = async () => {
-        try {
-            if (_currLocation?.villageCode) {
-                setFetching(true);
-                let data = await getVillageSubmissions(_currLocation.villageCode, currPage);
-                console.log("PREV SUBMISSIONS -->", data);
-                setFetching(false);
-                if (Object.keys(data)?.length) {
-                    setPrevSubmissions(data?.result?.submissions);
-                    setPrevTempSubmissions(data?.result?.submissions)
-                    setTotalPages(data?.result?.totalPages)
-                }
-            }
-        } catch (err) {
-            console.log(err);
-            setFetching(false);
-        }
-    }
 
     const searchCitizenSubmission = async (e) => {
         setSearchQuery(e.target.value);
         dispatch(updateSearchQuery({ villageId: _currLocation.villageCode, query: e.target.value }))
-    }
-
-    function a11yProps(index) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
     }
 
     useEffect(() => {
@@ -107,43 +70,13 @@ const SavedEntries = ({ params }) => {
         }
     })
 
-    function padTwoDigits(num) {
-        return num.toString().padStart(2, "0");
-    }
-
-    function dateInYyyyMmDdHhMmSs(date, dateDiveder = "-") {
-        // :::: Exmple Usage ::::
-        // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
-        // 👇️ 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
-        //console.log(dateInYyyyMmDdHhMmSs(new Date()));
-
-        //  👇️️ 2025-05-04 05:24:07 (yyyy-mm-dd hh:mm:ss)
-        // console.log(dateInYyyyMmDdHhMmSs(new Date('May 04, 2025 05:24:07')));
-        // Date divider
-        // 👇️ 01/04/2023 10:20:07 (MM/DD/YYYY hh:mm:ss)
-        // console.log(dateInYyyyMmDdHhMmSs(new Date(), "/"));
-        return (
-            [
-                date.getFullYear(),
-                padTwoDigits(date.getMonth() + 1),
-                padTwoDigits(date.getDate()),
-            ].join(dateDiveder) +
-            " " +
-            [
-                padTwoDigits(date.getHours()),
-                padTwoDigits(date.getMinutes()),
-                padTwoDigits(date.getSeconds()),
-            ].join(":")
-        );
-    }
-
     return !hydrated ? null : (
         <div className={styles.container} ref={containerRef}>
             <GovtBanner sx={{ paddingTop: '2rem' }} />
             <CommonHeader
                 onBack={() => router.back()}
                 text={`${_currLocation.villageName}`}
-                subText={`Completed Entries`}
+                subText={`Saved Entries`}
                 showLogout={false}
                 sx={{ justifyContent: 'space-between !important', padding: '2rem 1rem' }} />
 
@@ -153,7 +86,7 @@ const SavedEntries = ({ params }) => {
                         id="search"
                         color="success"
                         type="search"
-                        label={searchQuery ? "" : "Search submissions here ..."}
+                        label={searchQuery ? "" : "Search entries here ..."}
                         value={searchQuery}
                         onChange={searchCitizenSubmission}
                         sx={{ marginBottom: '2rem', border: 'none', border: '2px solid #007922', borderRadius: '1rem' }}
