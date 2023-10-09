@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import CommonHeader from "src/app/components/Commonheader";
 import { v4 as uuidv4 } from 'uuid';
-import { addCitizen, setCurrentCitizen, updateSearchQuery } from "../../redux/store";
+import { addCitizen, setCurrentCitizen, updateSearchQuery, updateSearchSavedQuery } from "../../redux/store";
 import { getVillageDetails, getVillageSubmissions, searchCitizen } from "../../services/api";
 import Pagination from '@mui/material/Pagination';
 import { TextField, InputAdornment, CircularProgress } from "@mui/material";
@@ -17,7 +17,9 @@ import SearchIcon from "@mui/icons-material/Search";
 const SavedEntries = ({ params }) => {
     /* Component States and Refs*/
     const userData = useSelector((state) => state?.userData);
+    const submissions = useSelector((state) => state?.userData?.submissions);
     const _currLocation = useSelector((state) => state?.userData?.currentLocation);
+    const [limit, setLimit] = useState(5);
     const [hydrated, setHydrated] = React.useState(false);
     const [citizens, setCitizens] = useState(_currLocation?.citizens || []);
     const [villageData, setVillageData] = useState({});
@@ -25,7 +27,7 @@ const SavedEntries = ({ params }) => {
     const [currPage, setCurrPage] = React.useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [prevSubmissions, setPrevSubmissions] = useState([]);
-    const [prevTempSubmissions, setPrevTempSubmissions] = useState([]);
+    let prevTempSubmissions = useRef([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [fetching, setFetching] = useState(false);
     const router = useRouter();
@@ -37,7 +39,9 @@ const SavedEntries = ({ params }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setHydrated(true);
         console.log(_currLocation)
-        setSearchQuery(userData?.searchQuery?.[_currLocation.villageCode] || "")
+        setSearchQuery(userData?.searchSavedQuery?.[_currLocation.villageCode] || "")
+        let totalPages = Math.ceil(submissions?.[_currLocation.villageCode]?.length / limit)
+        setTotalPages(totalPages || 0)
     }, [])
 
     useEffect(() => {
@@ -45,23 +49,32 @@ const SavedEntries = ({ params }) => {
     }, [_currLocation])
 
     useEffect(() => {
-        
+        let newSubmissions = submissions?.[_currLocation.villageCode];
+        if (newSubmissions?.length) {
+            let newIndex = (currPage - 1) * limit;
+            const paginatedSubmissions = newSubmissions.slice(newIndex, newIndex + limit)
+            setPrevSubmissions(paginatedSubmissions)
+            prevTempSubmissions.current = paginatedSubmissions;
+        }
     }, [currPage])
 
     useEffect(() => {
-        async function searchCitizens() {
-            if (searchQuery?.length) {
-                let res = await searchCitizen(_currLocation.villageCode, searchQuery)
-                setPrevSubmissions(res?.result?.submissions || []);
-            } else setPrevSubmissions(prevTempSubmissions)
+        if (searchQuery?.length) {
+            let newSubmissions = submissions?.[_currLocation.villageCode];
+            if (newSubmissions?.length) {
+                let res = newSubmissions?.filter(el => (el?.submissionData?.beneficiaryName?.toLowerCase()?.startsWith(searchQuery.toLowerCase()) || el?.submissionData?.aadharNumber?.startsWith(searchQuery.toLowerCase())));
+                console.log(res)
+                setPrevSubmissions(res);
+            }
+        } else {
+            setPrevSubmissions(prevTempSubmissions.current)
         }
-        searchCitizens();
     }, [searchQuery])
 
 
     const searchCitizenSubmission = async (e) => {
         setSearchQuery(e.target.value);
-        dispatch(updateSearchQuery({ villageId: _currLocation.villageCode, query: e.target.value }))
+        dispatch(updateSearchSavedQuery({ villageId: _currLocation.villageCode, query: e.target.value }))
     }
 
     useEffect(() => {
@@ -70,6 +83,7 @@ const SavedEntries = ({ params }) => {
         }
     })
 
+    console.log("pevSubmissions : ", prevSubmissions)
     return !hydrated ? null : (
         <div className={styles.container} ref={containerRef}>
             <GovtBanner sx={{ paddingTop: '2rem' }} />
@@ -100,7 +114,7 @@ const SavedEntries = ({ params }) => {
                         }}
                     />
                     {fetching && <CircularProgress color="success" />}
-                    {!fetching && userData?.submissions?.[_currLocation.villageCode]?.length > 0 && userData?.submissions?.[_currLocation.villageCode]?.map(el =>
+                    {!fetching && prevSubmissions?.length > 0 && prevSubmissions?.map(el =>
                         <SelectionItem
                             key={el.citizenId}
                             leftImage={'/assets/citizen.png'}

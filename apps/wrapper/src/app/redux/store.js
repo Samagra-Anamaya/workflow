@@ -38,6 +38,7 @@ const userDataSlice = createSlice({
     currentCitizen: {},
     forms: {},
     searchQuery: {},
+    searchSavedQuery: {},
     submissions: {}
   },
   reducers: {
@@ -95,14 +96,19 @@ const userDataSlice = createSlice({
 
     },
     clearSubmissions: (state, action) => {
-      state.submissions = {};
+      let tempState = state?.submissions;
+      delete tempState[action.payload];
+      state.submissions = tempState;
     },
     setCurrentCitizen: (state, action) => {
       state.currentCitizen = action.payload
     },
     updateSearchQuery: (state, action) => {
       state.searchQuery = { ...state.searchQuery, [action.payload.villageId]: action.payload.query }
-    }
+    },
+    updateSearchSavedQuery: (state, action) => {
+      state.searchSavedQuery = { ...state.searchSavedQuery, [action.payload.villageId]: action.payload.query }
+    },
   }
 })
 
@@ -133,6 +139,7 @@ export const {
   addFormUri,
   setCurrentCitizen,
   updateSearchQuery,
+  updateSearchSavedQuery,
   clearSubmissions
 } = userDataSlice.actions;
 

@@ -63,38 +63,7 @@
                 }
             }
 
-            .submitBtn {
-                width: 75%;
-                height: 7vh;
-                border-radius: 0.5rem;
-                text-align: center;
-                line-height: 60px;
-                color: #fff;
-                font-weight: bolder;
-                font-size: 1.2rem;
-                background: linear-gradient(90deg, #4a9a47,  #154d48, #88dd7c, #279e86);
-                background-size: 400%;
-                z-index: 1;
-                animation: animate 20s linear infinite;
-                margin: -2rem 0rem 2rem 0rem;
-                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
-                &:before {
-                    content: '';
-                    position: absolute;
-                    top: -5px;
-                    bottom: -5px;
-                    right: -5px;
-                    left: -5px;
-                    z-index: -1;
-                    background: linear-gradient(90deg, #4a9a47, #154d48, #88dd7c, #279e86);
-                    background-size: 400%;
-                    border-radius: 40px;
-                    filter: blur(20px);
-                    opacity: 0;
-                    transition: 0.5s;
-                }
-            }
         }
 
         .assignedLocations {
@@ -113,16 +82,5 @@
             }
         }
 
-    }
-}
-
-
-@keyframes animate {
-    0% {
-        background-position: 0%;
-    }
-
-    100% {
-        background-position: 400%;
     }
 }
