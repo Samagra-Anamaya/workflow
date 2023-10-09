@@ -38,7 +38,7 @@ const SurveyPage = ({ params }) => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setHydrated(true);
-        console.log(_currLocation)
+        console.log("DATA -->", userData)
         setSearchQuery(userData?.searchQuery?.[_currLocation.villageCode] || "")
         getVillageData();
     }, [])
@@ -46,10 +46,6 @@ const SurveyPage = ({ params }) => {
     useEffect(() => {
         setCitizens(_currLocation?.citizens || [])
     }, [_currLocation])
-
-    useEffect(() => {
-        getVillageSubmissionData();
-    }, [currPage])
 
     useEffect(() => {
         async function searchCitizens() {
@@ -63,7 +59,6 @@ const SurveyPage = ({ params }) => {
 
     useEffect(() => {
         if (containerRef.current) {
-            console.log("ref->", containerRef.current)
             containerRef.current.scrollIntoView();
         }
     })
@@ -87,21 +82,6 @@ const SurveyPage = ({ params }) => {
         }
     }
 
-    const getVillageSubmissionData = async () => {
-        try {
-            if (_currLocation?.villageCode) {
-                let data = await getVillageSubmissions(_currLocation.villageCode, currPage);
-                console.log("PREV SUBMISSIONS -->", data);
-                if (Object.keys(data)?.length) {
-                    setPrevSubmissions(data?.result?.submissions);
-                    setPrevTempSubmissions(data?.result?.submissions)
-                    setTotalPages(data?.result?.totalPages)
-                }
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
     return !hydrated ? null : (
         <div className={styles.container} ref={containerRef} >
@@ -138,6 +118,15 @@ const SurveyPage = ({ params }) => {
                 sx={{ width: '90%' }}
                 mainText={'View Completed Entries'}
                 href="/pages/completed-entries"
+            />
+            <SelectionItem
+                key={_currLocation.id}
+                onClick={() => { }}
+                leftImage={'/assets/assessment.png'}
+                rightImage={'/assets/circleArrow.png'}
+                sx={{ width: '90%' }}
+                mainText={'View Saved Entries'}
+                href="/pages/saved-entries"
             />
             <SelectionItem
                 key={_currLocation.id}

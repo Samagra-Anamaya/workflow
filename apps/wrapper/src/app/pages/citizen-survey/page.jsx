@@ -61,6 +61,9 @@ const CitizenSurveyPage = ({ params }) => {
             if (currCitizen?.status == 'SUBMITTED') {
                 setMode('manual')
                 setFormState(currCitizen.submissionData)
+            } else if (Object.keys(currCitizen?.submissionData)?.length > 0) {
+                setMode('manual')
+                setFormState(currCitizen.submissionData)
             }
         }
     }, [])
@@ -73,33 +76,42 @@ const CitizenSurveyPage = ({ params }) => {
             e.preventDefault();
             let capturedAt = new Date()
             capturedAt.toISOString().slice(0, 19).replace('T', ' ')
-            const config = {
-                method: 'POST',
-                url: BACKEND_SERVICE_URL + `/submissions`,
-                data: {
-                    submissionData: formState,
-                    spdpVillageId: _currLocation.villageCode,
-                    citizenId: currCitizen.citizenId,
-                    submitterId: user.id,
-                    capturedAt
-                },
-            };
-            const response = await sendRequest(config);
-            if (response?.result?.submission?.status == 'SUBMITTED') {
-                dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
-                setLoading(false);
-                showSubmittedModal(true);
-            } else {
-                // Either an error or offline
-                if (!navigator.onLine) {
-                    // Submitted Offline
-                    dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
-                    setLoading(false);
-                    showSubmittedModal(true);
-                } else
-                    alert("An error occured while submitting form. Please try again")
-                setLoading(false);
-            }
+            // const config = {
+            //     method: 'POST',
+            //     url: BACKEND_SERVICE_URL + `/submissions`,
+            //     data: {
+            // submissionData: formState,
+            // spdpVillageId: _currLocation.villageCode,
+            // citizenId: currCitizen.citizenId,
+            // submitterId: user.id,
+            // capturedAt
+            //     },
+            // };
+            // const response = await sendRequest(config);
+            // if (response?.result?.submission?.status == 'SUBMITTED') {
+            //     dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
+            //     setLoading(false);
+            //     showSubmittedModal(true);
+            // } else {
+            //     // Either an error or offline
+            //     if (!navigator.onLine) {
+            //         // Submitted Offline
+            //         dispatch(saveCitizenFormData({ id: currCitizen.citizenId, data: formState, capturedAt: capturedAt }))
+            //         setLoading(false);
+            //         showSubmittedModal(true);
+            //     } else
+            //         alert("An error occured while submitting form. Please try again")
+            //     setLoading(false);
+            // }
+            dispatch(saveCitizenFormData({
+                submissionData: formState,
+                spdpVillageId: _currLocation.villageCode,
+                citizenId: currCitizen.citizenId,
+                submitterId: user.id,
+                capturedAt
+            }))
+            setLoading(false);
+            showSubmittedModal(true);
         } catch (err) {
             console.log(err)
             setLoading(false);
@@ -170,17 +182,8 @@ const CitizenSurveyPage = ({ params }) => {
                     </div>
                 </>
                 : mode == 'manual' && !showForm ?
-                    <CitizenForm mode={mode} formEditable={currCitizen?.status == 'SUBMITTED' ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
+                    <CitizenForm mode={mode} formEditable={(currCitizen?.status == 'SUBMITTED' || Object.keys(currCitizen?.submissionData)?.length > 0) ? false : true} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />
                     : !showForm && <div className={styles.qrContainer}>
-                        {/* <QrReader
-                            delay={100}
-                            style={{
-                                height: 240,
-                                width: 320,
-                            }}
-                            onError={(err) => console.log(err)}
-                            onScan={(data) => handleScannedAadhaar(data?.text)}
-                        /> */}
                         <QrScanner
                             onDecode={(result) => handleScannedAadhaar(result)}
                             onError={(error) => console.log(error?.message)}
@@ -191,7 +194,7 @@ const CitizenSurveyPage = ({ params }) => {
 
             {showForm && <CitizenForm mode={mode} formEditable={formEditable} handleSubmit={handleSubmit} setFormState={setFormState} formState={formState} currCitizen={currCitizen} submittedModal={submittedModal} loading={loading} />}
 
-            {submittedModal && <CommonModal>
+            {submittedModal && <CommonModal sx={{ maxHeight: '40vh', overflow: 'scroll' }}>
                 <div className={styles.submitModal}>
                     <div>
                         <Lottie options={defaultOptions}
@@ -201,7 +204,7 @@ const CitizenSurveyPage = ({ params }) => {
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                        <p style={{ fontSize: '1.5rem', marginTop: -40, fontWeight: 600 }}>Citizen Data Submitted</p>
+                        <p style={{ fontSize: '1.5rem', marginTop: -40, fontWeight: 600 }}>Citizen Data Saved</p>
                         <p>You will get edit access after next cycle</p>
                         <div onClick={() => router.back()} style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#017922', height: '3.5rem', borderRadius: '0.75rem', color: '#fff', marginTop: 30 }}>End Survey</div>
                     </div>

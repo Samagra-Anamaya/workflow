@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { logoutUser } from '../../redux/store';
 import { useRouter } from "next/navigation";
 import CommonModal from '../../components/Modal';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const CommonHeader = (props) => {
     const { onBack, showBack = true, subText, text, sx, showLogout = true } = props;
@@ -25,7 +26,7 @@ const CommonHeader = (props) => {
                 <p className={styles.mainText}>{text}</p>
                 {subText && <p className={styles.subText}>{subText}</p>}
             </div>
-            {showLogout ? <div className={styles.logoutBtn}><img src="/assets/logout.png" style={{ height: 30, opacity: 0.6 }} onClick={() => showLogoutModal(true)} /></div> : <div style={{ width: '20%' }}></div>}
+            {showLogout ? <div className={styles.logoutBtn} onClick={() => showLogoutModal(true)}><LogoutIcon style={{ color: '#007922', fontSize: 40 }} /></div> : <div style={{ width: '20%' }}></div>}
             {
                 logoutModal && <CommonModal sx={{ height: '40vh' }}>
                     <div style={modalStyles.container}>
