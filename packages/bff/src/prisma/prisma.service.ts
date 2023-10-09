@@ -6,8 +6,13 @@ import { CustomLogger } from 'src/common/logger';
 export class PrismaService extends PrismaClient implements OnModuleDestroy {
   private readonly logger = new CustomLogger('DBService');
   async onModuleInit() {
-    this.logger.verbose('Initialized and Connected 🎉');
-    await this.$connect();
+    try {
+      await this.$connect();
+      this.logger.verbose('Initialized and Connected 🎉');
+    } catch (error) {
+      console.log({ error: error.message });
+      this.logger.error('Warning: Database connection not established.');
+    }
   }
 
   async onModuleDestroy() {

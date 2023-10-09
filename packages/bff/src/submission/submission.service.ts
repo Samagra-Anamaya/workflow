@@ -213,6 +213,35 @@ export class SubmissionService {
     };
   }
 
+  async getSubmissionByEnumeratorId(
+    id: string,
+    page: number,
+    pageSize: number,
+  ): Promise<any> {
+    const skip = (page - 1) * pageSize;
+
+    const [submissions, total] = await Promise.all([
+      this.prisma.submission.findMany({
+        where: { submitterId: id },
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.submission.count({
+        where: { submitterId: id },
+      }),
+    ]);
+
+    return {
+      result: {
+        submissions,
+        totalCount: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
+  }
+
   async getSubmissionByCitizenId(id: string): Promise<any> {
     return this.prisma.submission.findMany({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

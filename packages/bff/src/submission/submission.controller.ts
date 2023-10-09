@@ -109,6 +109,36 @@ export class SubmissionController {
     }
   }
 
+  @Get('/enumerator/:id')
+  async getSubmissionByEnumeratorId(
+    @Param('id') id: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ): Promise<any> {
+    if (!id || id.trim().length === 0) {
+      throw new BadRequestException('Invalid input: ID cannot be empty');
+    }
+    const validatedPage = Number(page) || 1;
+    const validatedLimit = Number(limit) || 10;
+
+    if (isNaN(validatedPage) || isNaN(validatedLimit)) {
+      throw new BadRequestException('Invalid input parameters');
+    }
+
+    try {
+      return await this.submissionService.getSubmissionByEnumeratorId(
+        id,
+        validatedPage,
+        validatedLimit,
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        'Failed to retrieve submission by citizen ID',
+      );
+    }
+  }
+
   @Get('/citizen/:id')
   async getSubmissionByCitizenId(@Param('id') id: string): Promise<any> {
     if (!id || id.trim().length === 0) {
