@@ -13,13 +13,18 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomLogger } from './common/logger';
 import { SubmissionModule } from './submission/submission.module';
-
+import { EventEmitterModule } from '@nestjs/event-emitter';
 @Module({
   imports: [
     PrismaModule,
     EnumeratorModule,
     ScheduleModule,
     UtilsModule,
+    EventEmitterModule.forRoot({
+      maxListeners: 50,
+      // show event name in memory leak message when more than maximum amount of listeners is assigned
+      verboseMemoryLeak: true,
+    }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'your-secret-key', // Change this to your secret key
