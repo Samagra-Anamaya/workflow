@@ -114,7 +114,9 @@ export class SubmissionService {
         data?.submissionData?.aadharNumber,
         saltRounds,
       );
+      const lastDigits = data.submissionData.aadharNumber.slice(-4);
       data.submissionData.aadharNumber = hashedAadhar;
+      data.submissionData.lastDigits = lastDigits;
       const submission = await this.prisma.submission.create({
         data,
       });
@@ -145,9 +147,10 @@ export class SubmissionService {
       } else {
         submissions = await this.prisma.$queryRawUnsafe(
           `SELECT * FROM "public"."Submission"
-        WHERE 
-          "spdpVillageId" = ${villageId} AND 
-          "submissionData"->>'beneficiaryName' ILIKE '%${text}%' LIMIT 10`,
+        WHERE
+          "spdpVillageId" = ${villageId} AND
+          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'
+                  LIMIT 30`,
         );
       }
 
