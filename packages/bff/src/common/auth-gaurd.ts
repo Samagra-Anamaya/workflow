@@ -40,9 +40,9 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    console.log({ headers: request.headers });
+
     const bearerToken = request.headers.authorization?.split(' ')[1];
-    console.log({ bearerToken });
+
     if (!bearerToken) {
       return false;
     }
@@ -50,11 +50,9 @@ export class AuthGuard implements CanActivate {
     return new Promise<boolean>((resolve) => {
       jwt.verify(bearerToken, this.getKey, (err, decoded) => {
         if (err) {
-          console.log({ err });
           this.logger.error('JWT verification error:', err);
           resolve(false);
         } else {
-          console.log({ decoded });
           request.headers.userId = decoded.sub;
           request.headers.userPhone = decoded['preferred_username'];
           request.headers.roles = decoded['roles'];
