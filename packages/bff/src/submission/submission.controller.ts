@@ -10,6 +10,7 @@ import {
   UseFilters,
   BadRequestException,
   InternalServerErrorException,
+  Delete,
   // UseGuards,
   // Headers,
 } from '@nestjs/common';
@@ -165,8 +166,8 @@ export class SubmissionController {
     return await this.submissionService.updateSubmission(id, data);
   }
 
-  // @Delete(':id')
-  // async deleteSubmission(@Param('id') id: number): Promise<any> {
-  //   return this.submissionService.deleteSubmission(id);
-  // }
+  @Delete('deleteAll')
+  async deleteSubmission(): Promise<any> {
+    return this.submissionService.deleteAllSubmission();
+  }
 }

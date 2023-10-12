@@ -279,6 +279,9 @@ export class SubmissionService {
     }
   }
 
+  async deleteAllSubmission(): Promise<any> {
+    return this.prisma.submission.deleteMany({});
+  }
   // async deleteSubmission(id: number): Promise<any> {
   //   return this.prisma.submission.delete({
   //     where: { id },
