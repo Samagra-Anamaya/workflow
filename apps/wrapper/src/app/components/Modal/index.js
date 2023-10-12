@@ -9,7 +9,6 @@ const CommonModal = (props) => {
           styles.container +
           " animate__animated animate__slideInUp animate__faster"
         }
-        style={...props?.sx}
       >
         {props.children}
       </div>
