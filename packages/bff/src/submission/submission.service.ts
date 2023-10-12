@@ -68,6 +68,8 @@ export class SubmissionService {
               record?.submissionData?.aadharNumber,
               saltRounds,
             );
+            const lastDigits = record.submissionData.aadharNumber.slice(-4);
+            record.submissionData.lastDigits = lastDigits;
             record.submissionData.aadharNumber = hashedAadhar;
             return record;
           }),
