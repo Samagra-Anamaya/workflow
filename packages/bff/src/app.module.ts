@@ -6,9 +6,9 @@ import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 //import { EnumeratorModule } from './enumerator/enumerator.module';
 import { SubmissionService } from './submission/submission.service';
-import { ScheduleModule } from './schedule/schedule.module';
+// import { ScheduleModule } from './schedule/schedule.module';
 import { UtilsModule } from './utils/utils.module';
-import { ScheduleService } from './schedule/schedule.service';
+//import { ScheduleService } from './schedule/schedule.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomLogger } from './common/logger';
@@ -18,7 +18,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
   imports: [
     PrismaModule,
     // EnumeratorModule,
-    ScheduleModule,
+    //ScheduleModule,
     UtilsModule,
     EventEmitterModule.forRoot({
       maxListeners: 50,
@@ -36,7 +36,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AppService,
     PrismaService,
     SubmissionService,
-    ScheduleService,
+    //  ScheduleService,
     CustomLogger,
   ],
 })

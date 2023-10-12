@@ -68,6 +68,8 @@ export class SubmissionService {
               record?.submissionData?.aadharNumber,
               saltRounds,
             );
+            const lastDigits = record.submissionData.aadharNumber.slice(-4);
+            record.submissionData.lastDigits = lastDigits;
             record.submissionData.aadharNumber = hashedAadhar;
             return record;
           }),
@@ -277,6 +279,9 @@ export class SubmissionService {
     }
   }
 
+  async deleteAllSubmission(): Promise<any> {
+    return this.prisma.submission.deleteMany({});
+  }
   // async deleteSubmission(id: number): Promise<any> {
   //   return this.prisma.submission.delete({
   //     where: { id },

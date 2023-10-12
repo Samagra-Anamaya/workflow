@@ -10,6 +10,7 @@ import {
   UseFilters,
   BadRequestException,
   InternalServerErrorException,
+  Delete,
   // UseGuards,
   // Headers,
 } from '@nestjs/common';
@@ -23,9 +24,14 @@ import {
 } from './dto/submission.dto';
 import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
 import { CustomLogger } from 'src/common/logger';
-//import { AuthGuard } from 'src/common/auth-gaurd';
+// import { AuthGuard } from 'src/common/auth-gaurd';
+// import { ApiHeader } from '@nestjs/swagger';
 
 @Controller('submissions')
+// @ApiHeader({
+//   name: 'Authorization',
+//   description: 'Bearer Token',
+// })
 // @UseGuards(AuthGuard)
 @UseFilters(PrismaExceptionFilter)
 export class SubmissionController {
@@ -51,9 +57,10 @@ export class SubmissionController {
   @Get()
   async getAllSubmissions(
     @Query() query: GetAllSubmissionsDto,
-    //@Headers('authorization') authorization: string,
+    // @Headers('Authorization') authorization: string,
   ): Promise<any> {
     try {
+      // console.log({ authorization });
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
 
@@ -165,8 +172,8 @@ export class SubmissionController {
     return await this.submissionService.updateSubmission(id, data);
   }
 
-  // @Delete(':id')
-  // async deleteSubmission(@Param('id') id: number): Promise<any> {
-  //   return this.submissionService.deleteSubmission(id);
-  // }
+  @Delete('deleteAll')
+  async deleteSubmission(): Promise<any> {
+    return this.submissionService.deleteAllSubmission();
+  }
 }
