@@ -15,15 +15,17 @@ async function bootstrap() {
     .setDescription('APIs for Anamaya')
     .setVersion('1.0')
     .addTag('anamaya')
+    .addBearerAuth()
     .build();
-
+  console.log({ DocumentBuilder });
   const options: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   };
+
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
 
   app.enableCors();
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();

@@ -11,8 +11,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   Delete,
-  // UseGuards,
-  // Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { Submission } from '@prisma/client';
@@ -24,15 +23,12 @@ import {
 } from './dto/submission.dto';
 import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
 import { CustomLogger } from 'src/common/logger';
-// import { AuthGuard } from 'src/common/auth-gaurd';
-// import { ApiHeader } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from 'src/common/auth-gaurd';
 
 @Controller('submissions')
-// @ApiHeader({
-//   name: 'Authorization',
-//   description: 'Bearer Token',
-// })
-// @UseGuards(AuthGuard)
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @UseFilters(PrismaExceptionFilter)
 export class SubmissionController {
   private logger: CustomLogger;
@@ -55,20 +51,15 @@ export class SubmissionController {
   }
 
   @Get()
-  async getAllSubmissions(
-    @Query() query: GetAllSubmissionsDto,
-    // @Headers('Authorization') authorization: string,
-  ): Promise<any> {
+  async getAllSubmissions(@Query() query: GetAllSubmissionsDto): Promise<any> {
     try {
-      // console.log({ authorization });
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
 
       return this.submissionService.getSubmissions(page, limit);
     } catch (error) {
-      // Handle the error appropriately (e.g., logging, throwing, or returning an error response)
       this.logger.error(error);
-      throw error; // Rethrow the error or return an appropriate error response
+      throw error;
     }
   }
 
@@ -111,7 +102,7 @@ export class SubmissionController {
       return await this.submissionService.searchSubmissions(villageId, name);
     } catch (error) {
       this.logger.error(error);
-      // Handle specific errors (e.g., database connection, query failure)
+
       throw new InternalServerErrorException('Failed to search submissions');
     }
   }
