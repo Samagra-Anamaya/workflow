@@ -28,7 +28,6 @@ export class AuthGuard implements CanActivate {
           this.logger.error(`Error fetching signing key: ${err}`);
           callback(err);
         } else {
-          console.log({ key });
           const signingKey = key.publicKey || key.rsaPublicKey;
           callback(null, signingKey);
         }

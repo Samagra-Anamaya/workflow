@@ -12,6 +12,7 @@ import {
   InternalServerErrorException,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { Submission } from '@prisma/client';
@@ -25,6 +26,7 @@ import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
 import { CustomLogger } from 'src/common/logger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/auth-gaurd';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('submissions')
 @ApiBearerAuth()
@@ -37,6 +39,7 @@ export class SubmissionController {
   }
 
   @Post()
+  @UseInterceptors(NoFilesInterceptor())
   async createSubmission(
     @Body() createSubmissionDto: CreateSubmissionDto,
   ): Promise<any> {

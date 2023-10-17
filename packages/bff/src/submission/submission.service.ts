@@ -63,14 +63,16 @@ export class SubmissionService {
         }
         const submissionsData = await Promise.all(
           map(data?.[villageId], async (record) => {
-            const saltRounds = 3; // Number of salt rounds for bcrypt
-            const hashedAadhar = await bcrypt.hash(
-              record?.submissionData?.aadharNumber,
-              saltRounds,
-            );
-            const lastDigits = record.submissionData.aadharNumber.slice(-4);
-            record.submissionData.lastDigits = lastDigits;
-            record.submissionData.aadharNumber = hashedAadhar;
+            if (record?.submissionData?.isAadhaarAvailable) {
+              const saltRounds = 3; // Number of salt rounds for bcrypt
+              const hashedAadhar = await bcrypt.hash(
+                record?.submissionData?.aadharNumber,
+                saltRounds,
+              );
+              const lastDigits = record.submissionData.aadharNumber.slice(-4);
+              record.submissionData.lastDigits = lastDigits;
+              record.submissionData.aadharNumber = hashedAadhar;
+            }
             return record;
           }),
         );

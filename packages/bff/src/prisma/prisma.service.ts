@@ -10,7 +10,6 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
       await this.$connect();
       this.logger.verbose('Initialized and Connected 🎉');
     } catch (error) {
-      console.log({ error: error.message });
       this.logger.error('Warning: Database connection not established.');
     }
   }
