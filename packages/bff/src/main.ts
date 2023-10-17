@@ -17,7 +17,7 @@ async function bootstrap() {
     .addTag('anamaya')
     .addBearerAuth()
     .build();
-  console.log({ DocumentBuilder });
+
   const options: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   };
