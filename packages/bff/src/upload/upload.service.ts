@@ -36,4 +36,11 @@ export class UploadService {
       throw error;
     }
   }
+
+  async getMediaUrl(filename: string) {
+    return await this.minioService.getFileLink(
+      this.configService.get<string>('MINIO_BUCKET'),
+      filename,
+    );
+  }
 }

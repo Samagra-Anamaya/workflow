@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Param,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -59,5 +60,12 @@ export class UploadController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get(':filename')
+  async getSubmissionByVillageId(
+    @Param('filename') filename: string,
+  ): Promise<any> {
+    return await this.uploadService.getMediaUrl(filename);
   }
 }
