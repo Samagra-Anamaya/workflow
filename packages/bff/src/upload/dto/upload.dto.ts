@@ -19,5 +19,9 @@ export class MultiFileUploadDto {
     },
   })
   @IsNotEmpty()
-  files: any[];
+  files: Express.Multer.File[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  meta: any; // or any other desired type, perhaps an object: meta: Record<string, any>;
 }

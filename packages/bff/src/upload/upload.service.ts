@@ -19,7 +19,7 @@ export class UploadService {
     return result;
   }
 
-  async uploadFiles(files: any) {
+  async uploadFiles(files: any, meta: any) {
     try {
       const urls = await Promise.all(
         files.map(async (file) => {
@@ -27,11 +27,12 @@ export class UploadService {
             this.configService.get<string>('MINIO_BUCKET'),
             file.originalname,
             file.buffer,
+            meta,
           );
           return result;
         }),
       );
-      return urls;
+      return { result: urls };
     } catch (error) {
       throw error;
     }

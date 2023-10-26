@@ -21,6 +21,7 @@ export class MinioService {
     bucketName: string,
     filename: string,
     file: Buffer,
+    meta?: any,
   ): Promise<any> {
     const _filename = `${uuid.v4()}.${filename.split('.').pop()}`;
     const result = await this.minioClient.putObject(
@@ -31,7 +32,7 @@ export class MinioService {
     );
 
     //const url = await this.getFileLink(bucketName, _filename);
-    return { result: { filename: _filename, msg: result } };
+    return { filename: _filename, msg: result, meta: meta ?? {} };
   }
 
   async getDownloadURL(bucketName: string, filename: string) {
