@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
@@ -51,11 +52,14 @@ export class UploadController {
     type: MultiFileUploadDto,
   })
   @UseInterceptors(FilesInterceptor('files'))
-  async upload(@UploadedFiles() files: Express.Multer.File[]) {
+  async upload(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body('meta') meta: any,
+  ) {
     try {
       if (!files || files?.length === 0)
         throw new BadRequestException('No Files passed');
-      const urls = await this.uploadService.uploadFiles(files);
+      const urls = await this.uploadService.uploadFiles(files, meta);
       return urls;
     } catch (error) {
       throw error;
