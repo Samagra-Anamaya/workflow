@@ -5,6 +5,8 @@ import {
   DocumentBuilder,
   SwaggerDocumentOptions,
 } from '@nestjs/swagger';
+import * as bodyParser from 'body-parser';
+
 // import { run } from './temporal-workflows/client';
 
 async function bootstrap() {
@@ -24,6 +26,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   app.enableCors();
   await app.listen(process.env.PORT);

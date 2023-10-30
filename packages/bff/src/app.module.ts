@@ -19,12 +19,19 @@ import { MinioModule } from './minio/minio.module';
 import { UploadService } from './upload/upload.service';
 import { MinioService } from './minio/minio.service';
 import { UploadController } from './upload/upload.controller';
+import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Makes the configuration service available globally
       envFilePath: '.env', // Specify the path to your environment file if needed
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     PrismaModule,
     // EnumeratorModule,
     //ScheduleModule,

@@ -15,10 +15,12 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { FileUploadDto, MultiFileUploadDto } from './dto/upload.dto';
 import { AuthGuard } from 'src/common/auth-gaurd';
+// import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('upload')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
+// @UseGuards(ThrottlerGuard)
 export class UploadController {
   constructor(private uploadService: UploadService) {}
 
