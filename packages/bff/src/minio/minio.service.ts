@@ -8,10 +8,11 @@ export class MinioService {
   public readonly minioClient: Minio.Client;
 
   constructor(private configService: ConfigService) {
+    const port = this.configService.get('MINIO_PORT');
     this.minioClient = new Minio.Client({
       endPoint: this.configService.get('MINIO_URL'),
-      port: 443,
-      useSSL: true,
+      port: Number(port),
+      useSSL: Number(port) === 443 ? true : false,
       accessKey: this.configService.get('MINIO_ACCESSKEY'),
       secretKey: this.configService.get('MINIO_SECRET'),
     });
