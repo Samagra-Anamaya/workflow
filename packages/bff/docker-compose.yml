@@ -1,0 +1,25 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  submission-service:
+    # build: .
+    platform: linux/x86_64
+    image: ghcr.io/samagra-anamaya/workflow-bff:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}  
+    ports:
+      - 3000:3000
+     

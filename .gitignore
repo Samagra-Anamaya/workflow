@@ -1,5 +1,10 @@
 .turbo
 node_modules
 .idea
-
+.env
+/dist
 pgdata
+.DS_Store
+/apps/wrapper/scripts
+/packages/bff/dist
+

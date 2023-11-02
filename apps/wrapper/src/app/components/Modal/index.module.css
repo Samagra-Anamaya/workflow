@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 110vh;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
@@ -12,6 +12,7 @@
     backdrop-filter: blur(2px);
     overflow: hidden;
     -ms-overflow-style: none;
+    overflow-y: hidden;
     /* IE and Edge */
     scrollbar-width: none;
     /* Firefox */
@@ -21,8 +22,8 @@
     background: #FFF;
     padding: 2rem;
     max-width: 70%;
-    min-width: 70%;
-    max-height: 76%;
+    width: 80%;
+    height: 76%;
     border-radius: 0.5rem;
     overflow: hidden;
     -ms-overflow-style: none;
@@ -35,8 +36,11 @@
     display: none;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (max-width: 768px) {
     .container {
-        min-width: 30%;
+        width: 90%;
+        max-width: 90%;
+        height: 45%;
+        overflow: hidden;
     }
 }

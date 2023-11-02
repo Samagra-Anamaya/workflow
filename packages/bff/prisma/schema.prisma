@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  log             = ["debug", "query"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  VERIFIED
+  PROCESSING
+  FAILED
+}
+
+model Submission {
+  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  submitterId    String
+  submissionData Json
+  createdAt      DateTime         @default(now())
+  capturedAt     DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  status         SubmissionStatus @default(SUBMITTED)
+  spdpVillageId  Int              @default(0)
+  citizenId      String?
+  errors         Json?
+  meta           Json?
+}
+
+enum defaultPassword {
+  ABCD
+}
+
+model User {
+  id              Int     @id @default(autoincrement())
+  userId          String  @unique
+  password        String?
+  meta            Json?
+  active          Boolean @default(true)
+  surveyAssigned  Int     @default(0)
+  surveyCompleted Int     @default(0)
+}
+
+model Admin {
+  userId       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mobile       String     @unique
+  active       Boolean    @default(true)
+  meta         Json?
+  isSuperAdmin Boolean    @default(false)
+  Schedule     Schedule[]
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  CANCEL
+  DONE
+  PROCESSING
+}
+
+model Schedule {
+  id           Int            @id @unique @default(autoincrement())
+  dateTime     DateTime       @default(now())
+  enumeratorId String
+  status       ScheduleStatus @default(SCHEDULED)
+  formId       String
+  locationId   Int
+  meta         Json?
+  location     VillageData?   @relation(fields: [locationId], references: [spdpVillageId])
+  assignerId   String         @db.Uuid
+  assignedBy   Admin?         @relation(fields: [assignerId], references: [userId])
+}
+
+enum VillageDataStatus {
+  ASSIGNED
+  COMPLETED
+  PROCESSING
+  UNASSIGNED
+}
+
+enum TspBlockStatus {
+  Y
+  N
+}
+
+model VillageData {
+  id              Int
+  stateCode       Int
+  stateName       String
+  districtCode    Int
+  districtName    String
+  itdaName        String
+  blockCode       Int
+  blockName       String
+  isTspBlock      String
+  gpCode          Int
+  gpName          String
+  surveySubmitted Int               @default(0)
+  surveyToConduct Int               @default(0)
+  spdpVillageId   Int               @id @unique
+  villageName     String
+  Schedule        Schedule[]
+  meta            Json?
+  submissions     Json?
+  status          VillageDataStatus @default(UNASSIGNED)
+}
