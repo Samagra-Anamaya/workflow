@@ -1,16 +1,18 @@
-import { Controller, Get, Post, Query, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Param,
+  Body,
+  Delete,
+} from '@nestjs/common';
 
 import { UtilsService } from './utils.service';
 import { CreateVillageDto } from './dto/util.dto';
 @Controller('utils')
 export class UtilsController {
   constructor(private readonly utilService: UtilsService) {}
-
-  // @Get('secure')
-  // @UseGuards(JwtAuthGuard)
-  // getSecureData() {
-  //   return `Hello! This is secure data.`;
-  // }
 
   @Get('villageData')
   async getVillageData(
@@ -32,10 +34,8 @@ export class UtilsController {
     return this.utilService.addVillage(data);
   }
 
-  // @Post('csv')
-  // async uploadVillageData(): Promise<any | null> {
-  //   return await this.prismaService.villageData.createMany({
-  //     data: villageRecords,
-  //   });
-  // }
+  @Delete('/villages/deleteAll')
+  async clearVillageData(): Promise<any> {
+    return this.utilService.deleteAllVillage();
+  }
 }

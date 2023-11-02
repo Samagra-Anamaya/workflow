@@ -284,6 +284,22 @@ export class SubmissionService {
   async deleteAllSubmission(): Promise<any> {
     return this.prisma.submission.deleteMany({});
   }
+
+  async getSubmissionDetails(id: string): Promise<any> {
+    try {
+      const submission = await this.prisma.submission.findFirst({
+        where: {
+          id,
+        },
+      });
+
+      if (!submission) {
+        throw new NotFoundException(`Submission with id: ${id} not found`);
+      } else return { result: { submission } };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
   // async deleteSubmission(id: number): Promise<any> {
   //   return this.prisma.submission.delete({
   //     where: { id },

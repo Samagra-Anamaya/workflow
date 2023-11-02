@@ -46,4 +46,8 @@ export class UtilsService {
       },
     };
   }
+
+  async deleteAllVillage(): Promise<any> {
+    return this.prisma.villageData.deleteMany({});
+  }
 }

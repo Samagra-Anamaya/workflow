@@ -87,6 +87,20 @@ export class SubmissionController {
     );
   }
 
+  @Get('/submissionDetails/:id')
+  async getSubmissionDetails(@Param('id') id: string): Promise<any> {
+    if (!id || id.trim().length === 0) {
+      throw new BadRequestException('Invalid input: name cannot be empty');
+    }
+
+    try {
+      return await this.submissionService.getSubmissionDetails(id);
+    } catch (error) {
+      this.logger.error(error);
+
+      throw new InternalServerErrorException('Failed to search submissions');
+    }
+  }
   @Get('/search/:villageId/:text')
   async searchSubmission(
     @Param('villageId') villageId: string,
