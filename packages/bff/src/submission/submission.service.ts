@@ -145,18 +145,17 @@ export class SubmissionService {
 
   async searchSubmissions(villageId: string, text: string) {
     try {
-      let submissions;
-      if (!Number.isNaN(Number(text))) {
-        submissions = await this.searchByAadhaar(text, villageId);
-      } else {
-        submissions = await this.prisma.$queryRawUnsafe(
-          `SELECT * FROM "public"."Submission"
+      // if (!Number.isNaN(Number(text))) {
+      //   submissions = await this.searchByAadhaar(text, villageId);
+      // } else {
+      const submissions = await this.prisma.$queryRawUnsafe(
+        `SELECT * FROM "public"."Submission"
         WHERE
           "spdpVillageId" = ${villageId} AND (
           "submissionData"->>'claimantName' ILIKE '%${text}%'  OR  "submissionData"->>'landTitleSerialNumber' ILIKE '%${text}%' )
                   LIMIT 30`,
-        );
-      }
+      );
+      // }
 
       return { result: { submissions } };
     } catch (error) {
