@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SubmissionController } from './submission/submission.controller';
@@ -20,6 +20,11 @@ import { UploadService } from './upload/upload.service';
 import { MinioService } from './minio/minio.service';
 import { UploadController } from './upload/upload.controller';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HttpHealthIndicator, TerminusModule } from '@nestjs/terminus';
+import { MinioHealthIndicator } from './minio/minio.health';
+import { HealthController } from './health/health.controller';
+import { HealthService } from './health/health.service';
+import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,6 +38,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
       },
     ]),
     PrismaModule,
+    TerminusModule,
+    HttpModule,
     // EnumeratorModule,
     //ScheduleModule,
     UtilsModule,
@@ -48,15 +55,27 @@ import { ThrottlerModule } from '@nestjs/throttler';
     SubmissionModule,
     MinioModule,
   ],
-  controllers: [AppController, SubmissionController, UploadController],
+  controllers: [
+    AppController,
+    SubmissionController,
+    UploadController,
+    HealthController,
+  ],
   providers: [
+    {
+      provide: 'TERMINUS_LOGGER',
+      useClass: Logger,
+    },
     AppService,
+    HttpHealthIndicator,
     PrismaService,
     MinioService,
     SubmissionService,
     //  ScheduleService,
     CustomLogger,
     UploadService,
+    MinioHealthIndicator,
+    HealthService,
   ],
 })
 export class AppModule {}
