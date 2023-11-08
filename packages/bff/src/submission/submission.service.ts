@@ -152,8 +152,8 @@ export class SubmissionService {
         submissions = await this.prisma.$queryRawUnsafe(
           `SELECT * FROM "public"."Submission"
         WHERE
-          "spdpVillageId" = ${villageId} AND
-          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'
+          "spdpVillageId" = ${villageId} AND (
+          "submissionData"->>'claimantName' ILIKE '%${text}%'  OR  "submissionData"->>'landTitleSerialNumber' ILIKE '%${text}%' )
                   LIMIT 30`,
         );
       }
