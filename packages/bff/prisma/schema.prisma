@@ -102,6 +102,7 @@ model VillageData {
   gpName          String
   surveySubmitted Int               @default(0)
   surveyToConduct Int               @default(0)
+  flagsRaised     Int               @default(0)
   spdpVillageId   Int               @id @unique
   villageName     String
   Schedule        Schedule[]

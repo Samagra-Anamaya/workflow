@@ -4,4 +4,5 @@ node_modules
 .env
 /dist
 pgdata
+pgdata2
 .DS_Store

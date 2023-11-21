@@ -72,8 +72,9 @@ export class SubmissionService {
               const lastDigits = record.submissionData.aadharNumber.slice(-4);
               record.submissionData.lastDigits = lastDigits;
               record.submissionData.aadharNumber = hashedAadhar;
+              record.spdpVillageId = Number(villageId);
             }
-            return record;
+            return { ...record, spdpVillageId: Number(villageId) };
           }),
         );
 
@@ -145,18 +146,17 @@ export class SubmissionService {
 
   async searchSubmissions(villageId: string, text: string) {
     try {
-      let submissions;
-      if (!Number.isNaN(Number(text))) {
-        submissions = await this.searchByAadhaar(text, villageId);
-      } else {
-        submissions = await this.prisma.$queryRawUnsafe(
-          `SELECT * FROM "public"."Submission"
+      // if (!Number.isNaN(Number(text))) {
+      //   submissions = await this.searchByAadhaar(text, villageId);
+      // } else {
+      const submissions = await this.prisma.$queryRawUnsafe(
+        `SELECT * FROM "public"."Submission"
         WHERE
-          "spdpVillageId" = ${villageId} AND
-          "submissionData"->>'beneficiaryName' ILIKE '%${text}%'
+          "spdpVillageId" = ${villageId} AND (
+          "submissionData"->>'claimantName' ILIKE '%${text}%'  OR  "submissionData"->>'landTitleSerialNumber' ILIKE '%${text}%' )
                   LIMIT 30`,
-        );
-      }
+      );
+      // }
 
       return { result: { submissions } };
     } catch (error) {
@@ -300,9 +300,41 @@ export class SubmissionService {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  // async deleteSubmission(id: number): Promise<any> {
-  //   return this.prisma.submission.delete({
-  //     where: { id },
-  //   });
-  // }
+
+  async raiseSubmissionFlag({
+    id,
+    details,
+  }: {
+    id: string;
+    details: Record<string, any>;
+  }): Promise<any> {
+    console.log({ id, details });
+    try {
+      const submission = await this.prisma.submission.findFirst({
+        where: {
+          id,
+        },
+      });
+
+      if (!submission) {
+        throw new NotFoundException(`Submission with id: ${id} not found`);
+      }
+
+      const updateSubmission = await this.prisma.submission.update({
+        where: { id },
+        data: {
+          errors: details.data,
+        },
+      });
+
+      const updatedVillage = await this.prisma.villageData.update({
+        where: { spdpVillageId: submission.spdpVillageId },
+        data: { flagsRaised: { increment: 1 } },
+      });
+      console.log({ updatedVillage });
+      return { result: { data: updateSubmission, updatedVillage } };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
