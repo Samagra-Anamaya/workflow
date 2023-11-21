@@ -180,6 +180,16 @@ export class SubmissionController {
     return await this.submissionService.updateSubmission(id, data);
   }
 
+  @Put('/flag/:id')
+  async raiseSubmissionFlag(
+    @Param('id') id: string,
+    @Body() details: UpdateSubmissionDto, // Use the Submission interface/type instead of 'any'
+  ): Promise<Submission | null> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    return await this.submissionService.raiseSubmissionFlag({ id, details });
+  }
+
   @Delete('deleteAll')
   async deleteSubmission(): Promise<any> {
     return this.submissionService.deleteAllSubmission();
