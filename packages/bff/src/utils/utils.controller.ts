@@ -38,4 +38,25 @@ export class UtilsController {
   async clearVillageData(): Promise<any> {
     return this.utilService.deleteAllVillage();
   }
+
+  @Get('villages/getGps')
+  async getGps(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ): Promise<any> {
+    const validatedLimit = Number(limit) || 10;
+    const validatedPage = Number(page) || 1;
+    return this.utilService.getGps(validatedPage, validatedLimit);
+  }
+
+  @Get('/villages/gp/:id')
+  async getVillageByGpId(@Param('id') id: number): Promise<any> {
+    const gpCode = Number(id);
+    return this.utilService.getVillageByGpId(gpCode);
+  }
+
+  @Get('/test')
+  async test(): Promise<any> {
+    return this.utilService.test();
+  }
 }

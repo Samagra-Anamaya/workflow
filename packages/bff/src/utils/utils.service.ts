@@ -50,4 +50,41 @@ export class UtilsService {
   async deleteAllVillage(): Promise<any> {
     return this.prisma.villageData.deleteMany({});
   }
+
+  async getGps(page: number, pageSize: number): Promise<any> {
+    const skip = (page - 1) * pageSize;
+
+    const gps = await this.prisma.villageData.groupBy({
+      by: ['gpCode', 'gpName'],
+      skip,
+      take: pageSize,
+      _count: {
+        gpCode: true,
+      },
+      orderBy: {
+        gpCode: 'asc', // or 'desc' for descending order
+      },
+    });
+
+    const totalCount = await this.prisma.villageData.groupBy({
+      by: ['gpCode'],
+    });
+    return {
+      result: {
+        villages: gps,
+        totalCount: totalCount?.length,
+        currentPage: page,
+        totalPages: Math.ceil(totalCount?.length / pageSize),
+      },
+    };
+  }
+
+  async getVillageByGpId(gpCode: number): Promise<any> {
+    return this.prisma.villageData.findMany({ where: { gpCode } });
+  }
+  async test(): Promise<any> {
+    return this.prisma.villageData.groupBy({
+      by: ['gpCode', 'gpName'],
+    });
+  }
 }
