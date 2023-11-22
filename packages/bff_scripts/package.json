@@ -1,0 +1,17 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "add-village": "node addVillage"
+  },
+  "author": "Saiyan Abhishek",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "csv-parser": "^3.0.0",
+    "lodash": "^4.17.21"
+  }
+}
