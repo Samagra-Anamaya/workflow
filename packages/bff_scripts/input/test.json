@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "stateCode": 21,
+        "stateName": "ODISHA",
+        "districtCode": 344,
+        "districtName": "ANUGUL",
+        "itdaName": "",
+        "blockCode": 3276,
+        "blockName": "ANUGUL",
+        "isTspBlock": "N",
+        "gpCode": 115550,
+        "gpName": "ANGARBANDHA",
+        "spdpVillageId": 404281,
+        "villageName": "Angarbandha"
+      }
+]
