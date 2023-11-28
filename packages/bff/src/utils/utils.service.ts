@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { map } from 'lodash';
 
 @Injectable()
 export class UtilsService {
@@ -80,8 +81,17 @@ export class UtilsService {
   }
 
   async getVillageByGpId(gpCode: number): Promise<any> {
-    return this.prisma.villageData.findMany({ where: { gpCode } });
+    const villageData = this.prisma.villageData.findMany({ where: { gpCode } });
+    return await Promise.all(
+      map(villageData, async (record) => {
+        record.surveySubmitted = await this.prisma.submission.count({
+          where: { spdpVillageId: record.spdpVillageId },
+        });
+        return record;
+      }),
+    );
   }
+
   async test(): Promise<any> {
     return this.prisma.villageData.groupBy({
       by: ['gpCode', 'gpName'],
