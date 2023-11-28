@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, Min } from 'class-validator';
+import { SubmissionStatus } from '@prisma/client';
+import {
+  IsEnum,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 export enum Gender {
   male = 'male',
   female = 'female',
@@ -92,6 +100,26 @@ class BulkSubmissionDto {
       'An array of village submissions.Replace VillageId_x with proper villageId',
   })
   villageId_2: CreateSubmissionDto[];
+}
+
+export class SubmissionQueryDto {
+  @IsString()
+  page: string;
+
+  @IsString()
+  limit: string;
+
+  @IsOptional()
+  @IsEnum(SubmissionStatus)
+  status?: SubmissionStatus;
+
+  @IsOptional()
+  @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  sort: string = 'createdAt';
+
+  @IsOptional()
+  @IsIn(['asc', 'desc'])
+  order: string = 'desc';
 }
 
 export { BulkSubmissionDto };

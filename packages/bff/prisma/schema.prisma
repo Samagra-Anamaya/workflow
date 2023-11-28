@@ -16,6 +16,7 @@ enum SubmissionStatus {
   SUBMITTED
   VERIFIED
   PROCESSING
+  FLAGGED
   FAILED
 }
 

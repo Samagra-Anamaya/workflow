@@ -20,6 +20,7 @@ import {
   BulkSubmissionDto,
   CreateSubmissionDto,
   GetAllSubmissionsDto,
+  SubmissionQueryDto,
   UpdateSubmissionDto,
 } from './dto/submission.dto';
 import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
@@ -69,12 +70,11 @@ export class SubmissionController {
   @Get(':id')
   async getSubmissionByVillageId(
     @Param('id') id: number,
-    @Query('page') page: string,
-    @Query('limit') limit: string,
+    @Query() submissionQuery: SubmissionQueryDto,
   ): Promise<any> {
     const validatedId = Number(id);
-    const validatedPage = Number(page) || 1;
-    const validatedLimit = Number(limit) || 10;
+    const validatedPage = Number(submissionQuery.page) || 1;
+    const validatedLimit = Number(submissionQuery.limit) || 10;
 
     if (isNaN(validatedId) || isNaN(validatedPage) || isNaN(validatedLimit)) {
       throw new BadRequestException('Invalid input parameters');
@@ -84,6 +84,9 @@ export class SubmissionController {
       validatedId,
       validatedPage,
       validatedLimit,
+      submissionQuery.status,
+      submissionQuery.sort,
+      submissionQuery.order,
     );
   }
 

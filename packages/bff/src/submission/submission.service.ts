@@ -9,6 +9,7 @@ import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { map } from 'lodash';
 import * as bcrypt from 'bcrypt';
+import { SubmissionStatus } from '@prisma/client';
 
 @Injectable()
 export class SubmissionService {
@@ -188,6 +189,9 @@ export class SubmissionService {
     id: number,
     page: number,
     pageSize: number,
+    status: SubmissionStatus,
+    sort: string,
+    order: string,
   ): Promise<any> {
     const village = await this.prisma.villageData.findFirst({
       where: { spdpVillageId: id },
@@ -197,18 +201,42 @@ export class SubmissionService {
       throw new NotFoundException(`Village with spdpVillageId ${id} not found`);
     }
     const skip = (page - 1) * pageSize;
+    let orderBy;
+    if (sort === 'createdAt') {
+      orderBy = { createdAt: order };
+    } else if (sort === 'capturedAt') {
+      orderBy = { capturedAt: order };
+    } else {
+      orderBy = { updatedAt: order };
+    }
 
-    const [submissions, total] = await Promise.all([
-      this.prisma.submission.findMany({
-        where: { spdpVillageId: id },
-        skip,
-        take: pageSize,
-        orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.submission.count({
-        where: { spdpVillageId: id },
-      }),
-    ]);
+    let submissions;
+    let total;
+    if (!status) {
+      [submissions, total] = await Promise.all([
+        this.prisma.submission.findMany({
+          where: { spdpVillageId: id },
+          skip,
+          take: pageSize,
+          orderBy: orderBy,
+        }),
+        this.prisma.submission.count({
+          where: { spdpVillageId: id },
+        }),
+      ]);
+    } else {
+      [submissions, total] = await Promise.all([
+        this.prisma.submission.findMany({
+          where: { spdpVillageId: id, status },
+          skip,
+          take: pageSize,
+          orderBy: orderBy,
+        }),
+        this.prisma.submission.count({
+          where: { spdpVillageId: id, status },
+        }),
+      ]);
+    }
 
     return {
       result: {
