@@ -365,4 +365,51 @@ export class SubmissionService {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async saveFeedback(id: string, feedbackBody: any) {
+    const submission = await this.prisma.submission.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!submission) {
+      throw new NotFoundException(`Submission with id: ${id} not found`);
+    }
+    const savedFeedback = await this.prisma.feedback.findFirst({
+      where: {
+        submissionId: id,
+      },
+    });
+    let feedback;
+    if (!savedFeedback) {
+      feedback = await this.prisma.feedback.create({
+        data: {
+          submissionId: id,
+          feedbackData: feedbackBody,
+          feedbackHistory: [],
+        },
+      });
+    } else {
+      savedFeedback.feedbackHistory.push(savedFeedback.feedbackData);
+      feedback = await this.prisma.feedback.updateMany({
+        where: {
+          submissionId: id,
+        },
+        data: {
+          count: { increment: 1 },
+          feedbackData: feedbackBody,
+          feedbackHistory: savedFeedback.feedbackHistory,
+        },
+      });
+    }
+    await this.prisma.submission.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SubmissionStatus.FLAGGED,
+      },
+    });
+    return feedback;
+  }
 }

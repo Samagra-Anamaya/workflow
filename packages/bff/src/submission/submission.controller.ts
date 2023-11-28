@@ -193,6 +193,14 @@ export class SubmissionController {
     return await this.submissionService.raiseSubmissionFlag({ id, details });
   }
 
+  @Post('/:id/submitFeedback')
+  async submitFeedback(
+    @Param('id') id: string,
+    @Body() feedbackDto: any,
+  ): Promise<any> {
+    return await this.submissionService.saveFeedback(id, feedbackDto);
+  }
+
   @Delete('deleteAll')
   async deleteSubmission(): Promise<any> {
     return this.submissionService.deleteAllSubmission();

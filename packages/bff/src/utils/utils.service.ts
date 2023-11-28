@@ -81,7 +81,9 @@ export class UtilsService {
   }
 
   async getVillageByGpId(gpCode: number): Promise<any> {
-    const villageData = this.prisma.villageData.findMany({ where: { gpCode } });
+    const villageData = await this.prisma.villageData.findMany({
+      where: { gpCode },
+    });
     return await Promise.all(
       map(villageData, async (record) => {
         record.surveySubmitted = await this.prisma.submission.count({

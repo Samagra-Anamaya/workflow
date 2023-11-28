@@ -21,7 +21,7 @@ enum SubmissionStatus {
 }
 
 model Submission {
-  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   submitterId    String
   submissionData Json
   createdAt      DateTime         @default(now())
@@ -32,6 +32,18 @@ model Submission {
   citizenId      String?
   errors         Json?
   meta           Json?
+  Feedback       Feedback[]
+}
+
+model Feedback {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  count           Int        @default(1)
+  feedbackData    Json
+  feedbackHistory Json[]
+  createdAt       DateTime   @default(now())
+  updateAt        DateTime   @updatedAt
+  submission      Submission @relation(fields: [submissionId], references: [id])
+  submissionId    String     @db.Uuid
 }
 
 enum defaultPassword {
