@@ -18,10 +18,19 @@ export class UtilsController {
   async getVillageData(
     @Query('page') page: string,
     @Query('limit') limit: string,
+    @Query('stateCode') stateCode: number,
+    @Query('districtCode') districtCode: number,
+    @Query('blockCode') blockCode: number,
   ): Promise<any | null> {
     const validatedLimit = Number(limit) || 10;
     const validatedPage = Number(page) || 1;
-    return this.utilService.getVillages(validatedPage, validatedLimit);
+    return this.utilService.getVillages(
+      validatedPage,
+      validatedLimit,
+      stateCode,
+      districtCode,
+      blockCode,
+    );
   }
 
   @Get('/villageData/:id')
@@ -43,16 +52,33 @@ export class UtilsController {
   async getGps(
     @Query('page') page: string,
     @Query('limit') limit: string,
+    @Query('gpCode') gpCode: number,
+    @Query('gpName') gpName: string,
   ): Promise<any> {
     const validatedLimit = Number(limit) || 10;
     const validatedPage = Number(page) || 1;
-    return this.utilService.getGps(validatedPage, validatedLimit);
+    return this.utilService.getGps(
+      validatedPage,
+      validatedLimit,
+      gpCode,
+      gpName,
+    );
   }
 
   @Get('/villages/gp/:id')
-  async getVillageByGpId(@Param('id') id: number): Promise<any> {
+  async getVillageByGpId(
+    @Param('id') id: number,
+    @Query('stateCode') stateCode: number,
+    @Query('districtCode') districtCode: number,
+    @Query('blockCode') blockCode: number,
+  ): Promise<any> {
     const gpCode = Number(id);
-    return this.utilService.getVillageByGpId(gpCode);
+    return this.utilService.getVillageByGpId(
+      gpCode,
+      stateCode,
+      districtCode,
+      blockCode,
+    );
   }
 
   @Get('/test')

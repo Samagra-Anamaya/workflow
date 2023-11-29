@@ -85,7 +85,7 @@ export class SubmissionController {
       validatedPage,
       validatedLimit,
       submissionQuery.status,
-      submissionQuery.sort,
+      submissionQuery.sortBy,
       submissionQuery.order,
     );
   }

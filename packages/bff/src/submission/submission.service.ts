@@ -190,7 +190,7 @@ export class SubmissionService {
     page: number,
     pageSize: number,
     status: SubmissionStatus,
-    sort: string,
+    sortBy: string,
     order: string,
   ): Promise<any> {
     const village = await this.prisma.villageData.findFirst({
@@ -201,14 +201,7 @@ export class SubmissionService {
       throw new NotFoundException(`Village with spdpVillageId ${id} not found`);
     }
     const skip = (page - 1) * pageSize;
-    let orderBy;
-    if (sort === 'createdAt') {
-      orderBy = { createdAt: order };
-    } else if (sort === 'capturedAt') {
-      orderBy = { capturedAt: order };
-    } else {
-      orderBy = { updatedAt: order };
-    }
+    const orderBy = { [sortBy]: order };
 
     let submissions;
     let total;

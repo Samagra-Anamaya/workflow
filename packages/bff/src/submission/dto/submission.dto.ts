@@ -115,7 +115,7 @@ export class SubmissionQueryDto {
 
   @IsOptional()
   @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
-  sort: string = 'createdAt';
+  sortBy: string = 'createdAt';
 
   @IsOptional()
   @IsIn(['asc', 'desc'])
