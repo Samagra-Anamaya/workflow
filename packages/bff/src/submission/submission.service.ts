@@ -360,10 +360,13 @@ export class SubmissionService {
     }
   }
 
-  async saveFeedback(id: string, feedbackBody: any) {
-    const submission = await this.prisma.submission.findFirst({
+  async saveFeedback(id: string, feedbackBody: any, flag: SubmissionStatus) {
+    let submission = await this.prisma.submission.findFirst({
       where: {
         id,
+      },
+      include: {
+        Feedback: true,
       },
     });
     if (!submission) {
@@ -374,9 +377,31 @@ export class SubmissionService {
         submissionId: id,
       },
     });
-    let feedback;
+    if (
+      submission.status === SubmissionStatus.VERIFIED ||
+      submission.status === SubmissionStatus.FAILED ||
+      submission.status === SubmissionStatus.FLAGGED
+    ) {
+      return submission;
+    }
+    if (
+      flag === SubmissionStatus.FAILED ||
+      flag === SubmissionStatus.VERIFIED
+    ) {
+      return await this.prisma.submission.update({
+        where: {
+          id,
+        },
+        data: {
+          status: flag,
+        },
+        include: {
+          Feedback: true,
+        },
+      });
+    }
     if (!savedFeedback) {
-      feedback = await this.prisma.feedback.create({
+      await this.prisma.feedback.create({
         data: {
           submissionId: id,
           feedbackData: feedbackBody,
@@ -385,7 +410,7 @@ export class SubmissionService {
       });
     } else {
       savedFeedback.feedbackHistory.push(savedFeedback.feedbackData);
-      feedback = await this.prisma.feedback.updateMany({
+      await this.prisma.feedback.updateMany({
         where: {
           submissionId: id,
         },
@@ -396,14 +421,39 @@ export class SubmissionService {
         },
       });
     }
-    await this.prisma.submission.update({
+    submission = await this.prisma.submission.update({
       where: {
         id,
       },
       data: {
         status: SubmissionStatus.FLAGGED,
       },
+      include: {
+        Feedback: true,
+      },
     });
+    return submission;
+  }
+
+  async getFeedbackFromSubmissionId(id: string) {
+    const submission = await this.prisma.submission.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!submission) {
+      throw new NotFoundException(`Submission with id: ${id} not found`);
+    }
+    const feedback = await this.prisma.feedback.findFirst({
+      where: {
+        submissionId: id,
+      },
+    });
+    if (!feedback) {
+      throw new NotFoundException(
+        `Feedback for submission id: ${id} not found`,
+      );
+    }
     return feedback;
   }
 }
