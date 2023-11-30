@@ -59,8 +59,13 @@ export class SubmissionController {
     try {
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
-
-      return this.submissionService.getSubmissions(page, limit);
+      return this.submissionService.getSubmissions(
+        page,
+        limit,
+        query.status,
+        query.sortBy,
+        query.order,
+      );
     } catch (error) {
       this.logger.error(error);
       throw error;

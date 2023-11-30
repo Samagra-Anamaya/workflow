@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubmissionStatus } from '@prisma/client';
-import {
-  IsEnum,
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsIn, IsInt, IsString, Min } from 'class-validator';
 export enum Gender {
   male = 'male',
   female = 'female',
@@ -65,6 +58,15 @@ export class GetAllSubmissionsDto {
   })
   @Min(1)
   limit: number = 10;
+
+  @IsEnum(SubmissionStatus)
+  status: SubmissionStatus = undefined;
+
+  @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  sortBy: string = 'createdAt';
+
+  @IsIn(['asc', 'desc'])
+  order: string = 'desc';
 }
 
 // citizen.dto.ts
@@ -109,15 +111,12 @@ export class SubmissionQueryDto {
   @IsString()
   limit: string;
 
-  @IsOptional()
   @IsEnum(SubmissionStatus)
-  status?: SubmissionStatus;
+  status: SubmissionStatus = undefined;
 
-  @IsOptional()
   @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
   sortBy: string = 'createdAt';
 
-  @IsOptional()
   @IsIn(['asc', 'desc'])
   order: string = 'desc';
 }

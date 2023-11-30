@@ -166,15 +166,29 @@ export class SubmissionService {
     }
   }
 
-  async getSubmissions(page: number, pageSize: number) {
+  async getSubmissions(
+    page: number,
+    pageSize: number,
+    status: SubmissionStatus,
+    sortBy: string,
+    order: string,
+  ) {
     const skip = (page - 1) * pageSize;
+    const orderBy = { [sortBy]: order };
     const submissions = await this.prisma.submission.findMany({
+      where: {
+        status: status,
+      },
       skip,
       take: pageSize,
-      orderBy: { createdAt: 'desc' }, // Change to 'asc' for ascending order
+      orderBy: orderBy, // Change to 'asc' for ascending order
+    });
+    const totalCount = await this.prisma.submission.count({
+      where: {
+        status: status,
+      },
     });
 
-    const totalCount = await this.prisma.submission.count();
     return {
       result: {
         submissions,
@@ -202,34 +216,21 @@ export class SubmissionService {
     }
     const skip = (page - 1) * pageSize;
     const orderBy = { [sortBy]: order };
-
-    let submissions;
-    let total;
-    if (!status) {
-      [submissions, total] = await Promise.all([
-        this.prisma.submission.findMany({
-          where: { spdpVillageId: id },
-          skip,
-          take: pageSize,
-          orderBy: orderBy,
-        }),
-        this.prisma.submission.count({
-          where: { spdpVillageId: id },
-        }),
-      ]);
-    } else {
-      [submissions, total] = await Promise.all([
-        this.prisma.submission.findMany({
-          where: { spdpVillageId: id, status },
-          skip,
-          take: pageSize,
-          orderBy: orderBy,
-        }),
-        this.prisma.submission.count({
-          where: { spdpVillageId: id, status },
-        }),
-      ]);
-    }
+    const searchQuery = {
+      spdpVillageId: id,
+      status: status,
+    };
+    const [submissions, total] = await Promise.all([
+      this.prisma.submission.findMany({
+        where: searchQuery,
+        skip,
+        take: pageSize,
+        orderBy: orderBy,
+      }),
+      this.prisma.submission.count({
+        where: searchQuery,
+      }),
+    ]);
 
     return {
       result: {

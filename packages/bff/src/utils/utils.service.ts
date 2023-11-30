@@ -107,9 +107,9 @@ export class UtilsService {
 
   async getVillageByGpId(
     gpCode: number,
-    stateCode,
-    districtCode,
-    blockCode,
+    stateCode: number,
+    districtCode: number,
+    blockCode: number,
   ): Promise<any> {
     const searchQuery = {
       gpCode: gpCode,

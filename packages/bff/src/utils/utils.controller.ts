@@ -24,6 +24,9 @@ export class UtilsController {
   ): Promise<any | null> {
     const validatedLimit = Number(limit) || 10;
     const validatedPage = Number(page) || 1;
+    stateCode = Number(stateCode) || undefined;
+    districtCode = Number(districtCode) || undefined;
+    blockCode = Number(blockCode) || undefined;
     return this.utilService.getVillages(
       validatedPage,
       validatedLimit,
@@ -57,6 +60,7 @@ export class UtilsController {
   ): Promise<any> {
     const validatedLimit = Number(limit) || 10;
     const validatedPage = Number(page) || 1;
+    gpCode = Number(gpCode) || undefined;
     return this.utilService.getGps(
       validatedPage,
       validatedLimit,
@@ -73,6 +77,9 @@ export class UtilsController {
     @Query('blockCode') blockCode: number,
   ): Promise<any> {
     const gpCode = Number(id);
+    stateCode = Number(stateCode) || undefined;
+    districtCode = Number(districtCode) || undefined;
+    blockCode = Number(blockCode) || undefined;
     return this.utilService.getVillageByGpId(
       gpCode,
       stateCode,
