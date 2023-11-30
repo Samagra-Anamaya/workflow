@@ -28,6 +28,7 @@ import { CustomLogger } from 'src/common/logger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/auth-gaurd';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
+import { FeedbackDto } from './dto/feedback.dto';
 
 @Controller('submissions')
 @ApiBearerAuth()
@@ -201,9 +202,18 @@ export class SubmissionController {
   @Post('/:id/submitFeedback')
   async submitFeedback(
     @Param('id') id: string,
-    @Body() feedbackDto: any,
+    @Body() feedbackDto: FeedbackDto,
   ): Promise<any> {
-    return await this.submissionService.saveFeedback(id, feedbackDto);
+    return await this.submissionService.saveFeedback(
+      id,
+      feedbackDto.feedbackBody,
+      feedbackDto.flag,
+    );
+  }
+
+  @Get('/:id/feedback')
+  async getFeedback(@Param('id') id: string): Promise<any> {
+    return await this.submissionService.getFeedbackFromSubmissionId(id);
   }
 
   @Delete('deleteAll')
