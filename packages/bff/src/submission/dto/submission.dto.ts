@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, Min } from 'class-validator';
+import { SubmissionStatus } from '@prisma/client';
+import { IsEnum, IsIn, IsInt, IsString, Min } from 'class-validator';
 export enum Gender {
   male = 'male',
   female = 'female',
@@ -57,6 +58,27 @@ export class GetAllSubmissionsDto {
   })
   @Min(1)
   limit: number = 10;
+
+  @IsEnum(SubmissionStatus)
+  @ApiProperty({
+    description: 'Submission status',
+    example: 'SUBMITTED',
+  })
+  status: SubmissionStatus = undefined;
+
+  @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  @ApiProperty({
+    description: 'Sort by createdAt, capturedAt, updatedAt',
+    example: 'createdAt',
+  })
+  sortBy: string = 'createdAt';
+
+  @IsIn(['asc', 'desc'])
+  @ApiProperty({
+    description: 'Sort order asc, desc',
+    example: 'desc',
+  })
+  order: string = 'desc';
 }
 
 // citizen.dto.ts
@@ -92,6 +114,35 @@ class BulkSubmissionDto {
       'An array of village submissions.Replace VillageId_x with proper villageId',
   })
   villageId_2: CreateSubmissionDto[];
+}
+
+export class SubmissionQueryDto {
+  @IsString()
+  page: string;
+
+  @IsString()
+  limit: string;
+
+  @IsEnum(SubmissionStatus)
+  @ApiProperty({
+    description: 'Submission status',
+    example: 'SUBMITTED',
+  })
+  status: SubmissionStatus = undefined;
+
+  @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  @ApiProperty({
+    description: 'Sort by createdAt, capturedAt, updatedAt',
+    example: 'createdAt',
+  })
+  sortBy: string = 'createdAt';
+
+  @IsIn(['asc', 'desc'])
+  @ApiProperty({
+    description: 'Sort order asc, desc',
+    example: 'desc',
+  })
+  order: string = 'desc';
 }
 
 export { BulkSubmissionDto };

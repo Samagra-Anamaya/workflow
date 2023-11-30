@@ -13,7 +13,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomLogger } from './common/logger';
 import { SubmissionModule } from './submission/submission.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule } from '@nestjs/config';
 import { MinioModule } from './minio/minio.module';
 import { UploadService } from './upload/upload.service';
@@ -43,10 +42,10 @@ import { HttpModule } from '@nestjs/axios';
     // EnumeratorModule,
     //ScheduleModule,
     UtilsModule,
-    EventEmitterModule.forRoot({
-      maxListeners: 50,
-      verboseMemoryLeak: true,
-    }),
+    // EventEmitterModule.forRoot({
+    //   maxListeners: 50,
+    //   verboseMemoryLeak: true,
+    // }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'your-secret-key', // Change this to your secret key

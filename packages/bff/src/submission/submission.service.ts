@@ -9,6 +9,7 @@ import { CustomLogger } from 'src/common/logger';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { map } from 'lodash';
 import * as bcrypt from 'bcrypt';
+import { SubmissionStatus } from '@prisma/client';
 
 @Injectable()
 export class SubmissionService {
@@ -165,15 +166,29 @@ export class SubmissionService {
     }
   }
 
-  async getSubmissions(page: number, pageSize: number) {
+  async getSubmissions(
+    page: number,
+    pageSize: number,
+    status: SubmissionStatus,
+    sortBy: string,
+    order: string,
+  ) {
     const skip = (page - 1) * pageSize;
+    const orderBy = { [sortBy]: order };
     const submissions = await this.prisma.submission.findMany({
+      where: {
+        status: status,
+      },
       skip,
       take: pageSize,
-      orderBy: { createdAt: 'desc' }, // Change to 'asc' for ascending order
+      orderBy: orderBy, // Change to 'asc' for ascending order
+    });
+    const totalCount = await this.prisma.submission.count({
+      where: {
+        status: status,
+      },
     });
 
-    const totalCount = await this.prisma.submission.count();
     return {
       result: {
         submissions,
@@ -188,6 +203,9 @@ export class SubmissionService {
     id: number,
     page: number,
     pageSize: number,
+    status: SubmissionStatus,
+    sortBy: string,
+    order: string,
   ): Promise<any> {
     const village = await this.prisma.villageData.findFirst({
       where: { spdpVillageId: id },
@@ -197,16 +215,20 @@ export class SubmissionService {
       throw new NotFoundException(`Village with spdpVillageId ${id} not found`);
     }
     const skip = (page - 1) * pageSize;
-
+    const orderBy = { [sortBy]: order };
+    const searchQuery = {
+      spdpVillageId: id,
+      status: status,
+    };
     const [submissions, total] = await Promise.all([
       this.prisma.submission.findMany({
-        where: { spdpVillageId: id },
+        where: searchQuery,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: orderBy,
       }),
       this.prisma.submission.count({
-        where: { spdpVillageId: id },
+        where: searchQuery,
       }),
     ]);
 
@@ -336,5 +358,52 @@ export class SubmissionService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async saveFeedback(id: string, feedbackBody: any) {
+    const submission = await this.prisma.submission.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!submission) {
+      throw new NotFoundException(`Submission with id: ${id} not found`);
+    }
+    const savedFeedback = await this.prisma.feedback.findFirst({
+      where: {
+        submissionId: id,
+      },
+    });
+    let feedback;
+    if (!savedFeedback) {
+      feedback = await this.prisma.feedback.create({
+        data: {
+          submissionId: id,
+          feedbackData: feedbackBody,
+          feedbackHistory: [],
+        },
+      });
+    } else {
+      savedFeedback.feedbackHistory.push(savedFeedback.feedbackData);
+      feedback = await this.prisma.feedback.updateMany({
+        where: {
+          submissionId: id,
+        },
+        data: {
+          count: { increment: 1 },
+          feedbackData: feedbackBody,
+          feedbackHistory: savedFeedback.feedbackHistory,
+        },
+      });
+    }
+    await this.prisma.submission.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SubmissionStatus.FLAGGED,
+      },
+    });
+    return feedback;
   }
 }

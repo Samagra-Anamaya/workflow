@@ -20,6 +20,7 @@ import {
   BulkSubmissionDto,
   CreateSubmissionDto,
   GetAllSubmissionsDto,
+  SubmissionQueryDto,
   UpdateSubmissionDto,
 } from './dto/submission.dto';
 import { PrismaExceptionFilter } from 'src/exceptions/exception-filter';
@@ -58,8 +59,13 @@ export class SubmissionController {
     try {
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
-
-      return this.submissionService.getSubmissions(page, limit);
+      return this.submissionService.getSubmissions(
+        page,
+        limit,
+        query.status,
+        query.sortBy,
+        query.order,
+      );
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -69,12 +75,11 @@ export class SubmissionController {
   @Get(':id')
   async getSubmissionByVillageId(
     @Param('id') id: number,
-    @Query('page') page: string,
-    @Query('limit') limit: string,
+    @Query() submissionQuery: SubmissionQueryDto,
   ): Promise<any> {
     const validatedId = Number(id);
-    const validatedPage = Number(page) || 1;
-    const validatedLimit = Number(limit) || 10;
+    const validatedPage = Number(submissionQuery.page) || 1;
+    const validatedLimit = Number(submissionQuery.limit) || 10;
 
     if (isNaN(validatedId) || isNaN(validatedPage) || isNaN(validatedLimit)) {
       throw new BadRequestException('Invalid input parameters');
@@ -84,6 +89,9 @@ export class SubmissionController {
       validatedId,
       validatedPage,
       validatedLimit,
+      submissionQuery.status,
+      submissionQuery.sortBy,
+      submissionQuery.order,
     );
   }
 
@@ -188,6 +196,14 @@ export class SubmissionController {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return await this.submissionService.raiseSubmissionFlag({ id, details });
+  }
+
+  @Post('/:id/submitFeedback')
+  async submitFeedback(
+    @Param('id') id: string,
+    @Body() feedbackDto: any,
+  ): Promise<any> {
+    return await this.submissionService.saveFeedback(id, feedbackDto);
   }
 
   @Delete('deleteAll')

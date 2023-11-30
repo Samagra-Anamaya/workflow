@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { map } from 'lodash';
 
 @Injectable()
 export class UtilsService {
@@ -27,9 +28,21 @@ export class UtilsService {
     };
   }
 
-  async getVillages(page: number, pageSize: number) {
+  async getVillages(
+    page: number,
+    pageSize: number,
+    stateCode: number,
+    districtCode: number,
+    blockCode: number,
+  ) {
+    const searchQuery = {
+      stateCode: stateCode,
+      districtCode: districtCode,
+      blockCode: blockCode,
+    };
     const skip = (page - 1) * pageSize;
     const villages = await this.prisma.villageData.findMany({
+      where: searchQuery,
       skip,
       take: pageSize,
       orderBy: { spdpVillageId: 'asc' }, // Change to 'desc' for ascending order
@@ -51,10 +64,22 @@ export class UtilsService {
     return this.prisma.villageData.deleteMany({});
   }
 
-  async getGps(page: number, pageSize: number): Promise<any> {
+  async getGps(
+    page: number,
+    pageSize: number,
+    gpCode: number,
+    gpName: string,
+  ): Promise<any> {
+    const searchQuery = {
+      gpCode: gpCode,
+      gpName: {
+        contains: gpName,
+      },
+    };
     const skip = (page - 1) * pageSize;
 
     const gps = await this.prisma.villageData.groupBy({
+      where: searchQuery,
       by: ['gpCode', 'gpName'],
       skip,
       take: pageSize,
@@ -67,6 +92,7 @@ export class UtilsService {
     });
 
     const totalCount = await this.prisma.villageData.groupBy({
+      where: searchQuery,
       by: ['gpCode'],
     });
     return {
@@ -79,9 +105,31 @@ export class UtilsService {
     };
   }
 
-  async getVillageByGpId(gpCode: number): Promise<any> {
-    return this.prisma.villageData.findMany({ where: { gpCode } });
+  async getVillageByGpId(
+    gpCode: number,
+    stateCode: number,
+    districtCode: number,
+    blockCode: number,
+  ): Promise<any> {
+    const searchQuery = {
+      gpCode: gpCode,
+      stateCode: stateCode,
+      districtCode: districtCode,
+      blockCode: blockCode,
+    };
+    const villageData = await this.prisma.villageData.findMany({
+      where: searchQuery,
+    });
+    return await Promise.all(
+      map(villageData, async (record) => {
+        record.surveySubmitted = await this.prisma.submission.count({
+          where: { spdpVillageId: record.spdpVillageId },
+        });
+        return record;
+      }),
+    );
   }
+
   async test(): Promise<any> {
     return this.prisma.villageData.groupBy({
       by: ['gpCode', 'gpName'],
