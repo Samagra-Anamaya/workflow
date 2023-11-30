@@ -60,12 +60,24 @@ export class GetAllSubmissionsDto {
   limit: number = 10;
 
   @IsEnum(SubmissionStatus)
+  @ApiProperty({
+    description: 'Submission status',
+    example: 'SUBMITTED',
+  })
   status: SubmissionStatus = undefined;
 
   @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  @ApiProperty({
+    description: 'Sort by createdAt, capturedAt, updatedAt',
+    example: 'createdAt',
+  })
   sortBy: string = 'createdAt';
 
   @IsIn(['asc', 'desc'])
+  @ApiProperty({
+    description: 'Sort order asc, desc',
+    example: 'desc',
+  })
   order: string = 'desc';
 }
 
@@ -112,12 +124,24 @@ export class SubmissionQueryDto {
   limit: string;
 
   @IsEnum(SubmissionStatus)
+  @ApiProperty({
+    description: 'Submission status',
+    example: 'SUBMITTED',
+  })
   status: SubmissionStatus = undefined;
 
   @IsIn(['createdAt', 'capturedAt', 'updatedAt'])
+  @ApiProperty({
+    description: 'Sort by createdAt, capturedAt, updatedAt',
+    example: 'createdAt',
+  })
   sortBy: string = 'createdAt';
 
   @IsIn(['asc', 'desc'])
+  @ApiProperty({
+    description: 'Sort order asc, desc',
+    example: 'desc',
+  })
   order: string = 'desc';
 }
 
