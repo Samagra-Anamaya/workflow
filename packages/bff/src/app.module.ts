@@ -24,6 +24,9 @@ import { MinioHealthIndicator } from './minio/minio.health';
 import { HealthController } from './health/health.controller';
 import { HealthService } from './health/health.service';
 import { HttpModule } from '@nestjs/axios';
+import { SteService } from './ste/ste.service';
+import { SteController } from './ste/ste.controller';
+import { SteModule } from './ste/ste.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -53,12 +56,14 @@ import { HttpModule } from '@nestjs/axios';
     }),
     SubmissionModule,
     MinioModule,
+    SteModule,
   ],
   controllers: [
     AppController,
     SubmissionController,
     UploadController,
     HealthController,
+    SteController,
   ],
   providers: [
     {
@@ -75,6 +80,7 @@ import { HttpModule } from '@nestjs/axios';
     UploadService,
     MinioHealthIndicator,
     HealthService,
+    SteService,
   ],
 })
 export class AppModule {}

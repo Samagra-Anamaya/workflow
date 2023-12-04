@@ -123,3 +123,32 @@ model VillageData {
   submissions     Json?
   status          VillageDataStatus @default(UNASSIGNED)
 }
+
+model scheme_transaction {
+  id                     Int     @id @default(autoincrement())
+  schemeCode             String
+  aadhaarNumber          String
+  aadhaarReferenceNumber String
+  uniqueBeneficiaryId    String
+  financialYear          String
+  transactionType        String
+  transactionAmount      Int
+  inKindBenefitDetail    String
+  transactionDate        String
+  remarks                String?
+  departmentData         Json?
+  userId                 String
+}
+
+model transaction_history_table {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  requestBody          Json[]
+  containErrors        Boolean  @default(false)
+  validRecordsSaved    Boolean  @default(false)
+  errors               Json
+  userId               String
+  transactionStartTime DateTime
+  transactionEndTime   DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
