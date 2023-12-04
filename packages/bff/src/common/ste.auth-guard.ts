@@ -56,7 +56,7 @@ export class SteAuthGuard implements CanActivate {
           console.log('JWT verification error:', err);
           resolve(false);
         } else {
-          if (decoded['roles'][0] !== 'department') {
+          if (!decoded['roles'].includes('department')) {
             resolve(false);
           }
           request.headers.userId = decoded.sub;

@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SchemeTransactionEvent } from './dto/scheme.transaction.dto';
 import axios from 'axios';
 import { SteValidator } from './ste.validator';
-import { map } from 'lodash';
 
 @Injectable()
 export class SteService {
@@ -39,20 +38,6 @@ export class SteService {
     }
   }
 
-  async transformSchemeTransaction(
-    schemeTransactions: SchemeTransactionEvent[],
-    deptUsername: string,
-  ): Promise<any[]> {
-    return await Promise.all(
-      map(schemeTransactions, async (transaction) => {
-        return {
-          userId: deptUsername,
-          ...transaction,
-        };
-      }),
-    );
-  }
-
   async saveSchemeTransaction(
     schemetransactions: SchemeTransactionEvent[],
     userId: string,
@@ -68,27 +53,42 @@ export class SteService {
 
     let validSchemeTransactionsSaved = false;
     try {
-      const records = await this.transformSchemeTransaction(
-        validSchemeTransactions,
-        userId,
-      );
       await this.prismaService.scheme_transaction.createMany({
-        data: records,
+        data: validSchemeTransactions.map((entry) => ({
+          scheme_code: entry.schemeCode,
+          aadhaar_number: entry.aadhaarNumber,
+          aadhaar_reference_number: entry.aadhaarReferenceNumber,
+          unique_beneficiary_id: entry.uniqueBeneficiaryId,
+          financial_year: entry.financialYear,
+          transaction_type: entry.transactionType,
+          transaction_amount: parseInt(entry.transactionAmount), // validator ensures transactionAmount is always a number
+          in_kind_benefit_detail: entry.inKindBenefitDetail,
+          transaction_date: entry.transactionDate,
+          remarks: entry.remarks,
+          department_data: entry.departmentData,
+          user_id: userId,
+        })),
       });
       validSchemeTransactionsSaved = true;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.data);
+    }
     let transactionHistory;
     try {
       transactionHistory =
         await this.prismaService.transaction_history_table.create({
           data: {
-            requestBody: schemeTransactionEvents,
-            containErrors: validatedSchemeTransactionEventBody.errorCount !== 0,
+            request_body: schemeTransactionEvents,
+            total_records: schemetransactions.length,
+            valid_records: validSchemeTransactions.length,
+            invalid_records: validatedSchemeTransactionEventBody.errorCount,
+            contain_errors:
+              validatedSchemeTransactionEventBody.errorCount !== 0,
             errors: validatedSchemeTransactionEventBody.errors,
-            userId,
-            validRecordsSaved: validSchemeTransactionsSaved,
-            transactionStartTime: transactionStartTime,
-            transactionEndTime: new Date(),
+            user_id: userId,
+            valid_records_saved: validSchemeTransactionsSaved,
+            transaction_start_time: transactionStartTime,
+            transaction_end_time: new Date(),
           },
         });
     } catch (error) {
@@ -99,8 +99,9 @@ export class SteService {
     }
     return {
       transactionId: transactionHistory.id,
-      savedTransactionsCount:
-        validatedSchemeTransactionEventBody.validSchemeTransactions.length,
+      savedTransactionsCount: validSchemeTransactionsSaved
+        ? validatedSchemeTransactionEventBody.validSchemeTransactions.length
+        : 0,
       errorTransactionsCount: validatedSchemeTransactionEventBody.errorCount,
     };
   }
@@ -124,7 +125,7 @@ export class SteService {
   async getProgress(userId: string) {
     const recordCount = await this.prismaService.scheme_transaction.count({
       where: {
-        userId: userId,
+        user_id: userId,
       },
     });
     return { records_saved: recordCount };
