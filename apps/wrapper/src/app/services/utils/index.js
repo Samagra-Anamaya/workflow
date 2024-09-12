@@ -202,3 +202,33 @@ export const getFormData = async ({ loading, scheduleId, formSpec, startingForm,
 //   console.log("Trans form:", transformedForm.data)
 //   setToLocalForage(formName, transformedForm.data);
 // }
+
+export const getOfflineCapableForm = async (formId) => {
+  try {
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_URL = appEnvs.ENKETO_URL;
+    const OPEN_ROSA_SERVER_URL = appEnvs.OPEN_ROSA_SERVER_URL;
+    if (navigator.onLine) {
+      let res = await axios.post(ENKETO_URL + "/api/v2/survey/offline",
+        {
+          server_url: OPEN_ROSA_SERVER_URL,
+          form_id: formId
+        },
+        {
+          headers: {
+            Authorization: 'Basic ' + btoa('enketorules:')
+          }
+        });
+      if (res?.data?.offline_url) {
+        setToLocalForage('formUri', res?.data?.offline_url)
+      }
+      return res?.data?.offline_url || undefined;
+    } else {
+      let formUri = await getFromLocalForage('formUri');
+      console.log(formUri);
+      return formUri;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
